@@ -1,11 +1,17 @@
-package com.example.runningman.presentation.screen
+package com.cjwjsw.runningman.presentation.screen
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
-import com.example.runningman.databinding.ActivitySplashBinding
+import com.cjwjsw.runningman.databinding.ActivitySplashBinding
 import android.os.Handler
+import android.util.Base64
+import android.util.Log
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 class SplashScreen : AppCompatActivity() {
     lateinit var binding : ActivitySplashBinding
@@ -40,5 +46,25 @@ class SplashScreen : AppCompatActivity() {
                 // Do nothing
             }
         })
+//        getDebugKeyHash(this)
     }
+//    fun getDebugKeyHash(context: Context): String? { // 디버그 키 해시 값 추출하기
+//        try {
+//            val packageName = context.packageName
+//            val packageInfo = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+//
+//            for (signature in packageInfo.signatures) {
+//                val md = MessageDigest.getInstance("SHA")
+//                md.update(signature.toByteArray())
+//                val keyHash = String(Base64.encode(md.digest(), Base64.NO_WRAP))
+//                Log.d("Debug Key Hash", keyHash)
+//                return keyHash
+//            }
+//        } catch (e: PackageManager.NameNotFoundException) {
+//            e.printStackTrace()
+//        } catch (e: NoSuchAlgorithmException) {
+//            e.printStackTrace()
+//        }
+//        return null
+//    }
 }

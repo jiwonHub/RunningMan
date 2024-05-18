@@ -1,4 +1,4 @@
-package com.example.runningman
+package com.cjwjsw.runningman
 
 import org.junit.Test
 
