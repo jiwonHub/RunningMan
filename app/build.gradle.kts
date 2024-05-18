@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.runningman"
+    namespace = "com.cjwjsw.runningman"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.runningman"
+        applicationId = "com.cjwjsw.runningman"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -46,4 +46,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
+    implementation("com.kakao.sdk:v2-all:2.20.1")
 }

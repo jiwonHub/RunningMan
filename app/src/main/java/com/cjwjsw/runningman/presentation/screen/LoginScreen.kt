@@ -1,8 +1,8 @@
-package com.example.runningman.presentation.screen
+package com.cjwjsw.runningman.presentation.screen
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.runningman.databinding.ActivityLoginBinding
+import com.cjwjsw.runningman.databinding.ActivityLoginBinding
 
 class LoginScreen : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
