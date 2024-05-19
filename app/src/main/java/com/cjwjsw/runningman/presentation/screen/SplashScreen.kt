@@ -1,18 +1,13 @@
 package com.cjwjsw.runningman.presentation.screen
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.cjwjsw.runningman.databinding.ActivitySplashBinding
 import android.os.Handler
-import android.util.Base64
-import android.util.Log
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
+import com.cjwjsw.runningman.presentation.screen.login.LoginScreen
 
 class SplashScreen : AppCompatActivity() {
     lateinit var binding : ActivitySplashBinding
