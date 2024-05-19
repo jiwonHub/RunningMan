@@ -20,7 +20,7 @@
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RunningMan"
+        android:text="정체성 멘트"
         android:textColor="@color/white"
         android:textSize="35dp"
         android:textStyle="bold"
