@@ -1,5 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -34,12 +35,20 @@ class SplashScreen : AppCompatActivity() {
             }
 
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                // 애니메이션 종료 후 0.8초 뒤에 다른 화면으로 전환
+                val text = binding.text
+
+                // 텍스트가 투명해지는 애니메이션 적용
+                ObjectAnimator.ofFloat(text, "alpha", 1f, 0f).apply {
+                    duration = 500
+                    start()
+                }
+
+                // 애니메이션 종료 후 0.5초 뒤에 다른 화면으로 전환
                 Handler().postDelayed({
                     val intent = Intent(this@SplashScreen, LoginScreen::class.java)
                     startActivity(intent)
                     finish() // 현재 액티비티 종료
-                }, 800) // 0.8초 후에 실행
+                }, 500) // 0.5초 후에 실행
             }
 
             override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
