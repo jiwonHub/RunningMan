@@ -10,5 +10,10 @@ class LoginScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            // 애니메이션 시작
+            binding.root.transitionToEnd()
+        }
     }
 }
