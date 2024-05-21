@@ -23,5 +23,4 @@ object AppModule {
     fun provideGoogleLoginUseCase() : GoogleLoginUseCase {
         return GoogleLoginUseCase()
     }
-
 }
