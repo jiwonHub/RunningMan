@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "254664442625",
+    "project_id": "running-man-77dea",
+    "storage_bucket": "running-man-77dea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254664442625:android:71a67523273067ddea5100",
+        "android_client_info": {
+          "package_name": "com.cjwjsw.runningman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254664442625-b1amfpqlnjbue8ge1a63jch7j6bflu13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cjwjsw.runningman",
+            "certificate_hash": "a4cd331119cbb8a4fb318aae41b05221a90e576a"
+          }
+        },
+        {
+          "client_id": "254664442625-infja3ocbnjr9p8kcjofa95jes3ojgtb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cjwjsw.runningman",
+            "certificate_hash": "6473ed7ef080b5bd806fc3456ebb1886fcf72a33"
+          }
+        },
+        {
+          "client_id": "254664442625-2o5lrbvq9j6kg9uhtkm2ml3q6io9kjl8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcvBl2bb6IHZKJVFv3zSW1bsMCyseoOTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254664442625-2o5lrbvq9j6kg9uhtkm2ml3q6io9kjl8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
