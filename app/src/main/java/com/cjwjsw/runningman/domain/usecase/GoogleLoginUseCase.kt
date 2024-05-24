@@ -1,5 +1,8 @@
 package com.cjwjsw.runningman.domain.usecase
 
+import javax.inject.Inject
 
-class GoogleLoginUseCase {
+
+class GoogleLoginUseCase @Inject constructor() {
+
 }
