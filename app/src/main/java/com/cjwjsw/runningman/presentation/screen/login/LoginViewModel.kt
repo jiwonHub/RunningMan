@@ -1,27 +1,18 @@
 package com.cjwjsw.runningman.presentation.screen.login
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
-import android.content.ContextWrapper
+import android.content.Context
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
-import com.cjwjsw.runningman.domain.factory.LoginViewModelFactory
 import com.cjwjsw.runningman.domain.model.UserModel
 import com.google.firebase.auth.FirebaseUser
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,14 +21,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @AssistedInject constructor(
-    @Assisted private val contextWrapper: ContextWrapper,
+class LoginViewModel @Inject constructor(
     private val appPreferenceManager: AppPreferenceManager
 ) : ViewModel() {
 
     val loginStateLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
 
-    fun kakaoLogin() {
+    fun kakaoLogin(context: Context) {
 
         //공용 콜백 선언
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -61,8 +51,8 @@ class LoginViewModel @AssistedInject constructor(
             }
         }
 
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(contextWrapper)) {
-            UserApiClient.instance.loginWithKakaoTalk(contextWrapper) { token, error ->
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
+            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 if (error != null) {
                     Log.e(ContentValues.TAG, "카카오톡으로 로그인 실패", error)
 
@@ -73,21 +63,21 @@ class LoginViewModel @AssistedInject constructor(
                     }
 
                     // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
-                    UserApiClient.instance.loginWithKakaoAccount(contextWrapper, callback = callback)
+                    UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
                 } else if (token != null) {
                     Log.i(ContentValues.TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
                 }
             }
         } else {
-            UserApiClient.instance.loginWithKakaoAccount(contextWrapper, callback = callback)
+            UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
         }
     }
 
     fun saveToken(idToken: String) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             appPreferenceManager.putIdToken(idToken)
+            fetchData()
         }
-        fetchData()
     }
 
     fun fetchData(): Job = viewModelScope.launch {
@@ -115,15 +105,4 @@ class LoginViewModel @AssistedInject constructor(
 
     //TODO 파베 저장 코드 생성
     fun setDataToFB() {}
-
-    companion object {
-        fun provideFactory(
-            assistedFactory: LoginViewModelFactory,
-            contextWrapper: ContextWrapper
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return assistedFactory.create(contextWrapper) as T
-            }
-        }
-    }
 }
