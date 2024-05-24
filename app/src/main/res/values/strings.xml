@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">RunningMan</string>
     <string name="KakaoAuthKey">kakao99180739a7bcf290c7df2a47e48e4767</string>
+    <string name="web_client_id">834166826046-ge0a0c7kea9h56uddfrs6bk47gngpjjh.apps.googleusercontent.com</string>
+    <string name="request_error">요청했지만 예상치 못한 이슈가 발생했습니다 : %s</string>
 </resources>
