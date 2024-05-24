@@ -1,34 +1,20 @@
 package com.cjwjsw.runningman.presentation.screen.login
 
 import android.app.Activity
-import android.content.ContentValues
-import android.content.ContentValues.TAG
-import android.content.ContextWrapper
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
-import com.cjwjsw.runningman.domain.factory.LoginViewModelFactory
-import com.cjwjsw.runningman.presentation.screen.MainActivity
-import com.cjwjsw.runningman.presentation.screen.SplashScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.common.util.Utility
-import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginScreen : AppCompatActivity() {
@@ -37,12 +23,7 @@ class LoginScreen : AppCompatActivity() {
 
     private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
-    @Inject
-    private lateinit var loginViewModelFactory: LoginViewModelFactory
-
-    private val viewModel by viewModels<LoginViewModel> {
-        LoginViewModel.provideFactory(loginViewModelFactory, ContextWrapper(this))
-    }
+    private val viewModel: LoginViewModel by viewModels()
 
     private val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -88,7 +69,7 @@ class LoginScreen : AppCompatActivity() {
         }
 
         binding.kakaoLogin.setOnClickListener {
-            viewModel.kakaoLogin()
+            viewModel.kakaoLogin(this@LoginScreen)
         }
 
         binding.googleLogin.setOnClickListener {
@@ -102,7 +83,7 @@ class LoginScreen : AppCompatActivity() {
     }
 
     private fun observeData() = viewModel.loginStateLiveData.observe(this) {
-        when(it) {
+        when (it) {
             is LoginState.Error -> handleErrorState(it)
             is LoginState.Loading -> handleLoadingState()
             is LoginState.Login -> handleLoginState(it)
@@ -120,7 +101,7 @@ class LoginScreen : AppCompatActivity() {
     }
 
     private fun handleSuccessState(state: LoginState.Success) {
-        when(state) {
+        when (state) {
             is LoginState.Success.Registered -> {
                 handleRegisteredState(state)
             }
