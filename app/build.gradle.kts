@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-kapt")
-    id ("com.google.dagger.hilt.android")
+    id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -39,6 +40,7 @@ android {
 }
 
 dependencies {
+    val activity_version = "1.9.0"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -52,11 +54,22 @@ dependencies {
 
 
     //카카오 로그인 API
-    implementation ("com.kakao.sdk:v2-user:2.20.1")
+    implementation("com.kakao.sdk:v2-user:2.20.1")
 
-
-    implementation ("com.google.dagger:hilt-android:2.51.1")
+    implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-compiler:2.51.1")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    implementation("androidx.activity:activity:$activity_version")
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
 }
 
 kapt {
