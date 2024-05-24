@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -70,6 +71,8 @@ dependencies {
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+
+    implementation ("com.google.android.gms:play-services-auth:21.1.1")
 }
 
 kapt {
