@@ -1,16 +1,14 @@
 package com.cjwjsw.runningman.domain.di
 
+import android.content.Context
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
-import com.cjwjsw.runningman.domain.factory.LoginViewModelFactory
-import com.cjwjsw.runningman.domain.factory.LoginViewModelFactoryImpl
 import com.cjwjsw.runningman.domain.usecase.GoogleLoginUseCase
 import com.cjwjsw.runningman.domain.usecase.KakaoLoginUseCase
-import com.cjwjsw.runningman.presentation.screen.login.LoginViewModel
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import dagger.assisted.AssistedFactory
 import dagger.hilt.InstallIn
+import dagger.hilt.android.internal.lifecycle.HiltViewModelFactory
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -32,10 +30,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLoginViewModelFactory(
-        appPreferenceManager: AppPreferenceManager
-    ): LoginViewModelFactory {
-        return LoginViewModelFactoryImpl(appPreferenceManager)
+    fun provideAppPreferenceManager(@ApplicationContext context: Context): AppPreferenceManager {
+        return AppPreferenceManager(context)
     }
 
 }
