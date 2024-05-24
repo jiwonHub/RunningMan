@@ -50,25 +50,5 @@ class SplashScreen : AppCompatActivity() {
                 // Do nothing
             }
         })
-//        getDebugKeyHash(this)
     }
-//    fun getDebugKeyHash(context: Context): String? { // 디버그 키 해시 값 추출하기
-//        try {
-//            val packageName = context.packageName
-//            val packageInfo = context.packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-//
-//            for (signature in packageInfo.signatures) {
-//                val md = MessageDigest.getInstance("SHA")
-//                md.update(signature.toByteArray())
-//                val keyHash = String(Base64.encode(md.digest(), Base64.NO_WRAP))
-//                Log.d("Debug Key Hash", keyHash)
-//                return keyHash
-//            }
-//        } catch (e: PackageManager.NameNotFoundException) {
-//            e.printStackTrace()
-//        } catch (e: NoSuchAlgorithmException) {
-//            e.printStackTrace()
-//        }
-//        return null
-//    }
 }
