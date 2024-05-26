@@ -22,14 +22,16 @@
         </activity>
         <activity android:name=".presentation.screen.SplashScreen"
             android:exported="true">
+
+        </activity>
+        <activity android:name=".presentation.screen.login.LoginScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.screen.login.LoginScreen"/>
-
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -43,6 +45,14 @@
                     android:scheme="kakao99180739a7bcf290c7df2a47e48e4767" />
             </intent-filter>
         </activity>
+        <activity android:name=".presentation.screen.onboarding.GenderScreen"
+            android:exported="true">
+
+        </activity>
+        <activity android:name=".presentation.screen.onboarding.WeightScreen"/>
+        <activity android:name=".presentation.screen.onboarding.HeightScreen"/>
+        <activity android:name=".presentation.screen.onboarding.AgeScreen"/>
+        <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
     </application>
 
 </manifest>

@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">RunningMan</string>
     <string name="KakaoAuthKey">kakao99180739a7bcf290c7df2a47e48e4767</string>
+    <string name="gender">성별이 무엇인가요?</string>
+    <string name="next">다음</string>
+    <string name="women">여자</string>
+    <string name="men">남자</string>
+    <string name="running_man_icon_description">This is an Running Man icon</string>
+    <string name="weight">몸무게가 어떻게 되나요?</string>
+    <string name="weight_hint">몸무게를 적어주세요!</string>
+    <string name="height_hint">키를 적어주세요!</string>
+    <string name="height">키가 몇cm신가요?</string>
+    <string name="age">나이가 어떻게 되나요?</string>
+    <string name="age_hint">나이를 적어주세요!</string>
+    <string name="start">시작합시다!</string>
+    <string name="start_button">시작하기</string>
 </resources>

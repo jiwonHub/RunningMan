@@ -29,7 +29,6 @@ class LoginScreen : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         KakaoSdk.init(this,"99180739a7bcf290c7df2a47e48e4767")
 
-
         setContentView(binding.root)
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
@@ -41,7 +40,6 @@ class LoginScreen : AppCompatActivity() {
         binding.kakaoLogin.setOnClickListener {
                viewModel = LoginViewModel(this)
                viewModel.kakaoLogin()
-
         }
 
     }

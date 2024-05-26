@@ -2,10 +2,12 @@ package com.cjwjsw.runningman.presentation.screen.login
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.cjwjsw.runningman.core.UserManager
+import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
@@ -30,11 +32,19 @@ class LoginViewModel(context: Context): AppCompatActivity() {
                     }
                     else if (user != null) {
                         //TODO 파베에 사용자 정보 저장
+                        UserManager.setUser(
+                            id = user.id.toString(),
+                            nickName = user.kakaoAccount?.profile?.nickname ?: "",
+                            email = user.kakaoAccount?.email ?: "",
+                            profileImageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl ?: ""
+                        )
                         Log.i(
                             ContentValues.TAG, "사용자 정보 요청 성공" +
                                     "\n회원번호: ${user.id}" +
                                     "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
                                     "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+                        val intent = Intent(context, GenderScreen::class.java)
+                        startActivity(intent)
                     }
                 }
             }
@@ -55,6 +65,28 @@ class LoginViewModel(context: Context): AppCompatActivity() {
                     UserApiClient.instance.loginWithKakaoAccount(this, callback = callback )
                 } else if (token != null) {
                     Log.i(ContentValues.TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    UserApiClient.instance.me { user, error ->
+                        if(error != null){
+                            Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
+                        }
+                        else if (user != null) {
+                            //TODO 파베에 사용자 정보 저장
+                            UserManager.setUser(
+                                id = user.id.toString(),
+                                nickName = user.kakaoAccount?.profile?.nickname ?: "",
+                                email = user.kakaoAccount?.email ?: "",
+                                profileImageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl ?: ""
+                            )
+                            Log.i(
+                                ContentValues.TAG, "사용자 정보 요청 성공" +
+                                        "\n회원번호: ${user.id}" +
+                                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                        "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+                            val intent = Intent(context, GenderScreen::class.java)
+                            startActivity(intent)
+                        }
+                    }
+
                 }
             }
         } else {

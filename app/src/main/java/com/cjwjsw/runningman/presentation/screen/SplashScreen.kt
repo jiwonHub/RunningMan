@@ -1,6 +1,7 @@
 package com.cjwjsw.runningman.presentation.screen
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,13 +9,16 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import com.cjwjsw.runningman.databinding.ActivitySplashBinding
 import android.os.Handler
 import com.cjwjsw.runningman.presentation.screen.login.LoginScreen
+import com.google.firebase.FirebaseApp
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreen : AppCompatActivity() {
     lateinit var binding : ActivitySplashBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FirebaseApp.initializeApp(this)
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             // 애니메이션 시작
