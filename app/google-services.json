@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "680523277004",
+    "project_id": "running-man-5d229",
+    "storage_bucket": "running-man-5d229.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680523277004:android:d2c8a45a79ba60df0d1869",
+        "android_client_info": {
+          "package_name": "com.cjwjsw.runningman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "680523277004-7jvsgi1mh5f85457van6nmvm4q13f0jg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXMyOFlk9J4WNq8cDLHKytMwxin9MizvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "680523277004-7jvsgi1mh5f85457van6nmvm4q13f0jg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
