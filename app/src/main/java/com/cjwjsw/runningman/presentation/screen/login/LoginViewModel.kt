@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                             user.kakaoAccount?.profile?.thumbnailImageUrl ?: "")
                         Log.i(
                             ContentValues.TAG, "사용자 정보 요청 성공" +
-                                    "\n회원번호: ${user.id}" +
+                                    "\n회원번호: $token" +
                                     "\n이메일: ${user.kakaoAccount?.email}" +
                                     "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
                     }
