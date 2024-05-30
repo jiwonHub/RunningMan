@@ -2,28 +2,35 @@ package com.cjwjsw.runningman.presentation.screen.login
 
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
-import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class LoginViewModel @Inject constructor() : ViewModel()  {
+    val _stateValue: MutableLiveData<State> by lazy {
+        MutableLiveData<State>()
+    }
+    val stateValue: LiveData<State> get() = _stateValue
 
 
-//https://jgeun97.tistory.com/350
 
-class LoginViewModel(context: Context): AppCompatActivity() {
-    private var context = context
-
-    fun kakaoLogin(){
+    fun kakaoLogin(context : Context){
+        _stateValue.value = State.Loading
 
         //공용 콜백 선언
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e(ContentValues.TAG, "카카오계정으로 로그인 실패", error)
+                _stateValue.value = State.LoggedFailed
             } else if (token != null) {
                 Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
                 UserApiClient.instance.me { user, error ->
@@ -43,11 +50,11 @@ class LoginViewModel(context: Context): AppCompatActivity() {
                                     "\n회원번호: ${user.id}" +
                                     "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
                                     "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
-                        val intent = Intent(context, GenderScreen::class.java)
-                        startActivity(intent)
                     }
                 }
+                _stateValue.value = State.LoggedIn
             }
+
         }
 
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
@@ -62,9 +69,10 @@ class LoginViewModel(context: Context): AppCompatActivity() {
                     }
 
                     // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
-                    UserApiClient.instance.loginWithKakaoAccount(this, callback = callback )
+                    UserApiClient.instance.loginWithKakaoAccount(context, callback = callback )
                 } else if (token != null) {
                     Log.i(ContentValues.TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    _stateValue.value = State.LoggedIn
                     UserApiClient.instance.me { user, error ->
                         if(error != null){
                             Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
@@ -82,18 +90,15 @@ class LoginViewModel(context: Context): AppCompatActivity() {
                                         "\n회원번호: ${user.id}" +
                                         "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
                                         "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
-                            val intent = Intent(context, GenderScreen::class.java)
-                            startActivity(intent)
                         }
                     }
 
                 }
+                _stateValue.value = State.LoggedIn
             }
         } else {
             UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
         }
     }
 
-    //TODO 파베 저장 코드 생성
-    fun setDataToFB(){}
 }
