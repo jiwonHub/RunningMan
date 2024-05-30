@@ -6,7 +6,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.cjwjsw.runningman.core.UserManager
+import com.cjwjsw.runningman.domain.usecase.FBStoreUserDataUseCase
+import com.google.firebase.auth.FirebaseAuth
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -20,10 +21,9 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
         MutableLiveData<State>()
     }
     val stateValue: LiveData<State> get() = _stateValue
+    val fbUsecase = FBStoreUserDataUseCase()
 
-
-
-    fun kakaoLogin(context : Context){
+    fun kakaoLogin(context : Context,auth : FirebaseAuth){
         _stateValue.value = State.Loading
 
         //공용 콜백 선언
@@ -39,22 +39,19 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                     }
                     else if (user != null) {
                         //TODO 파베에 사용자 정보 저장
-                        UserManager.setUser(
-                            id = user.id.toString(),
-                            nickName = user.kakaoAccount?.profile?.nickname ?: "",
-                            email = user.kakaoAccount?.email ?: "",
-                            profileImageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl ?: ""
-                        )
+                        fbUsecase.excute(auth,user.id.toString(),
+                            user.kakaoAccount?.profile?.nickname ?: "",
+                            user.kakaoAccount?.email ?: "",
+                            user.kakaoAccount?.profile?.thumbnailImageUrl ?: "")
                         Log.i(
                             ContentValues.TAG, "사용자 정보 요청 성공" +
                                     "\n회원번호: ${user.id}" +
-                                    "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                    "\n이메일: ${user.kakaoAccount?.email}" +
                                     "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
                     }
                 }
                 _stateValue.value = State.LoggedIn
             }
-
         }
 
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
@@ -79,20 +76,17 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                         }
                         else if (user != null) {
                             //TODO 파베에 사용자 정보 저장
-                            UserManager.setUser(
-                                id = user.id.toString(),
-                                nickName = user.kakaoAccount?.profile?.nickname ?: "",
-                                email = user.kakaoAccount?.email ?: "",
-                                profileImageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl ?: ""
-                            )
+                            fbUsecase.excute(auth,user.id.toString(),
+                                user.kakaoAccount?.profile?.nickname ?: "",
+                                user.kakaoAccount?.email ?: "",
+                                user.kakaoAccount?.profile?.thumbnailImageUrl ?: "")
                             Log.i(
                                 ContentValues.TAG, "사용자 정보 요청 성공" +
                                         "\n회원번호: ${user.id}" +
-                                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                                        "\n이메일: ${user.kakaoAccount?.email}" +
                                         "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
                         }
                     }
-
                 }
                 _stateValue.value = State.LoggedIn
             }
