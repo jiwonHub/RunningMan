@@ -3,8 +3,6 @@ package com.cjwjsw.runningman.domain.di
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
-import com.cjwjsw.runningman.domain.usecase.GoogleLoginUseCase
-import com.cjwjsw.runningman.domain.usecase.KakaoLoginUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,18 +28,6 @@ abstract class RepositoryModule {
 @InstallIn(SingletonComponent::class)
 object AppModule {
     private const val WEATHER_BASE_URL = "https://api.open-meteo.com/"
-
-    @Provides
-    @Singleton
-    fun provideKakaoLoginUseCase() : KakaoLoginUseCase {
-        return KakaoLoginUseCase()
-    }
-
-    @Provides
-    @Singleton
-    fun provideGoogleLoginUseCase() : GoogleLoginUseCase {
-        return GoogleLoginUseCase()
-    }
 
     @Provides
     @Singleton

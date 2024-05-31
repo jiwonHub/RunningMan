@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.cjwjsw.runningman.domain.usecase.FBStoreUserDataUseCase
+import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.google.firebase.auth.FirebaseAuth
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -21,7 +21,7 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
         MutableLiveData<State>()
     }
     val stateValue: LiveData<State> get() = _stateValue
-    val fbUsecase = FBStoreUserDataUseCase()
+    val fbUsecase = FBStoreUserSignInCase()
 
     fun kakaoLogin(context : Context,auth : FirebaseAuth){
         _stateValue.value = State.Loading
@@ -38,21 +38,14 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                         Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
                     }
                     else if (user != null) {
-                        //TODO 파베에 사용자 정보 저장
-                        fbUsecase.excute(auth,user.id.toString(),
-                            user.kakaoAccount?.profile?.nickname ?: "",
-                            user.kakaoAccount?.email ?: "",
-                            user.kakaoAccount?.profile?.thumbnailImageUrl ?: "")
-                        Log.i(
-                            ContentValues.TAG, "사용자 정보 요청 성공" +
-                                    "\n회원번호: $token" +
-                                    "\n이메일: ${user.kakaoAccount?.email}" +
-                                    "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+                        token.idToken?.let { fbUsecase.excute(auth, it) }
                     }
                 }
                 _stateValue.value = State.LoggedIn
             }
         }
+
+
 
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
@@ -75,16 +68,7 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                             Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
                         }
                         else if (user != null) {
-                            //TODO 파베에 사용자 정보 저장
-                            fbUsecase.excute(auth,user.id.toString(),
-                                user.kakaoAccount?.profile?.nickname ?: "",
-                                user.kakaoAccount?.email ?: "",
-                                user.kakaoAccount?.profile?.thumbnailImageUrl ?: "")
-                            Log.i(
-                                ContentValues.TAG, "사용자 정보 요청 성공" +
-                                        "\n회원번호: ${user.id}" +
-                                        "\n이메일: ${user.kakaoAccount?.email}" +
-                                        "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+                            token.idToken?.let { fbUsecase.excute(auth, it) }
                         }
                     }
                 }
