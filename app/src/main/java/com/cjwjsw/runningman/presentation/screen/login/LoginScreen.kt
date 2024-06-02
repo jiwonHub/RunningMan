@@ -38,6 +38,7 @@ class LoginScreen : AppCompatActivity() {
             viewModel.kakaoLogin(this,auth)
             viewModel.stateValue.observe(this,Observer{state ->
                 val isLogin = state.isLogin
+
                 if(isLogin){ //result 패턴, 수정해야함
                    val intent = Intent(this, GenderScreen::class.java)
                     startActivity(intent)
