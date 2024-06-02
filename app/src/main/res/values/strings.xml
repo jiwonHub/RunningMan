@@ -16,7 +16,7 @@
     <string name="start_button">시작하기</string>
     <string name="today">오늘</string>
     <string name="walk">걸음</string>
-    <string name="running_count_example">1000</string>
+    <string name="running_count_example">0</string>
     <string name="sunday_small">일</string>
     <string name="monday_small">월</string>
     <string name="tuesday_small">화</string>

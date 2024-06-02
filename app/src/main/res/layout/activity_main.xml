@@ -422,7 +422,7 @@
                     app:layout_constraintEnd_toEndOf="@id/timeImage"
                     app:layout_constraintTop_toBottomOf="@id/timeImage"
                     app:layout_constraintBottom_toTopOf="@id/timeTextView"
-                    android:text="0h 0m"
+                    android:text="00:00"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:layout_marginTop="5dp"/>

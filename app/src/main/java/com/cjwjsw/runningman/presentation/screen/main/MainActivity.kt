@@ -8,7 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import com.cjwjsw.runningman.databinding.ActivityMainBinding
+import com.cjwjsw.runningman.service.PedometerService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel : MainViewModel by viewModels()
+    private val maxSteps = 1000
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -29,21 +37,59 @@ class MainActivity : AppCompatActivity() {
         observeData()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        checkLocationPermissionAndFetchLocation()
+        checkAndRequestPermissions()
 
         viewModel.currentWeather
     }
 
-    private fun observeData() = viewModel.currentWeather.observe(this) { currentWeather ->
-        currentWeather?.let {
-            binding.weatherCode.text = "오늘 날씨: ${setWeatherCodeText(currentWeather.weather_code)}"
-            binding.weatherTemp.text = "${currentWeather.temperature_2m}℃"
-            binding.weatherPrecipitation.text = "${currentWeather.precipitation}%"
+    private fun startPedometerService() {
+        val serviceIntent = Intent(this, PedometerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
+    }
+
+    private fun observeData() {
+        viewModel.currentWeather.observe(this) { currentWeather ->
+            currentWeather?.let {
+                binding.weatherCode.text = "오늘 날씨: ${setWeatherCodeText(currentWeather.weather_code)}"
+                binding.weatherTemp.text = "${currentWeather.temperature_2m}℃"
+                binding.weatherPrecipitation.text = "${currentWeather.precipitation}%"
+            }
+        }
+
+        viewModel.stepCount.observe(this) { stepCount ->
+            binding.runningCountText.text = "$stepCount"
+            updateProgressBar(stepCount)
+        }
+
+        viewModel.caloriesBurned.observe(this) { caloriesBurned ->
+            binding.calorie.text = "%.2f".format(caloriesBurned)
+        }
+
+        viewModel.distanceWalked.observe(this) { distanceWalked ->
+            binding.distance.text = "%.2f".format(distanceWalked)
+        }
+
+        viewModel.elapsedTime.observe(this) { elapsedTime ->
+            val hours = elapsedTime / 3600
+            val minutes = (elapsedTime % 3600) / 60
+            binding.time.text = "%02d:%02d".format(hours, minutes)
         }
     }
 
     private fun initFetchData() {
         viewModel.fetchCurrentWeather()
+    }
+
+    private fun updateProgressBar(stepCount: Int) {
+        val progress = (stepCount * 100) / maxSteps
+        val cappedProgress = progress.coerceAtMost(100)
+
+        // Update the progress of runningProgressBar
+        binding.runningProgressBar.setProgress(cappedProgress)
     }
 
     private fun initViews() {
@@ -57,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         val saturdayProgressBar = binding.saturdayProgressBar
         val waterProgressBar = binding.waterProgressBar
 
-        progressBar.setProgress(50)
+        progressBar.setProgress(0)
         sundayProgressBar.setProgress(50)
         mondayProgressBar.setProgress(50)
         tuesdayProgressBar.setProgress(50)
@@ -82,31 +128,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkLocationPermissionAndFetchLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun checkAndRequestPermissions() {
+        val permissionsNeeded = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.ACTIVITY_RECOGNITION)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+        if (permissionsNeeded.isNotEmpty()) {
+            requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
         } else {
+            startPedometerService()
             fetchLocation()
         }
     }
 
-    private val requestLocationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-                fetchLocation()
-            } else {
-                // 권한이 거부된 경우 처리
-            }
+    private val requestPermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.all { it.value }) {
+            Log.d("MainActivity", "All required permissions granted")
+            startPedometerService()
+            fetchLocation()
+        } else {
+            Log.e("MainActivity", "Required permissions not granted")
         }
+    }
 
     private fun fetchLocation() {
         if (ActivityCompat.checkSelfPermission(
