@@ -18,6 +18,8 @@ class MainViewModel @Inject constructor(
 
     val stepCount: LiveData<Int> = PedometerService.stepCountLiveData
     val caloriesBurned: LiveData<Double> = PedometerService.caloriesBurnedLiveData
+    val distanceWalked: LiveData<Double> = PedometerService.distanceWalkedLiveData
+    val elapsedTime: LiveData<Long> = PedometerService.elapsedTimeLiveData
 
     private val _currentWeather = MutableLiveData<CurrentWeatherModel>()
     val currentWeather: LiveData<CurrentWeatherModel> get() = _currentWeather
