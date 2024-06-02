@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel : MainViewModel by viewModels()
+    private val maxSteps = 1000
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,15 +62,34 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.stepCount.observe(this) { stepCount ->
             binding.runningCountText.text = "$stepCount"
+            updateProgressBar(stepCount)
         }
 
         viewModel.caloriesBurned.observe(this) { caloriesBurned ->
-            binding.calorie.text = "$caloriesBurned"
+            binding.calorie.text = "%.2f".format(caloriesBurned)
+        }
+
+        viewModel.distanceWalked.observe(this) { distanceWalked ->
+            binding.distance.text = "%.2f".format(distanceWalked)
+        }
+
+        viewModel.elapsedTime.observe(this) { elapsedTime ->
+            val hours = elapsedTime / 3600
+            val minutes = (elapsedTime % 3600) / 60
+            binding.time.text = "%02d:%02d".format(hours, minutes)
         }
     }
 
     private fun initFetchData() {
         viewModel.fetchCurrentWeather()
+    }
+
+    private fun updateProgressBar(stepCount: Int) {
+        val progress = (stepCount * 100) / maxSteps
+        val cappedProgress = progress.coerceAtMost(100)
+
+        // Update the progress of runningProgressBar
+        binding.runningProgressBar.setProgress(cappedProgress)
     }
 
     private fun initViews() {
@@ -83,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         val saturdayProgressBar = binding.saturdayProgressBar
         val waterProgressBar = binding.waterProgressBar
 
-        progressBar.setProgress(50)
+        progressBar.setProgress(0)
         sundayProgressBar.setProgress(50)
         mondayProgressBar.setProgress(50)
         tuesdayProgressBar.setProgress(50)
