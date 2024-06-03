@@ -1,4 +1,4 @@
-package com.cjwjsw.runningman.presentation.screen.main
+package com.cjwjsw.runningman.presentation.screen.main.fragment.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
