@@ -6,7 +6,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.cjwjsw.runningman.core.UserLoginFirst
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
+import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -20,10 +22,13 @@ class LoginScreen : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private val viewModel : LoginViewModel by viewModels()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         auth = Firebase.auth
+        val isFirstLogin = UserLoginFirst.isFirstLogin(this)
         KakaoSdk.init(this,"99180739a7bcf290c7df2a47e48e4767")
 
         setContentView(binding.root)
@@ -36,15 +41,23 @@ class LoginScreen : AppCompatActivity() {
 
         binding.kakaoLogin.setOnClickListener {
             viewModel.kakaoLogin(this,auth)
+
             viewModel.stateValue.observe(this,Observer{state ->
                 val isLogin = state.isLogin
-
-                if(isLogin){ //result 패턴, 수정해야함
-                   val intent = Intent(this, GenderScreen::class.java)
+                if(isFirstLogin){
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 }else{
-                    Toast.makeText(this,"로그인 실패",Toast.LENGTH_SHORT).show()
+                    if(isLogin){
+                        if(isLogin){ //result 패턴, 수정해야함
+                            val intent = Intent(this, GenderScreen::class.java)
+                            startActivity(intent)
+                        }else{
+                            Toast.makeText(this,"로그인 실패", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
+
             })
         }
 
