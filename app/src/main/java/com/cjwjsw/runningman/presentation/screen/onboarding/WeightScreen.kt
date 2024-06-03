@@ -2,6 +2,7 @@ package com.cjwjsw.runningman.presentation.screen.onboarding
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cjwjsw.runningman.databinding.ActivityWeightBinding
@@ -15,12 +16,12 @@ class WeightScreen: AppCompatActivity() {
         setContentView(binding.root)
 
         val gender = intent.getStringExtra("gender")
-
+        Log.d("userdata",intent.getStringExtra("gender").toString())
         binding.nextButton.setOnClickListener {
             if (binding.weightEditText.text.isNotEmpty()) {
                 val intent = Intent(this, HeightScreen::class.java)
                 intent.putExtra("gender", gender)
-                intent.putExtra("weight", binding.weightEditText.text)
+                intent.putExtra("weight", binding.weightEditText.text.toString().toInt())
                 startActivity(intent)
             }
             else {

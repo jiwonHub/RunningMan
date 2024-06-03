@@ -2,10 +2,10 @@ package com.cjwjsw.runningman.presentation.screen.onboarding
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cjwjsw.runningman.databinding.ActivityAgeBinding
-import com.cjwjsw.runningman.databinding.ActivityWeightBinding
 import com.cjwjsw.runningman.presentation.screen.onboarding.onboardingend.OnBoardingEndScreen
 
 class AgeScreen: AppCompatActivity() {
@@ -17,8 +17,9 @@ class AgeScreen: AppCompatActivity() {
         setContentView(binding.root)
 
         val gender = intent.getStringExtra("gender")
-        val weight = intent.getDoubleExtra("weight", 0.0)
-        val height = intent.getDoubleExtra("height", 0.0)
+        val weight = intent.getIntExtra("weight", 0)
+        val height = intent.getIntExtra("height", 0)
+        Log.d("userdata",intent.getIntExtra("weight",0).toString())
 
         binding.nextButton.setOnClickListener {
             if (binding.ageEditText.text.isNotEmpty()) {
@@ -26,7 +27,7 @@ class AgeScreen: AppCompatActivity() {
                 intent.putExtra("gender", gender)
                 intent.putExtra("weight", weight)
                 intent.putExtra("height", height)
-                intent.putExtra("age", binding.ageEditText.text)
+                intent.putExtra("age", binding.ageEditText.text.toString().toInt())
                 startActivity(intent)
             }
             else {
