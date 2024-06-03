@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cjwjsw.runningman.core.UserLoginFirst
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.google.firebase.auth.FirebaseAuth
@@ -24,8 +25,10 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
     val stateValue: LiveData<State> get() = _stateValue
     val fbUsecase = FBStoreUserSignInCase()
 
+
     fun kakaoLogin(context : Context,auth : FirebaseAuth){
         _stateValue.value = State.Loading
+        val isFirstLogin = UserLoginFirst.isFirstLogin(context)
 
         //공용 콜백 선언
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -72,7 +75,6 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                         }
                         else if (user != null) {
                             token.idToken?.let { fbUsecase.excute(auth, it) }
-
                         }
                     }
                 }
