@@ -15,14 +15,14 @@ class HeightScreen: AppCompatActivity() {
         setContentView(binding.root)
 
         val gender = intent.getStringExtra("gender")
-        val weight = intent.getDoubleExtra("weight", 0.0)
+        val weight = intent.getIntExtra("weight", 0)
 
         binding.nextButton.setOnClickListener {
             if (binding.heightEditText.text.isNotEmpty()) {
                 val intent = Intent(this, AgeScreen::class.java)
                 intent.putExtra("gender", gender)
                 intent.putExtra("weight", weight)
-                intent.putExtra("height", binding.heightEditText.text)
+                intent.putExtra("height", binding.heightEditText.text.toString().toInt())
                 startActivity(intent)
             }
             else {

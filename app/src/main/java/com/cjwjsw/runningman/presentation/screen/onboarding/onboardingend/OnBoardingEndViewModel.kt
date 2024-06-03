@@ -11,7 +11,7 @@ class OnBoardingEndViewModel @Inject constructor() : ViewModel() {
 
     private val db = FirebaseFirestore.getInstance()
 
-    fun saveUserData(userId: String?, gender: String, weight: Double, height: Double, age: Int) {
+    fun saveUserData(userId: String?, gender: String, weight: Int, height: Int, age: Int) {
         userId?.let {
             val userRef = db.collection("user_info").document(userId)
 

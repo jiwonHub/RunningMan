@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.google.firebase.auth.FirebaseAuth
 import com.kakao.sdk.auth.model.OAuthToken
@@ -39,6 +40,8 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                     }
                     else if (user != null) {
                         token.idToken?.let { fbUsecase.excute(auth, it) }
+                        UserManager.setUser(auth.uid.toString(), user.kakaoAccount?.profile?.nickname.toString()
+                        , user.kakaoAccount?.email.toString(), user.kakaoAccount?.profile?.thumbnailImageUrl.toString())
                     }
                 }
                 _stateValue.value = State.LoggedIn
@@ -69,6 +72,7 @@ class LoginViewModel @Inject constructor() : ViewModel()  {
                         }
                         else if (user != null) {
                             token.idToken?.let { fbUsecase.excute(auth, it) }
+
                         }
                     }
                 }

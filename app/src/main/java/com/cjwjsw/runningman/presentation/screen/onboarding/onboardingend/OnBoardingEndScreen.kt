@@ -6,7 +6,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivityOnBoardingEndBinding
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,14 +20,22 @@ class OnBoardingEndScreen: AppCompatActivity() {
 
         val user = UserManager.getInstance()
         val userId = user?.id
+        Log.d("userdata",intent.getIntExtra("weight",0).toString())
 
         val gender = intent.getStringExtra("gender")
-        val weight = intent.getDoubleExtra("weight", 0.0)
-        val height = intent.getDoubleExtra("height",0.0)
+        val weight = intent.getIntExtra("weight", 0)
+        val height = intent.getIntExtra("height",0)
         val age = intent.getIntExtra("age", 0)
 
-        userId?.let {
-            viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age)
+
+
+
+        binding.nextButton.setOnClickListener {
+            userId?.let {
+                viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age)
+            }
         }
+
+
     }
 }
