@@ -3,7 +3,7 @@ package com.cjwjsw.runningman.domain.di
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
-import com.google.firebase.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -33,8 +33,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun proviedFireBase() : Firebase{
-       return Firebase
+    fun proviedFireBase() : FirebaseStorage{
+       return FirebaseStorage.getInstance()
     }
 
 
