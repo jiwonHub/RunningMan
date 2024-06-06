@@ -1,14 +1,15 @@
 package com.cjwjsw.runningman.presentation.screen.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.databinding.ActivityMainBinding
+import com.cjwjsw.runningman.presentation.screen.feed.feedScreen
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.MainFragment
 import com.cjwjsw.runningman.presentation.screen.main.fragment.map.MapFragment
 import com.cjwjsw.runningman.presentation.screen.main.fragment.profile.ProfileFragment
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.SocialFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,7 +37,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_social -> {
-                    loadFragment(SocialFragment())
+                    val intent : Intent =  Intent(this,feedScreen::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.navigation_profile -> {

@@ -76,6 +76,9 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation ("com.firebaseui:firebase-ui-storage:7.2.0")
 
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    kapt ("com.github.bumptech.glide:compiler:4.12.0")
+
 }
 
 kapt {

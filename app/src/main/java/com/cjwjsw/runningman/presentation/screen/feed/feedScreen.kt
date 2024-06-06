@@ -1,10 +1,9 @@
 package com.cjwjsw.runningman.presentation.screen.feed
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.GridLayoutManager
 import com.cjwjsw.runningman.databinding.ActivityFeedMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -12,18 +11,21 @@ import dagger.hilt.android.AndroidEntryPoint
 class feedScreen: AppCompatActivity() {
     private lateinit var binding : ActivityFeedMainBinding
     private val viewModel : feedViewModel by viewModels()
+    private lateinit var adapter: viewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFeedMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.recyclerView.layoutManager = GridLayoutManager(this, 3)
+        adapter = viewAdapter(emptyList())
+        binding.recyclerView.adapter = adapter
+
+        viewModel.imageUrls.observe(this) { urls ->
+            adapter.updateImages(urls)
+        }
 
         viewModel.fetchImage()
-
-        viewModel.imageUrl.observe(this) { url ->
-            Log.d("url", url.toString())
-            Glide.with(this)
-                .load(url)
-                .into(binding.exImg)
-        }
     }
 }

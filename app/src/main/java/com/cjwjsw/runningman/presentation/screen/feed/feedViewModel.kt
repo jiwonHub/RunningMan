@@ -13,23 +13,29 @@ import javax.inject.Inject
 @HiltViewModel
 class feedViewModel @Inject constructor(
     @ApplicationContext val context : Context,
-    val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage
 ) : ViewModel() {
 
-    private val _imageUrl = MutableLiveData<String>()
-    val imageUrl: LiveData<String> get() = _imageUrl
-
-
+    private val _imageUrls = MutableLiveData<List<String>>()
+    val imageUrls: LiveData<List<String>> get() = _imageUrls
     fun fetchImage() {
-        var storageRef = firebaseStorage.reference
-        var spaceRef = storageRef.child("running.png")
-        spaceRef.downloadUrl.addOnSuccessListener { uri ->
-            _imageUrl.value = uri.toString()
-        }.addOnFailureListener { e ->
-            Log.e("FeedViewModel",e.cause.toString())
-        }
-
+        val storageReference = firebaseStorage.reference.child("ex/")
+        storageReference.listAll()
+            .addOnSuccessListener { result ->
+                val urls = mutableListOf<String>()
+                result.items.forEach { item ->
+                    item.downloadUrl.addOnSuccessListener { uri ->
+                        urls.add(uri.toString())
+                        Log.e("fetImage",uri.toString())
+                        if (urls.size == result.items.size) {
+                            _imageUrls.value = urls
+                        }
+                    }.addOnFailureListener { exception ->
+                        Log.e("FeedViewModel", "Error fetching download URL", exception)
+                    }
+                }
+            }.addOnFailureListener { exception ->
+                Log.e("FeedViewModel", "Error listing images", exception)
+            }
     }
-
-
 }
