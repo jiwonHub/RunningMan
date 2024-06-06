@@ -1,9 +1,8 @@
 package com.cjwjsw.runningman.domain.model
 
-import android.net.Uri
-
-data class UserModel(
-    val userId: String,
-    val userName: String,
-    val profileImageUri: Uri?
+data class UserModel (
+    val id: String,
+    val nickName: String,
+    val email: String,
+    val profileUrl: String
 )

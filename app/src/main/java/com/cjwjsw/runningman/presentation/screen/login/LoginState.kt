@@ -1,29 +1,19 @@
 package com.cjwjsw.runningman.presentation.screen.login
+sealed class State{
+        abstract val isLogin : Boolean
+        object LoggedIn : State() {
+            override val isLogin: Boolean = true
+        }
 
-import android.net.Uri
-import androidx.annotation.StringRes
+        object LoggedOut : State() {
+            override val isLogin: Boolean = false
+        }
 
-sealed class LoginState {
-    data object Uninitialized: LoginState()
+        object Loading : State() {
+            override val isLogin: Boolean = false
+        }
 
-    data object Loading: LoginState()
-
-    data class Login(
-        val idToken: String
-    ): LoginState()
-
-    sealed class Success: LoginState() {
-        data class Registered(
-            val userId: String,
-            val userName: String,
-            val profileImageUri: Uri
-        ): Success()
-
-        data object NotRegistered: Success()
+        object LoggedFailed : State(){
+            override val isLogin: Boolean = false
+        }
     }
-
-    data class Error(
-        @StringRes val messageId: Int,
-        val e: Throwable
-    ): LoginState()
-}
