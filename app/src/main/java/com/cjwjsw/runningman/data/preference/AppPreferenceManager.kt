@@ -21,6 +21,7 @@ class AppPreferenceManager(
 
         const val USER_ID = "USER_ID"
         const val USER_NAME = "USER_NAME"
+        const val USER_EMAIL = "USER_EMAIL"
         const val USER_PROFILE = "USER_PROFILE"
     }
 
@@ -163,23 +164,6 @@ class AppPreferenceManager(
 
     fun getIdToken(): String? {
         return prefs.getString(KEY_ID_TOKEN, null)
-    }
-
-    fun saveUserInfo(user: UserModel) {
-        editor.putString(USER_ID, user.userId)
-        editor.putString(USER_NAME, user.userName)
-        editor.putString(USER_PROFILE, user.profileImageUri.toString())
-    }
-
-    fun getUserInfo(): UserModel? {
-        val userId = prefs.getString(USER_ID, null)
-        val userName = prefs.getString(USER_NAME, null)
-        val userProfile = prefs.getString(USER_PROFILE, null)
-        return if (userId != null && userName != null && userProfile != null) {
-            UserModel(userId = userId, userName = userName, profileImageUri = userProfile.toUri())
-        } else {
-            null
-        }
     }
 
     fun removeIdToken() {
