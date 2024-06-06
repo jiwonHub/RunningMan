@@ -35,7 +35,6 @@ class GenderScreen : AppCompatActivity() {
             if (isSelected) {
                 val intent = Intent(this, WeightScreen::class.java)
                 intent.putExtra("gender", gender)
-
                 startActivity(intent)
             }
             else {
