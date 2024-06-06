@@ -1,5 +1,7 @@
 package com.cjwjsw.runningman.domain.di
 
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
@@ -25,6 +27,9 @@ abstract class RepositoryModule {
         weatherRepositoryImpl: WeatherRepositoryImpl
     ): WeatherRepository
 }
+
+@GlideModule
+class MyAppGlideModule : AppGlideModule()
 
 @Module
 @InstallIn(SingletonComponent::class)
