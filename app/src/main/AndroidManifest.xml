@@ -34,6 +34,11 @@
         </activity>
         <activity android:name=".presentation.screen.SplashScreen"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
         <activity android:name=".presentation.screen.login.LoginScreen"
@@ -63,12 +68,6 @@
         <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
         <activity android:name="com.cjwjsw.runningman.presentation.screen.feed.feedScreen"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
         </activity>
     </application>
 
