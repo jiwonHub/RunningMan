@@ -1,10 +1,13 @@
 package com.cjwjsw.runningman.domain.di
 
 import android.content.Context
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -27,6 +30,11 @@ abstract class RepositoryModule {
         weatherRepositoryImpl: WeatherRepositoryImpl
     ): WeatherRepository
 }
+
+
+@GlideModule
+class GlideModule : AppGlideModule() {}
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -40,6 +48,14 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorage() : FirebaseStorage{
+        return FirebaseStorage.getInstance()
+    }
+
+
 
     @Provides
     @Singleton
