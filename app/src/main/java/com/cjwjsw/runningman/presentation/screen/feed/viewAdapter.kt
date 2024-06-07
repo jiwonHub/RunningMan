@@ -1,5 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.feed
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +11,8 @@ import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 
 
-//데이터 테이블을 목록 형태로 보여주기 위한 어댑터
-// viewHoler ? 화면에 표시될 데이터나 아이템들을 저장하는 역할
 class viewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<viewAdapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewAdapter.Holder {
-        //viewHolder가 생성되는 함수
-        //리사이클러뷰 정보 Holder로 넘기기
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_feed_recyclerview, parent, false)
         return Holder(view)
@@ -27,8 +24,9 @@ class viewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<
 
         Glide.with(holder.feedImageView.context)
             .load(imageUrl)
-            .placeholder(R.drawable.sun) // Placeholder image while loading
-            .error(R.drawable.calories) // Error image if loading fails
+            .placeholder(R.drawable.sun)
+            .error(R.drawable.calories)
+            .centerCrop()
             .into(holder.feedImageView)
     }
 
@@ -40,7 +38,7 @@ class viewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<
         val feedImageView: ImageView = itemView.findViewById(R.id.feedImg)
     }
 
-    // Method to update the image list
+    @SuppressLint("NotifyDataSetChanged")
     fun updateImages(newImages: List<String>) {
         imageList = newImages
         notifyDataSetChanged()
