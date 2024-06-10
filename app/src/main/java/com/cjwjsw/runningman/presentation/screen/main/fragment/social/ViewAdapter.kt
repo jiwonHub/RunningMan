@@ -5,13 +5,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 
 
-class ViewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<ViewAdapter.Holder>() {
+class ViewAdapter (
+    private  var imageList: List<String>,
+    private val clickListener: OnItemClickListener
+) : RecyclerView.Adapter<ViewAdapter.Holder>() {
+    interface OnItemClickListener{
+        fun onItemClick(imageUrl : String)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_feed_recyclerview, parent, false)
@@ -28,6 +36,10 @@ class ViewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<
             .error(R.drawable.calories)
             .centerCrop()
             .into(holder.feedImageView)
+
+        holder.itemView.setOnClickListener {
+            clickListener.onItemClick(imageUrl)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -43,4 +55,6 @@ class ViewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<
         imageList = newImages
         notifyDataSetChanged()
     }
+
+
 }

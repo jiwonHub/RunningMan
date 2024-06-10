@@ -69,6 +69,7 @@
         <activity android:name="com.cjwjsw.runningman.presentation.screen.feed.feedScreen"
             android:exported="true">
         </activity>
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.SocialDetailScreen" />
     </application>
 
 </manifest>
