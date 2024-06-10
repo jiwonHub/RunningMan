@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
@@ -19,6 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.RunningMan"
         tools:targetApi="31"
         tools:ignore="ForegroundServicePermission">
@@ -64,6 +66,9 @@
         <activity android:name=".presentation.screen.onboarding.HeightScreen"/>
         <activity android:name=".presentation.screen.onboarding.AgeScreen"/>
         <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.feed.feedScreen"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
