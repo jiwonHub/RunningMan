@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserLoginFirst
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
-import com.cjwjsw.runningman.presentation.screen.feed.feedScreen
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -126,7 +125,7 @@ class LoginScreen : AppCompatActivity() {
             viewModel.stateValue.observe(this,Observer{state ->
                 val isLogin = state.isLogin
                 if(isFirstLogin){
-                    val intent = Intent(this, feedScreen::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                 }else{
                     if(isLogin){

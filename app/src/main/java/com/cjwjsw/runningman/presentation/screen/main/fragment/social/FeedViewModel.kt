@@ -1,18 +1,15 @@
-package com.cjwjsw.runningman.presentation.screen.feed
+package com.cjwjsw.runningman.presentation.screen.main.fragment.social
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
-class feedViewModel @Inject constructor(
-    @ApplicationContext val context : Context,
+class FeedViewModel @Inject constructor(
     private val firebaseStorage: FirebaseStorage
 ) : ViewModel() {
 

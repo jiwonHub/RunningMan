@@ -5,12 +5,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cjwjsw.runningman.databinding.ActivityFeedMainBinding
+import com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedViewModel
+import com.cjwjsw.runningman.presentation.screen.main.fragment.social.viewAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class feedScreen: AppCompatActivity() {
     private lateinit var binding : ActivityFeedMainBinding
-    private val viewModel : feedViewModel by viewModels()
+    private val viewModel : FeedViewModel by viewModels()
     private lateinit var adapter: viewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {

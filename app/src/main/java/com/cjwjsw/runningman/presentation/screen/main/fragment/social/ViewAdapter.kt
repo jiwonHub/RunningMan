@@ -1,4 +1,4 @@
-package com.cjwjsw.runningman.presentation.screen.feed
+package com.cjwjsw.runningman.presentation.screen.main.fragment.social
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -12,7 +12,7 @@ import com.cjwjsw.runningman.R
 
 
 class viewAdapter (private  var imageList: List<String>) : RecyclerView.Adapter<viewAdapter.Holder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewAdapter.Holder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_feed_recyclerview, parent, false)
         return Holder(view)
