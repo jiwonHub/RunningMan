@@ -8,12 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cjwjsw.runningman.databinding.FragmentSocialBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SocialFragment : Fragment() {
     private var _binding: FragmentSocialBinding? = null
     private val viewModel : FeedViewModel by viewModels()
-    private lateinit var adapter: viewAdapter
+    private lateinit var adapter: ViewAdapter
     private val binding get() = _binding!!
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -22,7 +26,7 @@ class SocialFragment : Fragment() {
 
         _binding = FragmentSocialBinding.inflate(inflater, container, false)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = viewAdapter(emptyList())
+        adapter = ViewAdapter(emptyList())
         binding.recyclerView.adapter = adapter
 
         viewModel.imageUrls.observe(viewLifecycleOwner) { urls ->
