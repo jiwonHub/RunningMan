@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "680523277004-t0nmuvg3ub3p0auq472riehku3r7c15d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cjwjsw.runningman",
+            "certificate_hash": "2b2456d55e170202660c2827c566d4be309ec259"
+          }
+        },
+        {
           "client_id": "680523277004-7jvsgi1mh5f85457van6nmvm4q13f0jg.apps.googleusercontent.com",
           "client_type": 3
         }

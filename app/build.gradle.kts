@@ -72,7 +72,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.0")
 
     implementation("com.firebaseui:firebase-ui-auth:7.2.0")
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
 
     implementation ("com.github.bumptech.glide:glide:4.14.2")
