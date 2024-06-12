@@ -29,7 +29,7 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel: MainViewModel by viewModels()
-    private val maxSteps = 1000
+    private var maxSteps = 1000
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
@@ -200,6 +200,9 @@ class MainFragment : Fragment() {
         }
     }
 
+    fun updateMaxSteps(steps: Int) {
+        maxSteps = steps
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
