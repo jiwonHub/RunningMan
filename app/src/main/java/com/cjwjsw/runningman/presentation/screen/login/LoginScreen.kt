@@ -5,15 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserLoginFirst
-import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen

@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_social -> {
+//                    val intent : Intent =  Intent(this,feedScreen::class.java)
+//                    startActivity(intent)
                     loadFragment(SocialFragment())
                     true
                 }
