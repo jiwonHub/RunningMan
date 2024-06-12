@@ -64,6 +64,10 @@
         <activity android:name=".presentation.screen.onboarding.HeightScreen"/>
         <activity android:name=".presentation.screen.onboarding.AgeScreen"/>
         <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
+        <activity android:name=".presentation.screen.main.fragment.main.settings.SettingsActivity"/>
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/OssLicensesTheme" />
     </application>
 
 </manifest>
