@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="20dp"
+        android:src="@drawable/arrow_back"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="통계"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        app:layout_constraintStart_toEndOf="@id/backButton"
+        app:layout_constraintTop_toTopOf="@id/backButton"
+        app:layout_constraintBottom_toBottomOf="@id/backButton"
+        android:layout_marginStart="20dp"/>
+
+    <ScrollView
+        android:id="@+id/statisticsScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/text"
+        android:layout_marginTop="20dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <TextView
+                android:id="@+id/stepOption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/calorieOption"
+                android:text="@string/step"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/calorieOption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/stepOption"
+                app:layout_constraintBottom_toBottomOf="@id/stepOption"
+                app:layout_constraintStart_toEndOf="@id/stepOption"
+                app:layout_constraintEnd_toStartOf="@id/timeOption"
+                android:text="@string/calorie"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/timeOption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/stepOption"
+                app:layout_constraintBottom_toBottomOf="@id/stepOption"
+                app:layout_constraintStart_toEndOf="@id/calorieOption"
+                app:layout_constraintEnd_toStartOf="@id/distanceOption"
+                android:text="@string/time"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/distanceOption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/stepOption"
+                app:layout_constraintBottom_toBottomOf="@id/stepOption"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/timeOption"
+                android:text="@string/distance"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+
+            <FrameLayout
+                android:id="@+id/statisticsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                app:layout_constraintTop_toBottomOf="@id/timeOption"
+                android:layout_margin="20dp"
+                android:background="@drawable/gray15_background"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/dailyOptionButton"
+                android:layout_width="110dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/statisticsLayout"
+                android:layout_margin="20dp"
+                android:background="@drawable/gray15_background"
+                android:text="일"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/weekOptionButton"
+                android:layout_width="110dp"
+                android:layout_height="30dp"
+                app:layout_constraintTop_toTopOf="@id/dailyOptionButton"
+                app:layout_constraintBottom_toBottomOf="@id/dailyOptionButton"
+                app:layout_constraintStart_toEndOf="@id/dailyOptionButton"
+                app:layout_constraintEnd_toStartOf="@id/monthOptionButton"
+                android:background="@drawable/gray15_background"
+                android:text="주"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/monthOptionButton"
+                android:layout_width="110dp"
+                android:layout_height="30dp"
+                app:layout_constraintTop_toTopOf="@id/dailyOptionButton"
+                app:layout_constraintBottom_toBottomOf="@id/dailyOptionButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/weekOptionButton"
+                android:background="@drawable/gray15_background"
+                android:text="월"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
