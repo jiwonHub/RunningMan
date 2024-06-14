@@ -42,6 +42,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context {
+        return context
+    }
+
+    @Provides
+    @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(WEATHER_BASE_URL)
