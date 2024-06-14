@@ -44,7 +44,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/calorieOption"
-                android:text="@string/step"
+                android:text="걸음"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/white" />
@@ -57,7 +57,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/stepOption"
                 app:layout_constraintStart_toEndOf="@id/stepOption"
                 app:layout_constraintEnd_toStartOf="@id/timeOption"
-                android:text="@string/calorie"
+                android:text="칼로리"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/white" />
@@ -70,7 +70,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/stepOption"
                 app:layout_constraintStart_toEndOf="@id/calorieOption"
                 app:layout_constraintEnd_toStartOf="@id/distanceOption"
-                android:text="@string/time"
+                android:text="시간"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/white" />
@@ -83,7 +83,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/stepOption"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/timeOption"
-                android:text="@string/distance"
+                android:text="거리"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/white" />
@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
                 app:layout_constraintTop_toBottomOf="@id/timeOption"
-                android:layout_margin="20dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/gray15_background"/>
 
             <androidx.appcompat.widget.AppCompatButton
