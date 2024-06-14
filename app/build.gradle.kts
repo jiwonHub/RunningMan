@@ -81,6 +81,8 @@ dependencies {
 
 
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 }
 
 kapt {
