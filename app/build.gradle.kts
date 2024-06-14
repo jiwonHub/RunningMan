@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
     id ("com.google.gms.google-services")
+    id ("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
@@ -83,6 +84,7 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    implementation ("com.google.android.gms:play-services-oss-licenses:17.1.0")
 }
 
 kapt {
