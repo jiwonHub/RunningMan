@@ -22,7 +22,6 @@ class FBStoreUserSignInCase @Inject constructor(@ApplicationContext private val 
                 .addOnSuccessListener { authResult ->
                     val user = authResult.user
                     if (user != null) {
-                        saveUidToPreferences(user.uid)
                         Log.d("FirebaseAuth", "signInWithCredential:success${user.uid}")
                         cont.resume(Result.success(user.uid))
                     } else {
@@ -33,13 +32,6 @@ class FBStoreUserSignInCase @Inject constructor(@ApplicationContext private val 
                     Log.e("FirebaseAuth", "signInWithCredential:failure", e)
                     cont.resume(Result.failure(e))
                 }
-        }
-    }
-    private fun saveUidToPreferences(uid: String) {
-        val sharedPref = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putString("uid", uid)
-            apply()
         }
     }
 
