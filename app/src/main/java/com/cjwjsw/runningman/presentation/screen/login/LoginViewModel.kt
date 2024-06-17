@@ -46,9 +46,10 @@ class LoginViewModel @Inject constructor(
 
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
-                Log.e(ContentValues.TAG, "카카오계정으로 로그인 실패", error)
+                Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 실패", error)
                 _stateValue.value = State.LoggedFailed
             } else if (token != null) {
+                Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 성공")
                 viewModelScope.launch {
                     try {
                         val user = withContext(Dispatchers.IO) { fetchUser(token, auth) }
@@ -85,7 +86,7 @@ class LoginViewModel @Inject constructor(
 
     private fun handleKakaoLoginResult(token: OAuthToken?, error: Throwable?, callback: (OAuthToken?, Throwable?) -> Unit, context: Context) {
         if (error != null) {
-            Log.e(ContentValues.TAG, "카카오톡으로 로그인 실패", error)
+            Log.e("KakaoLogin", "카카오톡으로 로그인 실패", error)
 
             if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
                 return
@@ -93,7 +94,7 @@ class LoginViewModel @Inject constructor(
 
             UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
         } else if (token != null) {
-            Log.i(ContentValues.TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+            Log.i("KakaoLogin", "카카오톡으로 로그인 성공 ${token.accessToken}")
             callback(token, null)
         }
     }
@@ -102,7 +103,7 @@ class LoginViewModel @Inject constructor(
         return suspendCancellableCoroutine { cont ->
             UserApiClient.instance.me { user, error ->
                 if (error != null) {
-                    Log.e(ContentValues.TAG, "사용자 정보 요청 실패", error)
+                    Log.e("KakaoLogin", "사용자 정보 요청 실패", error)
                     cont.resume(null)
                 } else if (user != null) {
                     cont.resume(user)

@@ -17,4 +17,9 @@ object UserManager {
     fun clearUser() {
         instance = null
     }
+
+    override fun toString(): String {
+        val data : String = "id : " + instance?.id.toString() +  "email : " +instance?.email.toString() +  "nickname : " + instance?.nickName.toString() +  "profileUrl : " + instance?.profileUrl.toString()
+        return data
+    }
 }
