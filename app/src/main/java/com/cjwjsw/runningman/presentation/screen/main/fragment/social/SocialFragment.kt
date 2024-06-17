@@ -33,10 +33,6 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         viewModel.imageUrls.observe(viewLifecycleOwner) { urls ->
             adapter.updateImages(urls)
         }
-
-
-
-
         viewModel.fetchImage()
 
 
