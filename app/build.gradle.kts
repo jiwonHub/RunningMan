@@ -79,6 +79,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
     kapt ("com.github.bumptech.glide:compiler:4.14.2")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 
 
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
