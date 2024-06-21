@@ -77,6 +77,7 @@
         <activity android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/OssLicensesTheme"/>
         <activity android:name=".presentation.screen.main.fragment.main.settings.WebViewActivity"/>
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.AddFeedActivity" />
     </application>
 
 </manifest>
