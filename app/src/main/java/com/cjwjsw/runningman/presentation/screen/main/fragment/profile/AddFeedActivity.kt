@@ -2,6 +2,7 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.profile
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,11 @@ import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
 
 class AddFeedActivity: AppCompatActivity() {
     lateinit var binding: ActivityAddFeedBinding
+    private val imageLoadLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
+            updateImages(uriList)
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,12 +31,13 @@ class AddFeedActivity: AppCompatActivity() {
                     Manifest.permission.READ_MEDIA_IMAGES
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     Log.d("AddFeedAcitivity", "권한 부여 됌")
+                    loadImage()
                     //TODO 권한이 부여되었을 때
                 }
                 shouldShowRequestPermissionRationale( //사용자가 권한 거부했을 때 권한이 왜 필요한지 다이얼로그 뜸
                     Manifest.permission.READ_MEDIA_IMAGES
                 ) -> {
-                    showPermissionInfoDialog()
+                    showGalleryPermissionInfoDialog()
                 }
                 else -> {
                     Log.d("AddFeedAcitivity", "권한 부여 안됌")
@@ -55,7 +62,11 @@ class AddFeedActivity: AppCompatActivity() {
                     Log.d("AddFeedAcitivity", "권한 부여 됌")
                     //TODO 권한이 부여되었을 때
                 }
-
+                shouldShowRequestPermissionRationale( //사용자가 권한 거부했을 때 권한이 왜 필요한지 다이얼로그 뜸
+                    Manifest.permission.CAMERA
+                ) -> {
+                    showCameraPermissionInfoDialog()
+                }
                 else -> {
                     Log.d("AddFeedAcitivity", "권한 부여 안됌")
                     cameraRequestPermissionLauncher.launch( //launch 매개변수에 해당하는 권한 요청하는 알림 뜸.
@@ -74,12 +85,14 @@ class AddFeedActivity: AppCompatActivity() {
                 // Permission is granted. Continue the action or workflow in your
                 // app.
                 Log.d("AddFeedActivity", "권한 부여 완료")
+                loadImage()
             } else {
                 // Explain to the user that the feature is unavailable because the
                 // feature requires a permission that the user has denied. At the
                 // same time, respect the user's decision. Don't link to system
                 // settings in an effort to convince the user to change their
                 // decision.
+
                 Log.d("AddFeedActivity", "권한 부여 거부")
             }
         }
@@ -99,10 +112,11 @@ class AddFeedActivity: AppCompatActivity() {
                 // settings in an effort to convince the user to change their
                 // decision.
                 Log.d("AddFeedActivity", "권한 부여 거부")
+                showCameraPermissionInfoDialog()
             }
         }
 
-    private fun showPermissionInfoDialog() {
+    private fun showGalleryPermissionInfoDialog() {
         AlertDialog.Builder(this).apply {
             setMessage("이미지를 가져오기 위해서, 갤러리 권한이 필요합니다.")
             setNegativeButton("취소", null)
@@ -114,6 +128,25 @@ class AddFeedActivity: AppCompatActivity() {
         }.show()
     }
 
+    private fun showCameraPermissionInfoDialog() {
+        AlertDialog.Builder(this).apply {
+            setMessage("사진을 찍기 위해선 카메라 권한이 필요합니다.")
+            setNegativeButton("취소", null)
+            setPositiveButton("동의") { _, _ ->
+                cameraRequestPermissionLauncher.launch( //launch 매개변수에 해당하는 권한 요청하는 알림 뜸.
+                    Manifest.permission.CAMERA
+                )
+            }
+        }.show()
+    }
+
+    private fun updateImages(uriList: List<Uri>) {
+
+    }
+
+    private fun loadImage() {
+        imageLoadLauncher.launch("image/*")
+    }
 }
 
 
