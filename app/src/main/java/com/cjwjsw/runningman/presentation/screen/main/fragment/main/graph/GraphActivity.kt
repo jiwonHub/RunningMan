@@ -1,7 +1,11 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph
 
+import android.graphics.Color
 import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.databinding.ActivityGraphBinding
@@ -11,24 +15,47 @@ import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.weekly
 
 class GraphActivity : AppCompatActivity() {
     lateinit var binding: ActivityGraphBinding
+    private var selectedButton: Button? = null
+    private var selectedTextView: TextView? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGraphBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSelectedButton(binding.weekOptionButton)
+        setSelectedTextView(binding.stepOption)
         replaceFragment(WeeklyGraphFragment())
 
         binding.dailyOptionButton.setOnClickListener {
+            setSelectedButton(it as Button)
             replaceFragment(DailyGraphFragment())
         }
 
         binding.weekOptionButton.setOnClickListener {
+            setSelectedButton(it as Button)
             replaceFragment(WeeklyGraphFragment())
         }
 
         binding.monthOptionButton.setOnClickListener {
+            setSelectedButton(it as Button)
             replaceFragment(MonthlyGraphFragment())
         }
+        binding.stepOption.setOnClickListener {
+            setSelectedTextView(it as TextView)
+        }
+
+        binding.calorieOption.setOnClickListener {
+            setSelectedTextView(it as TextView)
+        }
+
+        binding.timeOption.setOnClickListener {
+            setSelectedTextView(it as TextView)
+        }
+
+        binding.distanceOption.setOnClickListener {
+            setSelectedTextView(it as TextView)
+        }
+
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -36,5 +63,26 @@ class GraphActivity : AppCompatActivity() {
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.statisticsLayout, fragment)
         fragmentTransaction.commit()
+    }
+
+    private fun setSelectedButton(button: Button) {
+        selectedButton?.setBackgroundResource(R.drawable.gray15_background) // 이전 선택된 버튼의 배경을 초기화
+        button.setBackgroundResource(R.drawable.blue_background) // 클릭된 버튼의 배경을 파란색으로 설정
+        selectedButton = button // 현재 선택된 버튼을 업데이트
+    }
+
+    private fun setSelectedTextView(textView: TextView) {
+        selectedTextView?.apply {
+            setTextColor(ContextCompat.getColor(context, R.color.white))
+            setBackgroundColor(Color.TRANSPARENT)
+            paint.isUnderlineText = false
+        }
+
+        textView.apply {
+            setTextColor(ContextCompat.getColor(context, R.color.blue))
+            paint.isUnderlineText = true
+        }
+
+        selectedTextView = textView
     }
 }
