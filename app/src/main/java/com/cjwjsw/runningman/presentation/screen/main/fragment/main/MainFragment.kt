@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import android.Manifest
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
+import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.settings.SettingsActivity
 import com.cjwjsw.runningman.service.PedometerService
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -53,6 +54,11 @@ class MainFragment : Fragment() {
 
         binding.setting.setOnClickListener {
             val intent = Intent(requireContext(), SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.runningContainer.setOnClickListener {
+            val intent = Intent(requireContext(), GraphActivity::class.java)
             startActivity(intent)
         }
 
