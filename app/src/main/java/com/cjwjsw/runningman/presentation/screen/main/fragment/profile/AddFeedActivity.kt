@@ -1,24 +1,31 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.profile
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-class AddFeedActivity: AppCompatActivity() {
+
+@AndroidEntryPoint
+class AddFeedActivity: AppCompatActivity()  {
+    //TODO 카메라 권한 받아왔고 에뮬말고 기기로 카메라 촬영 및 업로드 하는거 구현하기
+    private val viewModel: ProfileViewModel by viewModels()
     lateinit var binding: ActivityAddFeedBinding
     private val imageLoadLauncher =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
             updateImages(uriList)
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +39,6 @@ class AddFeedActivity: AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     Log.d("AddFeedAcitivity", "권한 부여 됌")
                     loadImage()
-                    //TODO 권한이 부여되었을 때
                 }
                 shouldShowRequestPermissionRationale( //사용자가 권한 거부했을 때 권한이 왜 필요한지 다이얼로그 뜸
                     Manifest.permission.READ_MEDIA_IMAGES
@@ -61,6 +67,7 @@ class AddFeedActivity: AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     Log.d("AddFeedAcitivity", "권한 부여 됌")
                     //TODO 권한이 부여되었을 때
+                    openCamera()
                 }
                 shouldShowRequestPermissionRationale( //사용자가 권한 거부했을 때 권한이 왜 필요한지 다이얼로그 뜸
                     Manifest.permission.CAMERA
@@ -105,6 +112,7 @@ class AddFeedActivity: AppCompatActivity() {
                 // Permission is granted. Continue the action or workflow in your
                 // app.
                 Log.d("AddFeedActivity", "권한 부여 완료")
+                openCamera()
             } else {
                 // Explain to the user that the feature is unavailable because the
                 // feature requires a permission that the user has denied. At the
@@ -141,11 +149,17 @@ class AddFeedActivity: AppCompatActivity() {
     }
 
     private fun updateImages(uriList: List<Uri>) {
-
+        Log.d("image","$uriList")
+        viewModel.upLoadImage(uriList)
     }
 
     private fun loadImage() {
         imageLoadLauncher.launch("image/*")
+    }
+
+    private fun openCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivity(cameraIntent)
     }
 }
 
