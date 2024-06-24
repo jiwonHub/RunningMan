@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -121,23 +121,23 @@ class LoginScreen : AppCompatActivity() {
 
         binding.kakaoLogin.setOnClickListener {
             viewModel.kakaoLogin(this,auth)
+            Log.d("isfirstLogin",isFirstLogin.toString())
 
-            viewModel.stateValue.observe(this,Observer{state ->
-                val isLogin = state.isLogin
+            viewModel.stateValue.observe(this,Observer{
                 if(isFirstLogin){
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                }else{
-                    if(isLogin){
-                        if(isLogin){ //result 패턴, 수정해야함
-                            val intent = Intent(this, GenderScreen::class.java)
+                    UserApiClient.instance.logout { error ->
+                        if (error != null) {
+                            Log.e("test", "연결 끊기 실패", error)
+                        } else {
+                            Log.i("test", "연결 끊기 성공. SDK에서 토큰 삭제 됨")
+                            val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
-                        }else{
-                            Toast.makeText(this,"로그인 실패", Toast.LENGTH_SHORT).show()
                         }
                     }
+                }else{
+                    val intent = Intent(this, GenderScreen::class.java)
+                    startActivity(intent)
                 }
-
             })
         }
 
@@ -146,5 +146,6 @@ class LoginScreen : AppCompatActivity() {
         }
 
     }
+
 
 }

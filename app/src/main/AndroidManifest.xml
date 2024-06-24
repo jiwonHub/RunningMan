@@ -35,15 +35,15 @@
         </activity>
         <activity android:name=".presentation.screen.SplashScreen"
             android:exported="true">
+
+        </activity>
+        <activity android:name=".presentation.screen.login.LoginScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-        </activity>
-        <activity android:name=".presentation.screen.login.LoginScreen"
-            android:exported="true">
 
         </activity>
 
@@ -67,7 +67,7 @@
         <activity android:name=".presentation.screen.onboarding.HeightScreen"/>
         <activity android:name=".presentation.screen.onboarding.AgeScreen"/>
         <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
-
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.SocialDetailScreen" />
         <activity android:name=".presentation.screen.main.fragment.main.settings.SettingsActivity"/>
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
