@@ -16,7 +16,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.cjwjsw.runningman.R
-import com.cjwjsw.runningman.service.WeeklyGraphFragmentListener
 import java.time.Duration
 
 class StatisticsProgressBar(context: Context, attrs: AttributeSet) : View(context, attrs) {
