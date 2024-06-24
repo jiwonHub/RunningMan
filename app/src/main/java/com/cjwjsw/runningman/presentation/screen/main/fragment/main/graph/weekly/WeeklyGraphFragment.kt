@@ -21,7 +21,6 @@ import com.cjwjsw.runningman.presentation.component.LabelUtils
 import com.cjwjsw.runningman.presentation.component.StatisticsDotLine
 
 import com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
-import com.cjwjsw.runningman.service.WeeklyGraphFragmentListener
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
