@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,24 +14,45 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @AndroidEntryPoint
 class AddFeedActivity: AppCompatActivity()  {
-    //TODO 카메라 권한 받아왔고 에뮬말고 기기로 카메라 촬영 및 업로드 하는거 구현하기
     private val viewModel: ProfileViewModel by viewModels()
+    private lateinit var photoFile: File
+    private lateinit var photoUri: Uri
     lateinit var binding: ActivityAddFeedBinding
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+           Log.d("AddFeedAcitivty",Uri.fromFile(photoFile).toString());
+            viewModel.setImageFile(Uri.fromFile(photoFile))
+    }
     private val imageLoadLauncher =
         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
-            updateImages(uriList)
+            uriList.forEach{
+                val file = uriToFile(it)
+
+                Log.d("AddFeedActivity",file.toString())
+                viewModel.setImageFile(Uri.fromFile(file))
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddFeedBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.previewImage.layoutManager
+        binding.addImageBtn.setOnClickListener{
+                viewModel.upLoadImage()
+        }
         binding.addPictureBtn.setOnClickListener {
             when {
                 ContextCompat.checkSelfPermission(
@@ -89,17 +111,9 @@ class AddFeedActivity: AppCompatActivity()  {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
                 Log.d("AddFeedActivity", "권한 부여 완료")
                 loadImage()
             } else {
-                // Explain to the user that the feature is unavailable because the
-                // feature requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
-
                 Log.d("AddFeedActivity", "권한 부여 거부")
             }
         }
@@ -109,16 +123,9 @@ class AddFeedActivity: AppCompatActivity()  {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                // Permission is granted. Continue the action or workflow in your
-                // app.
                 Log.d("AddFeedActivity", "권한 부여 완료")
                 openCamera()
             } else {
-                // Explain to the user that the feature is unavailable because the
-                // feature requires a permission that the user has denied. At the
-                // same time, respect the user's decision. Don't link to system
-                // settings in an effort to convince the user to change their
-                // decision.
                 Log.d("AddFeedActivity", "권한 부여 거부")
                 showCameraPermissionInfoDialog()
             }
@@ -148,19 +155,44 @@ class AddFeedActivity: AppCompatActivity()  {
         }.show()
     }
 
-    private fun updateImages(uriList: List<Uri>) {
-        Log.d("image","$uriList")
-        viewModel.upLoadImage(uriList)
-    }
-
     private fun loadImage() {
         imageLoadLauncher.launch("image/*")
     }
 
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivity(cameraIntent)
+        photoFile = createImageFile()
+        photoUri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", photoFile)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+        takePictureLauncher.launch(cameraIntent)
     }
+
+    private fun mutipleFile(uri : List<Uri>){
+
+
+    }
+
+    private fun uriToFile(uri: Uri): File? {
+        val file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp_image_${System.currentTimeMillis()}.jpg")
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                file.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+        return file
+    }
+
+    private fun createImageFile(): File { //카메라로 찍은 사진 파일명 생성 메서드
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+    }
+
 }
 
 

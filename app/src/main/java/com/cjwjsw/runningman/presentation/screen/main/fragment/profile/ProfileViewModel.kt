@@ -12,11 +12,11 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val fbManager:FirebaseStorage
 ): ViewModel() {
-    fun upLoadImage(fileUri : List<Uri>){
-        fileUri.forEach {fileUri ->
+    val photoArr : MutableList<Uri> = mutableListOf()
+    fun upLoadImage(){
+        photoArr.forEach {fileUri ->
             val fileName = UUID.randomUUID().toString() + ".jpg"
             val fileReference = fbManager.reference.child("images/$fileName")
-
             fileReference.putFile(fileUri)
                 .addOnSuccessListener {
                     Log.d("upLoadImage",fileUri.toString())
@@ -26,4 +26,10 @@ class ProfileViewModel @Inject constructor(
                 }
         }
     }
+
+    fun setImageFile(uri : Uri){
+        this.photoArr.add(uri)
+        Log.d("ProfileViewModel",uri.toString())
+    }
+
 }
