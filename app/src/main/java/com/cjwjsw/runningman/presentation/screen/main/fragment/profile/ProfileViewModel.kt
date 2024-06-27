@@ -2,6 +2,8 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.profile
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,9 +14,12 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val fbManager:FirebaseStorage
 ): ViewModel() {
-    val photoArr : MutableList<Uri> = mutableListOf()
+    private val _photoArr = MutableLiveData<MutableList<Uri>>().apply { value = mutableListOf() }
+    val photoArr: LiveData<MutableList<Uri>> get() = _photoArr
+
+
     fun upLoadImage(){
-        photoArr.forEach {fileUri ->
+        photoArr.value?.forEach {fileUri ->
             val fileName = UUID.randomUUID().toString() + ".jpg"
             val fileReference = fbManager.reference.child("images/$fileName")
             fileReference.putFile(fileUri)
@@ -28,8 +33,14 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun setImageFile(uri : Uri){
-        this.photoArr.add(uri)
-        Log.d("ProfileViewModel",uri.toString())
+        val currentList = _photoArr.value ?: mutableListOf()
+        currentList.add(uri)
+        _photoArr.value = currentList
+        Log.d("ProfileViewModel", uri.toString())
+    }
+
+    fun getImageFile(): MutableList<Uri> {
+        return _photoArr.value ?: mutableListOf()
     }
 
 }

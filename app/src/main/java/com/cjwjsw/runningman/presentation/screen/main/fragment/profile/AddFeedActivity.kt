@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Observer
+import androidx.viewpager2.widget.ViewPager2
 import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -30,28 +32,23 @@ class AddFeedActivity: AppCompatActivity()  {
     private lateinit var photoFile: File
     private lateinit var photoUri: Uri
     lateinit var binding: ActivityAddFeedBinding
-
-    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-           Log.d("AddFeedAcitivty",Uri.fromFile(photoFile).toString());
-            viewModel.setImageFile(Uri.fromFile(photoFile))
-    }
-    private val imageLoadLauncher =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
-            uriList.forEach{
-                val file = uriToFile(it)
-
-                Log.d("AddFeedActivity",file.toString())
-                viewModel.setImageFile(Uri.fromFile(file))
-            }
-        }
-
+    private lateinit var viewPager: ViewPager2
+    lateinit var adapter : ViewpageAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddFeedBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.previewImage.layoutManager
+        viewPager = binding.previewImage
+
+        initPreviewImage()
+        viewModel.photoArr.observe(this, Observer {uriList ->
+            Log.d("AddFeedActivity",uriList.toString())
+            adapter = ViewpageAdapter(uriList)
+            viewPager.adapter = adapter
+        })
+
         binding.addImageBtn.setOnClickListener{
-                viewModel.upLoadImage()
+            viewModel.upLoadImage()
         }
         binding.addPictureBtn.setOnClickListener {
             when {
@@ -105,6 +102,17 @@ class AddFeedActivity: AppCompatActivity()  {
             }
         }
     }
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        viewModel.setImageFile(Uri.fromFile(photoFile))
+    }
+    private val imageLoadLauncher =
+        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uriList ->
+            uriList.forEach{
+                val file = uriToFile(it)
+                viewModel.setImageFile(Uri.fromFile(file))
+            }
+        }
 
     private val galleryRequestPermissionLauncher =
         registerForActivityResult(
@@ -191,6 +199,11 @@ class AddFeedActivity: AppCompatActivity()  {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+    }
+
+    private fun initPreviewImage(){
+        adapter = ViewpageAdapter(emptyList())
+        viewPager.adapter = adapter
     }
 
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="item"
             type="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.AddFeedActivity" />
@@ -58,7 +57,7 @@
             android:id="@+id/previewImage"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/addPictureBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,10 +65,10 @@
             app:layout_constraintVertical_weight="2" />
 
         <ImageButton
-            android:layout_marginRight="10dp"
             android:id="@+id/addPictureBtn"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginRight="10dp"
             android:background="@color/black"
             android:src="@drawable/outline_add_photo_alternate_24"
             app:layout_constraintBottom_toTopOf="@id/firstEditText"
@@ -78,10 +77,10 @@
             app:layout_constraintVertical_weight="0.2" />
 
         <ImageButton
-            android:layout_marginRight="10dp"
             android:id="@+id/cameraBtn"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginRight="10dp"
             android:background="@color/black"
             android:src="@drawable/baseline_add_a_photo_24"
             app:layout_constraintBottom_toTopOf="@id/firstEditText"
