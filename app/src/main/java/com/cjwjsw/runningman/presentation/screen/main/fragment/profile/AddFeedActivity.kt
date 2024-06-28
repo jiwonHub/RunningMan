@@ -15,8 +15,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
+import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -49,7 +51,12 @@ class AddFeedActivity: AppCompatActivity()  {
         })
 
         binding.addImageBtn.setOnClickListener{
-            viewModel.upLoadImage()
+            val title = binding.titleEditText.text
+            val contents = binding.contentsEditText.text
+            viewModel.upLoadPost(title.toString(),contents.toString())
+            if(viewModel.uploadStatus.value == true){
+               finish()
+            }
         }
         binding.addPictureBtn.setOnClickListener {
             when {
@@ -176,11 +183,6 @@ class AddFeedActivity: AppCompatActivity()  {
         takePictureLauncher.launch(cameraIntent)
     }
 
-    private fun mutipleFile(uri : List<Uri>){
-
-
-    }
-
     private fun uriToFile(uri: Uri): File? {
         val file = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "temp_image_${System.currentTimeMillis()}.jpg")
         try {
@@ -206,6 +208,12 @@ class AddFeedActivity: AppCompatActivity()  {
         adapter = ViewpageAdapter(emptyList())
         viewPager.adapter = adapter
         binding.indicator.setViewPager(binding.previewImage)
+    }
+
+    private fun loadFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 
 }
