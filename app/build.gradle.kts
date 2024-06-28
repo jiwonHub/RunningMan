@@ -86,6 +86,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
     implementation ("com.google.android.gms:play-services-oss-licenses:17.1.0")
+
+    implementation("me.relex:circleindicator:1.3.2")
+    implementation("me.relex:circleindicator:2.1.6")
 }
 
 kapt {
