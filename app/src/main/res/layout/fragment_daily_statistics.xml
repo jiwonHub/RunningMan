@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dailyStatisticsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/gray15_background"
+        >
+
+        <TextView
+            android:id="@+id/totalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="총"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/stepText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1,000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/totalText"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/timeLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5월 12일"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stepText"
+            android:layout_marginTop="15dp"/>
+
+        <ImageView
+            android:id="@+id/rightButton"
+            android:layout_width="16sp"
+            android:layout_height="16sp"
+            android:src="@drawable/arrow_white"
+            app:layout_constraintTop_toTopOf="@id/timeLine"
+            app:layout_constraintBottom_toBottomOf="@id/timeLine"
+            app:layout_constraintStart_toEndOf="@id/timeLine"
+            android:layout_marginStart="50dp"
+            android:background="@drawable/shape_black_circle"/>
+
+        <ImageView
+            android:id="@+id/leftButton"
+            android:layout_width="16sp"
+            android:layout_height="16sp"
+            android:src="@drawable/arrow_white"
+            app:layout_constraintTop_toTopOf="@id/timeLine"
+            app:layout_constraintBottom_toBottomOf="@id/timeLine"
+            app:layout_constraintEnd_toStartOf="@id/timeLine"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/shape_black_circle"
+            android:scaleX="-1"/>
+
+        <TextView
+            android:id="@+id/dailySix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/sixProgress"
+            app:layout_constraintEnd_toEndOf="@id/sixProgress"
+            android:text="06:00"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginBottom="15dp"/>
+
+        <TextView
+            android:id="@+id/dailyTwelve"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/dailySix"
+            app:layout_constraintBottom_toBottomOf="@id/dailySix"
+            app:layout_constraintStart_toStartOf="@id/twelveProgress"
+            app:layout_constraintEnd_toEndOf="@id/twelveProgress"
+            android:text="12:00"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/dailyEighteen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/dailySix"
+            app:layout_constraintBottom_toBottomOf="@id/dailySix"
+            app:layout_constraintStart_toStartOf="@id/eighteenProgress"
+            app:layout_constraintEnd_toEndOf="@id/eighteenProgress"
+            android:text="18:00"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/oneProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/twoProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="15dp"/>
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twoProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/oneProgress"
+            app:layout_constraintEnd_toStartOf="@id/threeProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/threeProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/twoProgress"
+            app:layout_constraintEnd_toStartOf="@id/fourProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/fourProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/threeProgress"
+            app:layout_constraintEnd_toStartOf="@id/fiveProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/fiveProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/fourProgress"
+            app:layout_constraintEnd_toStartOf="@id/sixProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/sixProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/fiveProgress"
+            app:layout_constraintEnd_toStartOf="@id/sevenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/sevenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/sixProgress"
+            app:layout_constraintEnd_toStartOf="@id/eightProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/eightProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/sevenProgress"
+            app:layout_constraintEnd_toStartOf="@id/nineProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/nineProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/eightProgress"
+            app:layout_constraintEnd_toStartOf="@id/tenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/tenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/nineProgress"
+            app:layout_constraintEnd_toStartOf="@id/elevenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/elevenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/tenProgress"
+            app:layout_constraintEnd_toStartOf="@id/twelveProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+        
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twelveProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp"/>
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/thirteenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/twelveProgress"
+            app:layout_constraintEnd_toStartOf="@id/fourteenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/fourteenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/thirteenProgress"
+            app:layout_constraintEnd_toStartOf="@id/fifteenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/fifteenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/fourteenProgress"
+            app:layout_constraintEnd_toStartOf="@id/sixteenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/sixteenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/fifteenProgress"
+            app:layout_constraintEnd_toStartOf="@id/seventeenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/seventeenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/sixteenProgress"
+            app:layout_constraintEnd_toStartOf="@id/eighteenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/eighteenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/seventeenProgress"
+            app:layout_constraintEnd_toStartOf="@id/nineteenProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/nineteenProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/eighteenProgress"
+            app:layout_constraintEnd_toStartOf="@id/twentyProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twentyProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/nineteenProgress"
+            app:layout_constraintEnd_toStartOf="@id/twentyOneProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twentyOneProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/twentyProgress"
+            app:layout_constraintEnd_toStartOf="@id/twentyTwoProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twentyTwoProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/twentyOneProgress"
+            app:layout_constraintEnd_toStartOf="@id/twentyThreeProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twentyThreeProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/twentyTwoProgress"
+            app:layout_constraintEnd_toStartOf="@id/twentyFourProgress"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp" />
+
+        <com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+            android:id="@+id/twentyFourProgress"
+            android:layout_width="7dp"
+            android:layout_height="290dp"
+            app:layout_constraintStart_toEndOf="@id/twentyThreeProgress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/dailyTwelve"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="15dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
