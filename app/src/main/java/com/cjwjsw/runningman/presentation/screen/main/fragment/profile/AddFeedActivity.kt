@@ -45,6 +45,7 @@ class AddFeedActivity: AppCompatActivity()  {
             Log.d("AddFeedActivity",uriList.toString())
             adapter = ViewpageAdapter(uriList)
             viewPager.adapter = adapter
+            binding.indicator.setViewPager(binding.previewImage)
         })
 
         binding.addImageBtn.setOnClickListener{
@@ -204,6 +205,7 @@ class AddFeedActivity: AppCompatActivity()  {
     private fun initPreviewImage(){
         adapter = ViewpageAdapter(emptyList())
         viewPager.adapter = adapter
+        binding.indicator.setViewPager(binding.previewImage)
     }
 
 }
