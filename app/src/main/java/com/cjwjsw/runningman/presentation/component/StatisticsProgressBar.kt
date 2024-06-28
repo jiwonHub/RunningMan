@@ -10,13 +10,11 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.util.TypedValue
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.cjwjsw.runningman.R
-import java.time.Duration
 
 class StatisticsProgressBar(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val defaultColor = Color.WHITE
@@ -108,7 +106,7 @@ class StatisticsProgressBar(context: Context, attrs: AttributeSet) : View(contex
         if (bubbleTextView == null) {
             bubbleTextView = TextView(context).apply {
                 text = "$progress 걸음"
-                setBackgroundResource(R.drawable.bubble_background)
+                setBackgroundResource(R.drawable.blue_background)
                 setPadding(16.dpToPx(), 8.dpToPx(), 16.dpToPx(), 8.dpToPx())
                 setTextColor(Color.WHITE)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
