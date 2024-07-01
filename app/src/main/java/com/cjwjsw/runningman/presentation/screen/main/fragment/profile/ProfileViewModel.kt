@@ -81,4 +81,20 @@ class ProfileViewModel @Inject constructor(
                 Log.d("ProfileViewModel",e.toString())
             }
     }
+
+    fun getUserFeed(){
+        fbsManager.collection("posts").document(userUid?.uid.toString())
+            .get()
+            .addOnSuccessListener {document ->
+                if(document == null){
+                    Log.d("ProfileViewModel","해당하는 유저의 저장된 피드는 없음")
+                }else{
+                    Log.d("ProfileViewModel", document.data.toString())
+                }
+
+            }
+            .addOnFailureListener {
+                Log.d("ProfileViewModel","파이어베이스에서 유저 피드 정보 호출 실패 +${it.toString()}")
+            }
+    }
 }

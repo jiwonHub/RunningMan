@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserManager
@@ -18,6 +19,8 @@ import javax.inject.Inject
 class ProfileFragment @Inject constructor() : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    //lateinit var adapter : ProfileViewAdapter
+    private val viewModel: ProfileViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,9 +30,9 @@ class ProfileFragment @Inject constructor() : Fragment() {
             val intent = Intent(super.getActivity(), AddFeedActivity::class.java)
             startActivity(intent)
         }
+       // initAdapter()
+        viewModel.getUserFeed()
         loadProfileImg()
-
-
         return binding.root
     }
 
@@ -44,4 +47,9 @@ class ProfileFragment @Inject constructor() : Fragment() {
         }
     }
 
+//    private fun initAdapter(){
+//        adapter = ProfileViewAdapter()
+//        binding.feeddRecyclerView.adapter = adapter
+//        binding.feeddRecyclerView.layoutManager = GridLayoutManager(this)
+//    }
 }
