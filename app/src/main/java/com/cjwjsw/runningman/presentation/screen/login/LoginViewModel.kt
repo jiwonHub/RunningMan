@@ -58,7 +58,7 @@ class LoginViewModel @Inject constructor(
                             uidResult.onSuccess { uid ->
                                 Log.e("UserInfo", uid)
                                 UserManager.setUser(uid, user.kakaoAccount?.profile?.nickname.toString(),
-                                    user.kakaoAccount?.email.toString(), user.kakaoAccount?.profile?.thumbnailImageUrl.toString())
+                                    user.kakaoAccount?.email.toString(), user.kakaoAccount?.profile?.thumbnailImageUrl.toString(),uid)
                                 _stateValue.value = State.LoggedIn
                             }.onFailure {
                                 Log.e("FirebaseAuth", "signInWithCredential:failure", it)
