@@ -15,10 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
-import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -208,12 +206,6 @@ class AddFeedActivity: AppCompatActivity()  {
         adapter = ViewpageAdapter(emptyList())
         viewPager.adapter = adapter
         binding.indicator.setViewPager(binding.previewImage)
-    }
-
-    private fun loadFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
     }
 
 }

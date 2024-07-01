@@ -5,11 +5,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cjwjsw.runningman.core.UserManager
+import com.cjwjsw.runningman.domain.model.UserModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +20,8 @@ class ProfileViewModel @Inject constructor(
 ): ViewModel() {
     private val _photoArr = MutableLiveData<MutableList<Uri>>().apply { value = mutableListOf() }
     val photoArr: LiveData<MutableList<Uri>> get() = _photoArr
+
+    private val userUid : UserModel? = UserManager.getInstance()
 
     private val _uploadStatus = MutableLiveData<Boolean>()
     val uploadStatus: LiveData<Boolean> get() = _uploadStatus
@@ -30,7 +33,8 @@ class ProfileViewModel @Inject constructor(
         Log.d("ProfileViewModel", uri.toString())
     }
     fun upLoadPost(title : String, content : String){
-        val postId = UUID.randomUUID().toString()
+        val postId = userUid?.uid.toString()
+        Log.d("ProfileViewModel",postId)
         val uploadedImageUrls = mutableListOf<String>()
         val imageUris = _photoArr.value ?: return
 
