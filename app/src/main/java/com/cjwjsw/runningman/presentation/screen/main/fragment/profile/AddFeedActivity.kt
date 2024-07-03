@@ -49,7 +49,11 @@ class AddFeedActivity: AppCompatActivity()  {
         })
 
         binding.addImageBtn.setOnClickListener{
-            viewModel.upLoadImage()
+            val title = binding.titleEditText.text
+            val contents = binding.contentsEditText.text
+            viewModel.upLoadPost(title.toString(),contents.toString())
+            finish()
+
         }
         binding.addPictureBtn.setOnClickListener {
             when {
@@ -174,11 +178,6 @@ class AddFeedActivity: AppCompatActivity()  {
         photoUri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", photoFile)
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
         takePictureLauncher.launch(cameraIntent)
-    }
-
-    private fun mutipleFile(uri : List<Uri>){
-
-
     }
 
     private fun uriToFile(uri: Uri): File? {
