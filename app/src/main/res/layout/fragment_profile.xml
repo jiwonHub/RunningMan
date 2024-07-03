@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
     android:layout_marginStart="10dp"
+    android:layout_marginTop="10dp"
     android:layout_marginEnd="10dp"
     app:layout_constraintHorizontal_chainStyle="packed">
 
@@ -33,14 +33,15 @@
 
         <ImageButton
             android:id="@+id/addFeedBtn"
-            android:paddingTop="3dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@color/black"
+            android:paddingTop="3dp"
             android:src="@drawable/outline_add_24" />
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
+
         android:id="@+id/profileImg"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -136,25 +137,27 @@
         android:id="@+id/feedText"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:gravity="start"
         android:text="내 피드"
         android:textColor="@color/white"
         android:textSize="16dp"
-        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.03"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/valueText" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:scrollbarSize="5dp"
         android:id="@+id/feeddRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedText" />
-
+        app:layout_constraintTop_toBottomOf="@id/feedText"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

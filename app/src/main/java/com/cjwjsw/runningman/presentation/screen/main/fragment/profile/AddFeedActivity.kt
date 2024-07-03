@@ -52,9 +52,8 @@ class AddFeedActivity: AppCompatActivity()  {
             val title = binding.titleEditText.text
             val contents = binding.contentsEditText.text
             viewModel.upLoadPost(title.toString(),contents.toString())
-            if(viewModel.uploadStatus.value == true){
-               finish()
-            }
+            finish()
+
         }
         binding.addPictureBtn.setOnClickListener {
             when {
