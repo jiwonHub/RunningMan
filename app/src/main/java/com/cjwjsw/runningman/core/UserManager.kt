@@ -10,8 +10,8 @@ object UserManager {
         return instance
     }
 
-    fun setUser(id: String, nickName: String, email: String, profileImageUrl: String, uid : String) {
-        instance = UserModel(id, nickName, email, profileImageUrl, uid)
+    fun setUser(id: String, nickName: String, email: String, profileImageUrl: String) {
+        instance = UserModel(id, nickName, email, profileImageUrl)
     }
 
     fun clearUser() {
