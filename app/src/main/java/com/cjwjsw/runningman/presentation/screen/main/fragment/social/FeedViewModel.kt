@@ -4,35 +4,48 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.storage.FirebaseStorage
+import com.cjwjsw.runningman.domain.model.FeedModel
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseFirestore: FirebaseFirestore
 ) : ViewModel() {
 
-    private val _imageUrls = MutableLiveData<List<String>>()
-    val imageUrls: LiveData<List<String>> get() = _imageUrls
-    fun fetchImage() {
-        val storageReference = firebaseStorage.reference.child("ex/")
-        storageReference.listAll()
-            .addOnSuccessListener { result ->
-                val urls = mutableListOf<String>()
-                result.items.forEach { item ->
-                    item.downloadUrl.addOnSuccessListener { uri ->
-                        urls.add(uri.toString())
-                        Log.e("fetImage",uri.toString())
-                        if (urls.size == result.items.size) {
-                            _imageUrls.value = urls
-                        }
-                    }.addOnFailureListener { exception ->
-                        Log.e("FeedViewModel", "Error fetching download URL", exception)
+    private val _feedArr = MutableLiveData<MutableList<FeedModel>>()
+    val feedArr: LiveData<MutableList<FeedModel>> get() = _feedArr
+
+    private val arr : MutableList<FeedModel> = mutableListOf()
+    fun fetchFeedData() {
+        firebaseFirestore.collection("posts").orderBy("timestamp",Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener {documents ->
+                for(i in 0 ..< documents.documents.size){
+                    val ref = documents.documents[i].data?.toDataClass<FeedModel>()
+                    Log.d("FeedViewModel",documents.toString())
+                    if(i == 15){
+                        break;
+                    }
+                    if (ref != null) {
+                        arr.add(ref)
                     }
                 }
-            }.addOnFailureListener { exception ->
-                Log.e("FeedViewModel", "Error listing images", exception)
+                Log.d("FeedViewModel",arr.toString())
+                _feedArr.value = arr
+            }
+            .addOnFailureListener {e ->
+                Log.d("FeedViewModel","피드 정보 불러오기 실패 : ${e.toString()}")
             }
     }
+
+    inline fun <reified T> Map<String, Any>.toDataClass(): T {
+        val json = JSONObject(this).toString()
+        return Gson().fromJson(json, T::class.java)
+    }
+
 }

@@ -13,7 +13,7 @@ import com.cjwjsw.runningman.R
 
 
 class ViewAdapter (
-    private  var imageList: List<String>,
+    private  var imageList: MutableList<String>,
     private val clickListener: OnItemClickListener
 ) : RecyclerView.Adapter<ViewAdapter.Holder>() {
     interface OnItemClickListener{
@@ -51,7 +51,7 @@ class ViewAdapter (
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateImages(newImages: List<String>) {
+    fun updateImages(newImages: MutableList<String>) {
         imageList = newImages
         notifyDataSetChanged()
     }

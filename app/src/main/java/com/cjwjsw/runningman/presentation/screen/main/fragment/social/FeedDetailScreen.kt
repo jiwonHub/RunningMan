@@ -7,14 +7,14 @@ import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitiyFeedDetailBinding
 
-class SocialDetailScreen: AppCompatActivity() {
+class FeedDetailScreen: AppCompatActivity() {
     private lateinit var binding: ActivitiyFeedDetailBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitiyFeedDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         loadFeedImg()
         loadProfileImg()
+        binding = ActivitiyFeedDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         binding.backBtn.setOnClickListener {
             finish()
         }

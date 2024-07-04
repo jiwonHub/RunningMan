@@ -18,6 +18,7 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     private val viewModel : FeedViewModel by viewModels()
     private lateinit var adapter: ViewAdapter
     private val binding get() = _binding!!
+    private val imageArr = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,14 +28,18 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
 
         _binding = FragmentSocialBinding.inflate(inflater, container, false)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = ViewAdapter(emptyList(),this)
+        adapter = ViewAdapter(mutableListOf(),this)
         binding.recyclerView.adapter = adapter
 
-        viewModel.imageUrls.observe(viewLifecycleOwner) { urls ->
-            adapter.updateImages(urls)
+        viewModel.feedArr.observe(viewLifecycleOwner) { urls ->
+            for(i in 0 ..< urls.size ){
+                imageArr.add(urls[i].imageUrls[0])
+                Log.d("SocialFragment",urls[i].imageUrls[0])
+            }
+            adapter.updateImages(imageArr)
         }
-        viewModel.fetchImage()
 
+        viewModel.fetchFeedData()
 
         return binding.root
     }
@@ -45,7 +50,7 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(imageUrl: String) {
-       val intent = Intent(requireContext(),SocialDetailScreen::class.java).apply {
+       val intent = Intent(requireContext(),FeedDetailScreen::class.java).apply {
            putExtra("URL",imageUrl)
            Log.d("onclick",imageUrl)
        }
