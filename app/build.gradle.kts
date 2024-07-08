@@ -86,6 +86,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
     implementation ("com.google.android.gms:play-services-oss-licenses:17.1.0")
+
+    implementation("com.naver.maps:map-sdk:3.18.0")
 }
 
 kapt {
