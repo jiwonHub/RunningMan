@@ -18,24 +18,21 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     private val viewModel : FeedViewModel by viewModels()
     private lateinit var adapter: ViewAdapter
     private val binding get() = _binding!!
-    private val imageArr = mutableListOf<String>()
+    private var imageArr = mutableListOf<MutableList<String>>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         _binding = FragmentSocialBinding.inflate(inflater, container, false)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = ViewAdapter(mutableListOf(),this)
         binding.recyclerView.adapter = adapter
-
         viewModel.feedArr.observe(viewLifecycleOwner) { urls ->
             for(i in 0 ..< urls.size ){
-                imageArr.add(urls[i].imageUrls[0])
-                Log.d("SocialFragment",urls[i].imageUrls[0])
+                imageArr.add(urls[i].imageUrls.toMutableList())
             }
+            Log.d("SocialFragment",imageArr.size.toString())
             adapter.updateImages(imageArr)
         }
 
@@ -49,10 +46,13 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         _binding = null
     }
 
-    override fun onItemClick(imageUrl: String) {
+    override fun onItemClick(imageUrl: MutableList<String>) {
+        val feedInfo : ArrayList<String> = arrayListOf()
+        feedInfo.addAll(imageUrl)
+        Log.d("SocialFragment3",imageUrl.toString())
        val intent = Intent(requireContext(),FeedDetailScreen::class.java).apply {
-           putExtra("URL",imageUrl)
-           Log.d("onclick",imageUrl)
+           putStringArrayListExtra("URL",feedInfo)
+           Log.d("onclick", feedInfo.toString())
        }
         startActivity(intent)
     }

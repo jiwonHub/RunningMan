@@ -19,15 +19,13 @@ class FeedViewModel @Inject constructor(
 
     private val _feedArr = MutableLiveData<MutableList<FeedModel>>()
     val feedArr: LiveData<MutableList<FeedModel>> get() = _feedArr
-
     private val arr : MutableList<FeedModel> = mutableListOf()
     fun fetchFeedData() {
         firebaseFirestore.collection("posts").orderBy("timestamp",Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener {documents ->
-                for(i in 0 ..< documents.documents.size){
+                for(i in 0 .. documents.documents.size){
                     val ref = documents.documents[i].data?.toDataClass<FeedModel>()
-                    Log.d("FeedViewModel",documents.toString())
                     if(i == 15){
                         break;
                     }
@@ -35,14 +33,12 @@ class FeedViewModel @Inject constructor(
                         arr.add(ref)
                     }
                 }
-                Log.d("FeedViewModel",arr.toString())
                 _feedArr.value = arr
             }
             .addOnFailureListener {e ->
                 Log.d("FeedViewModel","피드 정보 불러오기 실패 : ${e.toString()}")
             }
     }
-
     inline fun <reified T> Map<String, Any>.toDataClass(): T {
         val json = JSONObject(this).toString()
         return Gson().fromJson(json, T::class.java)

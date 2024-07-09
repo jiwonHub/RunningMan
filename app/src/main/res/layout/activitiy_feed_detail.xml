@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/feedImg"
+        app:layout_constraintBottom_toTopOf="@id/feedImgViewPager"
         app:layout_constraintTop_toBottomOf="@id/toolBar">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -74,16 +74,23 @@
         </LinearLayout>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/feedImg"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/feedImgViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/inputText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedText"
-        tools:src="@drawable/calories" />
+        app:layout_constraintTop_toBottomOf="@id/feedText" />
+
+    <me.relex.circleindicator.CircleIndicator3
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/feedImgViewPager"
+        app:layout_constraintBottom_toTopOf="@id/inputText"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <EditText
         android:id="@+id/inputText"
@@ -93,6 +100,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedImg"/>
+        app:layout_constraintTop_toBottomOf="@id/indicator"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
