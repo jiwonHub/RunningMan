@@ -4,25 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/feedText"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
         android:id="@+id/toolBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@id/feedText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.03"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/arrow_back"
             android:layout_marginEnd="10dp"
-            android:background="@color/black"/>
+            android:background="@color/black"
+            android:src="@drawable/arrow_back" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -37,69 +39,156 @@
         android:layout_height="0dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
+        android:weightSum="5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/feedImgViewPager"
         app:layout_constraintTop_toBottomOf="@id/toolBar">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profileImg"
-            android:layout_width="wrap_content"
+            android:layout_weight="0.3"
+            android:id="@+id/feedDetailProfileImage"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginEnd="5dp"
             android:src="@drawable/ic_android_black_24dp" />
 
 
         <LinearLayout
+            android:layout_weight="0.2"
             android:layout_width="wrap_content"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="12dp"
-            android:text="정성욱"
-            android:textColor="@color/white" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_marginTop="2dp"
-                android:textColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="8dp"
-               android:text="2시간전" />
+                android:text="정성욱"
+                android:textColor="@color/white"
+                android:textSize="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:text="2시간전"
+                android:textColor="@color/white"
+                android:textSize="8dp" />
         </LinearLayout>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4.6"/>
     </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/feedImgViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/inputText"
+        app:layout_constraintBottom_toTopOf="@id/indicatorLayer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.7"
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/feedText" />
 
-    <me.relex.circleindicator.CircleIndicator3
-        android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/feedImgViewPager"
-        app:layout_constraintBottom_toTopOf="@id/inputText"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <EditText
-        android:id="@+id/inputText"
+    <LinearLayout
+        android:id="@+id/indicatorLayer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:weightSum="5"
+        app:layout_constraintBottom_toTopOf="@id/titleLayer"
+        app:layout_constraintHeight_percent="0.03"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/feedImgViewPager">
+        <ImageButton
+            android:background="@color/black"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:src="@drawable/like_icon" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="8dp"
+            tools:text="10명이 좋아합니다" />
+
+        <me.relex.circleindicator.CircleIndicator3
+            android:layout_weight="2"
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/titleLayer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/indicatorLayer">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="24dp"
+            tools:text="제목" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feedDetailRecycerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/inputTextLayer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleLayer" />
+
+
+    <LinearLayout
+        android:id="@+id/inputTextLayer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/gray15"
+        android:gravity="center"
+        android:hint="댓글을 입력하세요"
+        android:textColorHint="@color/white"
+        android:weightSum="4"
+        android:paddingStart="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/indicator"/>
+        app:layout_constraintHeight_percent="0.05"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/textFeedDetailImg"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:src="@drawable/ic_android_black_24dp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3.6"
+            android:gravity="center"
+            android:hint="댓글을 입력하세요"
+            android:textColorHint="@color/white"
+            android:textSize="16dp" />
+
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

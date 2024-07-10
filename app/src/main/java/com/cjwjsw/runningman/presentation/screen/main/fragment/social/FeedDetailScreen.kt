@@ -26,6 +26,7 @@ class FeedDetailScreen: AppCompatActivity() {
         viewPager.adapter = adapter
         binding.indicator.setViewPager(binding.feedImgViewPager)
         loadProfileImg()
+        loadTextProfileImg()
         binding.backBtn.setOnClickListener {
             finish()
         }
@@ -37,7 +38,18 @@ class FeedDetailScreen: AppCompatActivity() {
                 .load(profileUrl)
                 .placeholder(R.drawable.sun)
                 .error(R.drawable.calories)
-                .into(binding.profileImg)
+                .into(binding.feedDetailProfileImage)
+        }
+    }
+
+    private fun loadTextProfileImg(){
+        val profileUrl = UserManager.getInstance()?.profileUrl
+        if (profileUrl != null) {
+            Glide.with(this)
+                .load(profileUrl)
+                .placeholder(R.drawable.sun)
+                .error(R.drawable.calories)
+                .into(binding.textFeedDetailImg)
         }
     }
 }
