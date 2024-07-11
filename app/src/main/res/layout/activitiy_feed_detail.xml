@@ -180,14 +180,22 @@
             android:src="@drawable/ic_android_black_24dp" />
 
         <EditText
+            android:id="@+id/editText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3.6"
+            android:layout_weight="3.2"
             android:gravity="center"
             android:hint="댓글을 입력하세요"
             android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:textSize="16dp" />
-
+        <ImageButton
+            android:id="@+id/commentUploadBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:src="@drawable/comment_upload_btn"
+            android:background="@color/black"/>
     </LinearLayout>
 
 

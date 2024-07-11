@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cjwjsw.runningman.databinding.FragmentSocialBinding
+import com.cjwjsw.runningman.domain.model.FeedModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,7 +19,7 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     private val viewModel : FeedViewModel by viewModels()
     private lateinit var adapter: ViewAdapter
     private val binding get() = _binding!!
-    private var imageArr = mutableListOf<MutableList<String>>()
+    private var feedArr = mutableListOf<FeedModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,32 +29,42 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         adapter = ViewAdapter(mutableListOf(),this)
         binding.recyclerView.adapter = adapter
-        viewModel.feedArr.observe(viewLifecycleOwner) { urls ->
-            for(i in 0 ..< urls.size ){
-                imageArr.add(urls[i].imageUrls.toMutableList())
+        viewModel.feedArr.observe (viewLifecycleOwner) { urls ->
+            Log.d("SocialFragment",urls.toString())
+            if(urls == null){
+                Log.d("SocialFragment","피드 정보가 없습니다")
+            }else{
+                for(i in 0..<urls.size){
+                    feedArr.add(urls[i])
+                }
             }
-            Log.d("SocialFragment",imageArr.size.toString())
-            adapter.updateImages(imageArr)
+            adapter.updateImages(feedArr)
         }
+
 
         viewModel.fetchFeedData()
 
         return binding.root
     }
 
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    override fun onItemClick(imageUrl: MutableList<String>) {
+    override fun onItemClick(imageUrl: MutableList<String>, feedUid: MutableList<Char>) {
         val feedInfo : ArrayList<String> = arrayListOf()
+        Log.d("SocialFragment","피드 UID : ${feedUid}")
+        val uid = viewModel.charToString(feedUid)
         feedInfo.addAll(imageUrl)
-        Log.d("SocialFragment3",imageUrl.toString())
-       val intent = Intent(requireContext(),FeedDetailScreen::class.java).apply {
-           putStringArrayListExtra("URL",feedInfo)
-           Log.d("onclick", feedInfo.toString())
-       }
+        val intent = Intent(requireContext(),FeedDetailScreen::class.java).apply {
+            putStringArrayListExtra("URL",feedInfo)
+            putExtra("UID",uid)
+            Log.d("onclick", uid)
+            Log.d("onclick", feedInfo.toString())
+        }
         startActivity(intent)
     }
 

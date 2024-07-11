@@ -53,7 +53,8 @@ class ProfileViewModel @Inject constructor(
                     imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                         uploadedImageUrls.add(downloadUrl.toString())
                         if (uploadedImageUrls.size == imageUris.size) {
-                            savePostMetadata(postId, title, content, uploadedImageUrls)
+                            val feedUID = UUID.randomUUID().toString()
+                            savePostMetadata(postId, title, content, uploadedImageUrls, feedUID)
                         }
                     }.addOnFailureListener { e ->
                         _uploadStatus.value = false
@@ -67,17 +68,17 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun savePostMetadata(postId: String, title: String, content: String, imageUrls: List<String>) {
+    private fun savePostMetadata(postId: String, title: String, content: String, imageUrls: List<String>, feedUID : String) {
         val postMetadata = hashMapOf(
             "postId" to postId,
             "title" to title,
             "content" to content,
             "imageUrls" to imageUrls,
-            "timestamp" to FieldValue.serverTimestamp()
+            "timestamp" to FieldValue.serverTimestamp(),
+            "feedUID" to feedUID
         )
-        val documentName = UUID.randomUUID().toString()
 
-        fbsManager.collection("posts").document(documentName)
+        fbsManager.collection("posts").document(feedUID)
             .set(postMetadata)
             .addOnSuccessListener {
                 _uploadStatus.value = true

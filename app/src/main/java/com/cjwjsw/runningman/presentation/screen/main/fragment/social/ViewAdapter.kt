@@ -9,14 +9,16 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
+import com.cjwjsw.runningman.domain.model.FeedModel
 
 
 class ViewAdapter (
-    private  var imageList: MutableList<MutableList<String>>,
-    private val clickListener: OnItemClickListener
+    private  var imageList: MutableList<FeedModel>,
+    private val clickListener: OnItemClickListener,
+
 ) : RecyclerView.Adapter<ViewAdapter.Holder>() {
     interface OnItemClickListener{
-        fun onItemClick(imageUrl: MutableList<String>)
+        fun onItemClick(imageUrl: MutableList<String>,feedUid : MutableList<Char>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -26,8 +28,8 @@ class ViewAdapter (
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val imageUrl = imageList[position]
-        for(i : Int in 0 .. 14){
+        val imageUrl = imageList[position].imageUrls
+        for(i : Int in 0..<imageList.size){
             Log.d("ViewAdapter", "Loading image URL: ${imageList[i]}")
 
         }
@@ -39,7 +41,7 @@ class ViewAdapter (
             .into(holder.feedImageView)
 
         holder.itemView.setOnClickListener {
-            clickListener.onItemClick(imageList[position])
+            clickListener.onItemClick(imageList[position].imageUrls.toMutableList(),imageList[position].feedUID.toMutableList())
         }
     }
 
@@ -52,7 +54,7 @@ class ViewAdapter (
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateImages(newImages: MutableList<MutableList<String>>) {
+    fun updateImages(newImages: MutableList<FeedModel>) {
         imageList = newImages
         notifyDataSetChanged()
     }
