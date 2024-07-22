@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.cjwjsw.runningman.core.UserLoginFirst
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivityOnBoardingEndBinding
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
@@ -36,11 +35,7 @@ class OnBoardingEndScreen: AppCompatActivity() {
             userId?.let {
              viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age, this)
             }
-            if(UserLoginFirst.isFirstLogin(this)){
                 startActivity(intent)
-            }
         }
-
-
     }
 }
