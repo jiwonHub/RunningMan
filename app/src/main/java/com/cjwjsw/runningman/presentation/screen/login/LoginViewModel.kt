@@ -6,47 +6,43 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.kakao.sdk.user.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val appPreferenceManager: AppPreferenceManager,
-    @ApplicationContext private val context: Context
+    private val appPreferenceManager: AppPreferenceManager
 ) : ViewModel()  {
 
     val myStateLiveData = MutableLiveData<LoginState2>(LoginState2.Uninitialized)
     val kakaoStateLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
 
 
-    fun kakaoLogin(context: Context, auth: FirebaseAuth) {
+    fun kakaoLogin(context: Context,onSuccess: () -> Unit, onFailure: (Throwable) -> Unit) {
        kakaoStateLiveData.value = LoginState.Loading
         Log.d("LoginScreen","handleKakaoLoadingState")
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 실패", error)
+                onFailure(error)
             } else if (token != null) {
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 성공")
                 kakaoStateLiveData.value = LoginState.LoggedIn(token.idToken.toString())
+                onSuccess()
                 Log.d("LoginScreen","handleKakaoLoggedInState")
             }
 
-        }
 
+        }
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 handleKakaoLoginResult(token, error, callback, context)
@@ -67,19 +63,6 @@ class LoginViewModel @Inject constructor(
         } else if (token != null) {
             Log.i("KakaoLogin", "카카오톡으로 로그인 성공 ${token.accessToken}")
             callback(token, null)
-        }
-    }
-
-    private suspend fun fetchUser(token: OAuthToken, auth: FirebaseAuth): User? {
-        return suspendCancellableCoroutine { cont ->
-            UserApiClient.instance.me { user, error ->
-                if (error != null) {
-                    Log.e("KakaoLogin", "사용자 정보 요청 실패", error)
-                    cont.resume(null)
-                } else if (user != null) {
-                    cont.resume(user)
-                }
-            }
         }
     }
 

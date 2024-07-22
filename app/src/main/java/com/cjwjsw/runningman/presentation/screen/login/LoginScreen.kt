@@ -112,10 +112,11 @@ class LoginScreen : AppCompatActivity() {
 
     private fun handleKakaoLogedinState(loginState: LoginState.LoggedIn, auth: FirebaseAuth) {
         fbUsecase.execute(auth,loginState.token.toString(),
-            onSuccess = {
-                Log.d("LoginScreen","파이어베이스 로그인 성공${it}")
-                viewModel.setUserInfo(auth.currentUser)
 
+            onSuccess = {
+                Log.d("LoginScreen","파이어베이스 로그인 성공${auth.uid}")
+                UserManager.setUserUid(auth.uid.toString())
+                viewModel.setUserInfo(auth.currentUser)
             },
             onFailure = {
                 Log.d("LoginScreen","파이어베이스 로그인 실패${it.message}")
@@ -131,8 +132,6 @@ class LoginScreen : AppCompatActivity() {
             is LoginState.Success.Registered ->{
                 handleKakaoRegisteredState(it)
                 Log.d("LoginScreen","handleKakaoSucessState")
-                val intent = Intent(this@LoginScreen, MainActivity::class.java)
-                startActivity(intent)
             }
             is LoginState.Success.NotRegistered ->{
                 Log.d("LoginScreen","유저 정보 등록 실패")
@@ -170,12 +169,20 @@ class LoginScreen : AppCompatActivity() {
 
 
         binding.kakaoLogin.setOnClickListener {
-            if(isFirstLogin){
-                val intent = Intent(this,GenderScreen::class.java)
-                startActivity(intent)
-            }else{
-                viewModel.kakaoLogin(this,auth)
-            }
+            viewModel.kakaoLogin(this,
+                onSuccess = {
+                    if(isFirstLogin){
+                        val intent = Intent(this,GenderScreen::class.java)
+                        startActivity(intent)
+                    }else{
+                        val intent = Intent(this,MainActivity::class.java)
+                        startActivity(intent)
+                    }
+                },
+                onFailure = {
+                    Log.e("LoginScreen","로그인실패 ${it.message}")
+                })
+
         }
 
         binding.googleLogin.setOnClickListener {

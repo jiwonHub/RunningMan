@@ -23,14 +23,14 @@ class OnBoardingEndScreen: AppCompatActivity() {
 
         val user = UserManager.getUidInstance()
         val userId = user?.id
-        val intent  = Intent(this,MainActivity::class.java)
 
         Log.d("userdata",intent.getIntExtra("weight",0).toString())
-
         val gender = intent.getStringExtra("gender")
-        val weight = intent.getIntExtra("weight", 0)
+        val weight = intent.getIntExtra("weight",0)
         val height = intent.getIntExtra("height",0)
         val age = intent.getIntExtra("age", 0)
+        Log.d("userdata",userId+gender+weight+height+age)
+        val intent  = Intent(this, MainActivity::class.java)
 
         binding.nextButton.setOnClickListener {
             userId?.let {

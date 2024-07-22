@@ -15,6 +15,7 @@ class OnBoardingEndViewModel @Inject constructor() : ViewModel() {
 
     fun saveUserData(userId: String?, gender: String, weight: Int, height: Int, age: Int,context : Context) {
         userId?.let {
+            Log.d("OnBardEndViewModel",userId + gender + weight + height + age)
             val userRef = db.collection("user_info").document(userId)
 
             val userData = hashMapOf(
