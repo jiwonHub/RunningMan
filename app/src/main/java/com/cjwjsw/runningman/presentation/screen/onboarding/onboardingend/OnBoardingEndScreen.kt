@@ -21,7 +21,7 @@ class OnBoardingEndScreen: AppCompatActivity() {
         binding = ActivityOnBoardingEndBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val user = UserManager.getInstance()
+        val user = UserManager.getUidInstance()
         val userId = user?.id
         val intent  = Intent(this,MainActivity::class.java)
 

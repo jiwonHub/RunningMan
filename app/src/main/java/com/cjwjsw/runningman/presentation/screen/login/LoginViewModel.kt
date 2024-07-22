@@ -1,15 +1,11 @@
 package com.cjwjsw.runningman.presentation.screen.login
 
-import android.content.ContentValues
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
-import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.kakao.sdk.auth.model.OAuthToken
@@ -32,47 +28,23 @@ class LoginViewModel @Inject constructor(
     private val appPreferenceManager: AppPreferenceManager,
     @ApplicationContext private val context: Context
 ) : ViewModel()  {
-    val _stateValue: MutableLiveData<State> by lazy {
-        MutableLiveData<State>()
-    }
-    val myStateLiveData = MutableLiveData<LoginState2>(LoginState2.Uninitialized)
 
-    val stateValue: LiveData<State> get() = _stateValue
-    val fbUsecase = FBStoreUserSignInCase(context)
+    val myStateLiveData = MutableLiveData<LoginState2>(LoginState2.Uninitialized)
+    val kakaoStateLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
 
 
     fun kakaoLogin(context: Context, auth: FirebaseAuth) {
-        _stateValue.value = State.Loading
-
+       kakaoStateLiveData.value = LoginState.Loading
+        Log.d("LoginScreen","handleKakaoLoadingState")
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 실패", error)
-                _stateValue.value = State.LoggedFailed
             } else if (token != null) {
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 성공")
-                viewModelScope.launch {
-                    try {
-                        val user = withContext(Dispatchers.IO) { fetchUser(token, auth) }
-                        user?.let {
-                            val uidResult = fbUsecase.execute(auth, token.idToken.toString())
-                            uidResult.onSuccess { uid ->
-                                Log.e("UserInfo", uid)
-                                UserManager.setUser(uid, user.kakaoAccount?.profile?.nickname.toString(),
-                                    user.kakaoAccount?.email.toString(), user.kakaoAccount?.profile?.thumbnailImageUrl.toString())
-                                _stateValue.value = State.LoggedIn
-                            }.onFailure {
-                                Log.e("FirebaseAuth", "signInWithCredential:failure", it)
-                                _stateValue.value = State.LoggedFailed
-                            }
-                        } ?: run {
-                            _stateValue.value = State.LoggedFailed
-                        }
-                    } catch (e: Exception) {
-                        Log.e(ContentValues.TAG, "Error during login process", e)
-                        _stateValue.value = State.LoggedFailed
-                    }
-                }
+                kakaoStateLiveData.value = LoginState.LoggedIn(token.idToken.toString())
+                Log.d("LoginScreen","handleKakaoLoggedInState")
             }
+
         }
 
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
@@ -91,7 +63,6 @@ class LoginViewModel @Inject constructor(
             if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
                 return
             }
-
             UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
         } else if (token != null) {
             Log.i("KakaoLogin", "카카오톡으로 로그인 성공 ${token.accessToken}")
@@ -129,14 +100,29 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setUserInfo(firebaseUser: FirebaseUser?) = viewModelScope.launch{
-        firebaseUser?.let{ user ->
-            myStateLiveData.value = LoginState2.Success.Registered(
-                userName = user.displayName ?: "익명",
-                profileImageUri = user.photoUrl,
-            )
-        }?: kotlin.run {
-            myStateLiveData.value = LoginState2.Success.NotRegistered
+        if(myStateLiveData.value != null){
+            firebaseUser?.let{ user ->
+                myStateLiveData.value = LoginState2.Success.Registered(
+                    userName = user.displayName ?: "익명",
+                    profileImageUri = user.photoUrl,
+                )
+            }?: kotlin.run {
+                myStateLiveData.value = LoginState2.Success.NotRegistered
+            }
+        }else{
+            firebaseUser?.let{ user ->
+                Log.d("LoginScreen","handleRegisterState")
+                kakaoStateLiveData.value = LoginState.Success.Registered(
+                    userName = user.displayName ?: "익명",
+                    profileImageUri = user.photoUrl.toString(),
+                    email = user.email.toString()
+                )
+            }?: kotlin.run {
+                Log.d("LoginScreen","handleNotRegisterState")
+                kakaoStateLiveData.value = LoginState.Success.NotRegistered
+            }
         }
+
     }
 
     fun signOut() = viewModelScope.launch {

@@ -7,10 +7,11 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserLoginFirst
+import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
+import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -21,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.kakao.sdk.common.KakaoSdk
-import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,6 +30,7 @@ class LoginScreen : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private val viewModel : LoginViewModel by viewModels()
+    val fbUsecase = FBStoreUserSignInCase(this)
 
     private val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -66,8 +67,7 @@ class LoginScreen : AppCompatActivity() {
         }
     }
 
-    private fun handleLoadingState() {
-    }
+    private fun handleLoadingState() {}
     private fun handleSuccessState(state: LoginState2.Success) = with(binding){
         when(state){
             is LoginState2.Success.Registered -> {
@@ -103,6 +103,55 @@ class LoginScreen : AppCompatActivity() {
         loginLauncher.launch(signInIntent)
     }
 
+    private fun handleKakaoLoadingState() {}
+
+    private fun handleKakaoRegisteredState(loginState: LoginState.Success.Registered) {
+        UserManager.setUser(loginState.userName ,loginState.profileImageUri.toString(),loginState.email)
+    }
+
+
+    private fun handleKakaoLogedinState(loginState: LoginState.LoggedIn, auth: FirebaseAuth) {
+        fbUsecase.execute(auth,loginState.token.toString(),
+            onSuccess = {
+                Log.d("LoginScreen","파이어베이스 로그인 성공${it}")
+                viewModel.setUserInfo(auth.currentUser)
+
+            },
+            onFailure = {
+                Log.d("LoginScreen","파이어베이스 로그인 실패${it.message}")
+            })
+    }
+
+    private fun handleKakaoLoginFailedState() {
+        Log.d("LoginScreen","카카오 로그인 실패")
+    }
+
+    private fun handleKakaoSucessState(it: LoginState.Success) {
+        when(it){
+            is LoginState.Success.Registered ->{
+                handleKakaoRegisteredState(it)
+                Log.d("LoginScreen","handleKakaoSucessState")
+                val intent = Intent(this@LoginScreen, MainActivity::class.java)
+                startActivity(intent)
+            }
+            is LoginState.Success.NotRegistered ->{
+                Log.d("LoginScreen","유저 정보 등록 실패")
+            }
+        }
+    }
+
+    fun observeKakaoData(auth: FirebaseAuth) = viewModel.kakaoStateLiveData.observe(this) {
+        when (it) {
+            is LoginState.Loading -> handleKakaoLoadingState()
+            is LoginState.LoggedIn -> handleKakaoLogedinState(it,auth)
+            is LoginState.LoggedFailed -> handleKakaoLoginFailedState()
+            is LoginState.Success -> handleKakaoSucessState(it)
+            else -> Unit
+        }
+
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -112,6 +161,7 @@ class LoginScreen : AppCompatActivity() {
 
         setContentView(binding.root)
         observeData()
+        observeKakaoData(auth)
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             // 애니메이션 시작
@@ -120,25 +170,12 @@ class LoginScreen : AppCompatActivity() {
 
 
         binding.kakaoLogin.setOnClickListener {
-            viewModel.kakaoLogin(this,auth)
-            Log.d("isfirstLogin",isFirstLogin.toString())
-
-            viewModel.stateValue.observe(this,Observer{
-                if(isFirstLogin){
-                    UserApiClient.instance.logout { error ->
-                        if (error != null) {
-                            Log.e("test", "연결 끊기 실패", error)
-                        } else {
-                            Log.i("test", "연결 끊기 성공. SDK에서 토큰 삭제 됨")
-                            val intent = Intent(this, MainActivity::class.java)
-                            startActivity(intent)
-                        }
-                    }
-                }else{
-                    val intent = Intent(this, GenderScreen::class.java)
-                    startActivity(intent)
-                }
-            })
+            if(isFirstLogin){
+                val intent = Intent(this,GenderScreen::class.java)
+                startActivity(intent)
+            }else{
+                viewModel.kakaoLogin(this,auth)
+            }
         }
 
         binding.googleLogin.setOnClickListener {

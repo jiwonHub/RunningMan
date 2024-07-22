@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.FeedModel
-import com.cjwjsw.runningman.domain.model.UserModel
+import com.cjwjsw.runningman.domain.model.UserUid
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     private val _feedArr = MutableLiveData<MutableList<FeedModel>?>()
     val feedArr: LiveData<MutableList<FeedModel>?> get() = _feedArr
 
-    private val userUid : UserModel? = UserManager.getInstance()
+    private val userUid : UserUid? = UserManager.getUidInstance()
 
     private val _uploadStatus = MutableLiveData<Boolean>()
     val uploadStatus: LiveData<Boolean> get() = _uploadStatus

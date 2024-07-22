@@ -1,19 +1,25 @@
 package com.cjwjsw.runningman.presentation.screen.login
-sealed class State{
-        abstract val isLogin : Boolean
-        object LoggedIn : State() {
-            override val isLogin: Boolean = true
-        }
 
-        object LoggedOut : State() {
-            override val isLogin: Boolean = false
-        }
+sealed class LoginState{
+    data object Uninitialized : LoginState()
+    data class LoggedIn(
+        val token : String
+    ) : LoginState()
 
-        object Loading : State() {
-            override val isLogin: Boolean = false
-        }
+    sealed class Success: LoginState() {
 
-        object LoggedFailed : State(){
-            override val isLogin: Boolean = false
-        }
+        data class Registered(
+            val userName: String,
+            val profileImageUri: String?,
+            val email : String
+        ): Success()
+        data object NotRegistered: Success()
+
+    }
+        sealed class LoggedOut() : LoginState()
+
+        data object Loading: LoginState()
+        data class LoggedFailed(
+            val error : Exception
+        ) : LoginState()
     }
