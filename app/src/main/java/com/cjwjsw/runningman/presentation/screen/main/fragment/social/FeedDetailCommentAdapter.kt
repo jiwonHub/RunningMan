@@ -12,8 +12,9 @@ import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.domain.model.CommentModel
 
 class FeedDetailCommentAdapter(
-        val comment : MutableList<CommentModel>,
-        val profileImage : String
+    private val comment : List<CommentModel>,
+    private val profileImage : String,
+    private val userName : String
 ): RecyclerView.Adapter<FeedDetailCommentAdapter.ViewHolder>() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreateViewHolder(
@@ -31,24 +32,27 @@ class FeedDetailCommentAdapter(
 
     override fun onBindViewHolder(holder: FeedDetailCommentAdapter.ViewHolder, position: Int) {
         holder.bind(profileImage)
-        holder.commentUpload(comment[position])
+        holder.commentUpload(comment[position].comment,userName)
+        holder.bind(userName)
     }
 
     inner class ViewHolder(view : View) : RecyclerView.ViewHolder(view){
         private val view : ImageView = itemView.findViewById(R.id.commentProfileImage)
         private val commentText : TextView = itemView.findViewById(R.id.comment)
         private val userName : TextView = itemView.findViewById(R.id.userName)
-        //private val commentTime : TextView = itemView.findViewById(R.id.timeTextView) 시간 입력
+
+        //private val commentTime : TextView = itemView.findViewById(R.id.timeTextView) 시간 관련
 
         fun bind(item : String){
             Glide.with(view)
                 .load(item)
+                .centerCrop()
                 .into(view)
         }
 
-        fun commentUpload(item : CommentModel){
-                commentText.text = item.comment.joinToString { " " }
-                userName.text = item.id
+        fun commentUpload(item: String,name : String){
+                commentText.text = item
+                userName.text = name
         }
     }
 

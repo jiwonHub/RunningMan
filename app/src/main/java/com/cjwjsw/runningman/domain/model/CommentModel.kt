@@ -1,7 +1,8 @@
 package com.cjwjsw.runningman.domain.model
 
 data class CommentModel(
-    val id : String,
-    val comment : List<String>,
-    val likedCount : Int
+    val comment: String = "",
+    val userUid: String = "",
+    val timestamp: Long = 0
 )
+

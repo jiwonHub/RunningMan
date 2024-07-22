@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
@@ -17,8 +19,10 @@ class FeedDetailScreen: AppCompatActivity() {
     private lateinit var viewPager : ViewPager2
     private lateinit var adapter : FeedDetailViewAdapter
     private lateinit var commentAdapter: FeedDetailCommentAdapter
+    private lateinit var recyclerView: RecyclerView
     private val viewModel : FeedViewModel by viewModels()
     private val profileUrl = UserManager.getInstance()?.profileUrl
+    private val userName = UserManager.getInstance()?.nickName
     private var comment : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,16 +37,26 @@ class FeedDetailScreen: AppCompatActivity() {
         adapter = image?.let { FeedDetailViewAdapter(it) }!!
         viewPager = binding.feedImgViewPager
         viewPager.adapter = adapter
+
         binding.indicator.setViewPager(binding.feedImgViewPager)
+
         loadProfileImg()
         loadTextProfileImg()
         viewModel.fetchCommentData(uid.toString())
+        recyclerView = binding.feedDetailRecycerView
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        commentAdapter = FeedDetailCommentAdapter(emptyList(),profileUrl.toString(),userName.toString())
+        recyclerView.adapter = commentAdapter
+
         binding.backBtn.setOnClickListener {
             finish()
         }
+
         viewModel.commentArr.observe(this){ arr ->
             //TODO 댓글 RecycerView 텍스트 입력 정의 이곳에
-            commentAdapter = arr?.let { FeedDetailCommentAdapter(arr,profileUrl.toString()) }!!
+            Log.d("FeedDetailScreen","Livedata 댓글 : ${userName.toString()}")
+            commentAdapter = arr?.let { FeedDetailCommentAdapter(arr,profileUrl.toString(),userName.toString()) }!!
+            recyclerView.adapter = commentAdapter
         }
 
 

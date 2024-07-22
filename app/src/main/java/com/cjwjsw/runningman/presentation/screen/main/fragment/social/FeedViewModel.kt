@@ -10,7 +10,6 @@ import com.cjwjsw.runningman.domain.model.FeedModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -61,26 +60,95 @@ class FeedViewModel @Inject constructor(
     }
 
     fun fetchCommentData(uid : String){
-        val postListener = object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) { //데이터 가져오기
-                val post = snapshot.getValue<MutableList<CommentModel>>()
-                _commentArr.value = post
+        val ref = fbRef.getReference(uid).child("comments")
+
+        ref.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val commentList = mutableListOf<CommentModel>()
+                for (commentSnapshot in snapshot.children) {
+                    val comment = commentSnapshot.getValue(CommentModel::class.java)
+                    if (comment != null) {
+                        commentList.add(comment)
+                    }
+                }
+                _commentArr.value = commentList // _commentArr은 LiveData<List<Comment>> 타입
+                Log.d("FeedViewModel","댓글 불러오기 성공 : ${snapshot.value.toString()}")
             }
 
-            override fun onCancelled(error: DatabaseError) { //데이터 접근 불가 시
-                Log.d("FeedViewModel", "loadPost:onCancelled ${error.toException()}")
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("FeedViewModel","댓글 불러오기 실패 : ${error.message}")
             }
 
-        }
+        })
+
+
+
+//        val ref = fbRef.getReference(uid)
+//        ref.child(uid).get().addOnSuccessListener {snapshot ->
+//            val commentList = mutableListOf<CommentModel>()
+//            for(data in snapshot.children){
+//                val comment = data.getValue(CommentModel::class.java)
+//                Log.d("FeedViewModel","snapShot CommentModel로 캐스팅 성공 : ${comment.toString()}")
+//                commentList.add(comment!!)
+//            }
+//            _commentArr.value = commentList
+//            Log.d("FeedViewModel","댓글 불러오기 성공 : ${snapshot.value.toString()}")
+//        }.addOnFailureListener {
+//            Log.d("FeedViewModel","댓글 불러오기 실패 : ${it.message.toString()}")
+//        }
+
+//        val commentRef = fbRef.getReference(uid)
+//        commentRef.addValueEventListener(object : ValueEventListener{
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val commentList = mutableListOf<CommentModel>()
+//                Log.d("FeedViewModel","스냅샷 : ${snapshot.value}")
+//                for(commentSnapshot in snapshot.children){
+//                    val comment = commentSnapshot.getValue(CommentModel::class.java)
+//                    Log.d("FeedViewModel","댓글 정보 불러오기 성공2 : $comment")
+//                    if(comment!=null){
+//                        commentList.add(comment)
+//                    }
+//                }
+//                _commentArr.value = commentList
+//                Log.d("FeedViewModel","댓글 정보 불러오기 성공 : $commentList")
+//
+//            }
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.d("FeedViewModel","댓글 정보 불러오기 실패 : ${error.toString()}")
+//            }
+//
+//        })
 
     }
 
-    fun uploadComment(comment : String, uid : String ) {
-        fbRef.child(uid).child(userUid.toString()).push().setValue(comment).addOnSuccessListener {
-            Log.d("FeedViewModel","댓글 저장 성공 : $comment")
-        }.addOnFailureListener {
-            Log.d("FeedViewModel","댓글 저장 실패 : ${it.message.toString()}")
+    fun uploadComment(comment : String, feedUid : String ) {
+        val ref = fbRef.getReference(feedUid).child("comments")
+        val newComment = CommentModel(
+            comment = comment,
+            timestamp = System.currentTimeMillis() / 1000,
+            userUid = userUid.toString()
+        )
+
+        val newCommentKey = ref.push().key
+        if(newCommentKey != null) {
+           ref.child(newCommentKey).setValue(newComment).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FeedViewModel", "Comment added successfully")
+                } else {
+                    Log.d("FeedViewModel", "Failed to add comment: ${task.exception}")
+                }
+            }
         }
+
+//        val comment = translateData(comment) //코멘트 정의
+//        val final : HashMap<String,Comments> = hashMapOf()
+//        final.put(userUid.toString(),comment)
+//
+//        ref.updateChildren(final as Map<String, Any>).addOnSuccessListener {
+//            Log.d("FeedViewModel","댓글 저장 성공 : $comment")
+//        }.addOnFailureListener {
+//            Log.d("FeedViewModel","댓글 저장 실패 : ${it.message.toString()}")
+//        }
     }
 
 
@@ -90,12 +158,24 @@ class FeedViewModel @Inject constructor(
         return transUID
     }
 
+//    fun translateData(com: String): Comments { //Comments 데이터 타입 변경
+//        val time = Timestamps(
+//            nanoseconds = System.currentTimeMillis() * 1000000 % 1000000000,
+//            seconds = System.currentTimeMillis() / 1000
+//        )
+//        val comArr : MutableList<String> = mutableListOf()
+//        comArr.add(com)
+//
+//        val arr = Comments(comment = comArr, userUid = userUid.toString(), timestamp = time)
+//        return arr
+//    }
+
     private inline fun <reified T> Map<String, Any>.toDataClass(): T? {
             val json = Gson().toJson(this)
             return Gson().fromJson(json, T::class.java)
     }
 
     companion object{
-        val fbRef = Firebase.database.getReference("comment")
+        val fbRef = Firebase.database
     }
 }

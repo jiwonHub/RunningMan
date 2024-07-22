@@ -144,7 +144,7 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="24dp"
-            tools:text="제목" />
+            android:text="제목" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

@@ -1,5 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,11 +15,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import android.Manifest
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.settings.SettingsActivity
-import com.cjwjsw.runningman.service.PedometerService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,14 +64,14 @@ class MainFragment : Fragment() {
         viewModel.currentWeather
     }
 
-    private fun startPedometerService() {
-        val serviceIntent = Intent(requireContext(), PedometerService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireActivity().startForegroundService(serviceIntent)
-        } else {
-            requireActivity().startService(serviceIntent)
-        }
-    }
+//    private fun startPedometerService() {
+//        val serviceIntent = Intent(requireContext(), PedometerService::class.java)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            requireActivity().startForegroundService(serviceIntent)
+//        } else {
+//            requireActivity().startService(serviceIntent)
+//        }
+//    }
 
     private fun observeData() {
         viewModel.currentWeather.observe(viewLifecycleOwner) { currentWeather ->
@@ -171,7 +170,7 @@ class MainFragment : Fragment() {
         if (permissionsNeeded.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
         } else {
-            startPedometerService()
+            //startPedometerService()
             fetchLocation()
         }
     }
@@ -181,7 +180,7 @@ class MainFragment : Fragment() {
     ) { permissions ->
         if (permissions.all { it.value }) {
             Log.d("MainFragment", "All required permissions granted")
-            startPedometerService()
+            //startPedometerService()
             fetchLocation()
         } else {
             Log.e("MainFragment", "Required permissions not granted")
