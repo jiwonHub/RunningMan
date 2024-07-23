@@ -156,6 +156,7 @@ class LoginScreen : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         auth = Firebase.auth
         val isFirstLogin = UserLoginFirst.isFirstLogin(this)
+        Log.d("LoginScreen",UserLoginFirst.isFirstLogin(this).toString())
         KakaoSdk.init(this,"99180739a7bcf290c7df2a47e48e4767")
 
         setContentView(binding.root)
@@ -172,10 +173,11 @@ class LoginScreen : AppCompatActivity() {
             viewModel.kakaoLogin(this,
                 onSuccess = {
                     if(isFirstLogin){
-                        val intent = Intent(this,GenderScreen::class.java)
+
+                        val intent = Intent(this,MainActivity::class.java)
                         startActivity(intent)
                     }else{
-                        val intent = Intent(this,MainActivity::class.java)
+                        val intent = Intent(this, GenderScreen::class.java)
                         startActivity(intent)
                     }
                 },

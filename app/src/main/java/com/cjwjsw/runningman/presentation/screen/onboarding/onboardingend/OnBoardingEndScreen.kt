@@ -36,11 +36,12 @@ class OnBoardingEndScreen: AppCompatActivity() {
             userId?.let {
              viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age, this)
             }
-            if(UserLoginFirst.isFirstLogin(this)){
+            if(!UserLoginFirst.isFirstLogin(this)) {
+                UserLoginFirst.setFirstLogin(this,true)
+                startActivity(intent)
+            }else{
                 startActivity(intent)
             }
         }
-
-
     }
 }
