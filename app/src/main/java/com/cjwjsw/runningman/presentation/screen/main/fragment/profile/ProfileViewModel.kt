@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.FeedModel
-import com.cjwjsw.runningman.domain.model.UserUid
+import com.cjwjsw.runningman.domain.model.UserModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     private val _feedArr = MutableLiveData<MutableList<FeedModel>?>()
     val feedArr: LiveData<MutableList<FeedModel>?> get() = _feedArr
 
-    private val userUid : UserUid? = UserManager.getUidInstance()
+    private val userUid : UserModel? = UserManager.getInstance()
 
     private val _uploadStatus = MutableLiveData<Boolean>()
     val uploadStatus: LiveData<Boolean> get() = _uploadStatus
@@ -41,8 +41,8 @@ class ProfileViewModel @Inject constructor(
         Log.d("ProfileViewModel", uri.toString())
     }
     fun upLoadPost(title : String, content : String){
-        val postId = userUid?.id.toString()
-        Log.d("ProfileViewModel",postId)
+        val postId = userUid?.idToken
+        Log.d("ProfileViewModel", postId!!)
         val uploadedImageUrls = mutableListOf<String>()
         val imageUris = _photoArr.value ?: return
 
@@ -89,7 +89,7 @@ class ProfileViewModel @Inject constructor(
             }
     }
     fun getUserFeed(){
-        fbsManager.collection("posts").whereEqualTo("postId",userUid?.id)
+        fbsManager.collection("posts").whereEqualTo("postId",userUid)
             .get()
             .addOnSuccessListener {document ->
                 if(document == null){

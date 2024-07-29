@@ -1,22 +1,29 @@
 package com.cjwjsw.runningman.presentation.screen.login
 
+import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
+import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.kakao.sdk.user.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -25,9 +32,10 @@ class LoginViewModel @Inject constructor(
 
     val myStateLiveData = MutableLiveData<LoginState2>(LoginState2.Uninitialized)
     val kakaoStateLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
+    val fbUsecase = FBStoreUserSignInCase()
 
 
-    fun kakaoLogin(context: Context,onSuccess: () -> Unit, onFailure: (Throwable) -> Unit) {
+    fun kakaoLogin(context: Context,auth:FirebaseAuth,onSuccess: () -> Unit, onFailure: (Throwable) -> Unit) {
        kakaoStateLiveData.value = LoginState.Loading
         Log.d("LoginScreen","handleKakaoLoadingState")
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -36,9 +44,34 @@ class LoginViewModel @Inject constructor(
                 onFailure(error)
             } else if (token != null) {
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 성공")
-                kakaoStateLiveData.value = LoginState.LoggedIn(token.idToken.toString())
-                onSuccess()
-                Log.d("LoginScreen","handleKakaoLoggedInState")
+                viewModelScope.launch {
+                    try {
+                        val user = withContext(Dispatchers.IO) { fetchUser(token, auth) }
+                        user?.let {
+                            val uidResult = fbUsecase.execute(auth, token.idToken.toString(), onSuccess = {
+                                Log.d("LoginViewModel","파이어베이스 로그인 성공")
+                            }, onFailure = {
+                                Log.d("LoginViewModel","파이어베이스 로그인 실패")
+                            })
+                            uidResult.onSuccess { uid ->
+                                UserManager.setUser(
+                                    uid,
+                                    user.kakaoAccount?.profile?.nickname.toString(),
+                                    user.kakaoAccount?.email.toString(),
+                                    user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
+                                )
+                            }.onFailure {
+                                Log.e("FirebaseAuth", "signInWithCredential:failure", )
+                            }
+                        } ?: run {
+                        }
+                    }catch (e: Exception) {
+                        Log.e(ContentValues.TAG, "Error during login process", e)
+                    }
+                    kakaoStateLiveData.value = LoginState.LoggedIn(token.idToken.toString())
+                    onSuccess()
+                    Log.d("LoginScreen", "handleKakaoLoggedInState")
+                }
             }
 
 
@@ -83,7 +116,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setUserInfo(firebaseUser: FirebaseUser?) = viewModelScope.launch{
-        if(myStateLiveData.value != null){
             firebaseUser?.let{ user ->
                 myStateLiveData.value = LoginState2.Success.Registered(
                     userName = user.displayName ?: "익명",
@@ -92,20 +124,21 @@ class LoginViewModel @Inject constructor(
             }?: kotlin.run {
                 myStateLiveData.value = LoginState2.Success.NotRegistered
             }
-        }else{
-            firebaseUser?.let{ user ->
-                Log.d("LoginScreen","handleRegisterState")
-                kakaoStateLiveData.value = LoginState.Success.Registered(
-                    userName = user.displayName ?: "익명",
-                    profileImageUri = user.photoUrl.toString(),
-                    email = user.email.toString()
-                )
-            }?: kotlin.run {
-                Log.d("LoginScreen","handleNotRegisterState")
-                kakaoStateLiveData.value = LoginState.Success.NotRegistered
-            }
-        }
+    }
 
+    fun setKakaoUserInfo(firebaseUser: FirebaseUser?){
+        firebaseUser?.let{ user ->
+            Log.d("LoginScreen","handleRegisterState")
+            kakaoStateLiveData.value = LoginState.Success.Registered(
+                token = user.uid,
+                userName = user.displayName ?: "익명",
+                profileImageUri = user.photoUrl.toString(),
+                email = user.email.toString()
+            )
+        }?: kotlin.run {
+            Log.d("LoginScreen","handleNotRegisterState")
+            kakaoStateLiveData.value = LoginState.Success.NotRegistered
+        }
     }
 
     fun signOut() = viewModelScope.launch {
@@ -114,4 +147,19 @@ class LoginViewModel @Inject constructor(
         }
         fetchData()
     }
+
+    private suspend fun fetchUser(token: OAuthToken, auth: FirebaseAuth): User? {
+        return suspendCancellableCoroutine { cont ->
+            UserApiClient.instance.me { user, error ->
+                if (error != null) {
+                    Log.e("KakaoLogin", "사용자 정보 요청 실패", error)
+                    cont.resume(null)
+                } else if (user != null) {
+                    cont.resume(user)
+                }
+            }
+        }
+    }
+
+
 }

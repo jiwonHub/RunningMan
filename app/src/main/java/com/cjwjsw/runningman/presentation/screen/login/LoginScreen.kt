@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserLoginFirst
 import com.cjwjsw.runningman.core.UserManager
@@ -23,6 +24,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginScreen : AppCompatActivity() {
@@ -30,7 +32,7 @@ class LoginScreen : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private val viewModel : LoginViewModel by viewModels()
-    val fbUsecase = FBStoreUserSignInCase(this)
+    val fbUsecase = FBStoreUserSignInCase()
 
     private val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -105,22 +107,24 @@ class LoginScreen : AppCompatActivity() {
 
     private fun handleKakaoLoadingState() {}
 
-    private fun handleKakaoRegisteredState(loginState: LoginState.Success.Registered) {
-        UserManager.setUser(loginState.userName ,loginState.profileImageUri.toString(),loginState.email)
+    private fun handleKakaoRegisteredState(
+        loginState: LoginState.Success.Registered,
+    ) {
+        UserManager.setUser(loginState.token,loginState.userName ,loginState.profileImageUri.toString(),loginState.email)
     }
 
 
-    private fun handleKakaoLogedinState(loginState: LoginState.LoggedIn, auth: FirebaseAuth) {
-        fbUsecase.execute(auth,loginState.token.toString(),
-
-            onSuccess = {
-                Log.d("LoginScreen","파이어베이스 로그인 성공${auth.uid}")
-                UserManager.setUserUid(auth.uid.toString())
-                viewModel.setUserInfo(auth.currentUser)
-            },
-            onFailure = {
-                Log.d("LoginScreen","파이어베이스 로그인 실패${it.message}")
-            })
+    private fun handleKakaoLogedinState(loginState: LoginState.LoggedIn, auth: FirebaseAuth,) {
+        lifecycleScope.launch {
+            fbUsecase.execute(auth,loginState.token,
+                onSuccess = {
+                    Log.d("LoginScreen","파이어베이스 로그인 성공${auth.currentUser?.uid}")
+                    viewModel.setKakaoUserInfo(auth.currentUser)
+                },
+                onFailure = {
+                    Log.d("LoginScreen","파이어베이스 로그인 실패${it.message}")
+                })
+        }
     }
 
     private fun handleKakaoLoginFailedState() {
@@ -147,17 +151,16 @@ class LoginScreen : AppCompatActivity() {
             is LoginState.Success -> handleKakaoSucessState(it)
             else -> Unit
         }
-
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
+        KakaoSdk.init(this,"99180739a7bcf290c7df2a47e48e4767")
         auth = Firebase.auth
         val isFirstLogin = UserLoginFirst.isFirstLogin(this)
         Log.d("LoginScreen",UserLoginFirst.isFirstLogin(this).toString())
-        KakaoSdk.init(this,"99180739a7bcf290c7df2a47e48e4767")
 
         setContentView(binding.root)
         observeData()
@@ -170,10 +173,9 @@ class LoginScreen : AppCompatActivity() {
 
 
         binding.kakaoLogin.setOnClickListener {
-            viewModel.kakaoLogin(this,
+            viewModel.kakaoLogin(this,auth,
                 onSuccess = {
                     if(isFirstLogin){
-
                         val intent = Intent(this,MainActivity::class.java)
                         startActivity(intent)
                     }else{
@@ -184,9 +186,7 @@ class LoginScreen : AppCompatActivity() {
                 onFailure = {
                     Log.e("LoginScreen","로그인실패 ${it.message}")
                 })
-
         }
-
         binding.googleLogin.setOnClickListener {
             signInGoogle()
         }

@@ -9,6 +9,7 @@ sealed class LoginState{
     sealed class Success: LoginState() {
 
         data class Registered(
+            val token : String,
             val userName: String,
             val profileImageUri: String?,
             val email : String
