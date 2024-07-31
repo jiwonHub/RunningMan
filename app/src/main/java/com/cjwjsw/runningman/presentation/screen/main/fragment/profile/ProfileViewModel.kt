@@ -41,8 +41,8 @@ class ProfileViewModel @Inject constructor(
         Log.d("ProfileViewModel", uri.toString())
     }
     fun upLoadPost(title : String, content : String){
-        val postId = userUid?.id.toString()
-        Log.d("ProfileViewModel",postId)
+        val postId = userUid?.idToken
+        Log.d("ProfileViewModel", postId!!)
         val uploadedImageUrls = mutableListOf<String>()
         val imageUris = _photoArr.value ?: return
 
@@ -89,7 +89,7 @@ class ProfileViewModel @Inject constructor(
             }
     }
     fun getUserFeed(){
-        fbsManager.collection("posts").whereEqualTo("postId",userUid?.id)
+        fbsManager.collection("posts").whereEqualTo("postId",userUid)
             .get()
             .addOnSuccessListener {document ->
                 if(document == null){

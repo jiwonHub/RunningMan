@@ -21,26 +21,26 @@ class OnBoardingEndScreen: AppCompatActivity() {
         binding = ActivityOnBoardingEndBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val user = UserManager.getInstance()
-        val userId = user?.id
-        val intent  = Intent(this,MainActivity::class.java)
+        val userId = UserManager.getInstance()?.idToken
 
-        Log.d("userdata",intent.getIntExtra("weight",0).toString())
-
+        Log.d("userdata",userId.toString())
         val gender = intent.getStringExtra("gender")
-        val weight = intent.getIntExtra("weight", 0)
+        val weight = intent.getIntExtra("weight",0)
         val height = intent.getIntExtra("height",0)
         val age = intent.getIntExtra("age", 0)
+        val intent  = Intent(this, MainActivity::class.java)
 
         binding.nextButton.setOnClickListener {
             userId?.let {
              viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age, this)
             }
-            if(UserLoginFirst.isFirstLogin(this)){
+
+            if(!UserLoginFirst.isFirstLogin(this)) {
+                UserLoginFirst.setFirstLogin(this,true)
+                startActivity(intent)
+            }else{
                 startActivity(intent)
             }
         }
-
-
     }
 }

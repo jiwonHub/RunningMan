@@ -19,7 +19,7 @@ class AgeScreen: AppCompatActivity() {
         val gender = intent.getStringExtra("gender")
         val weight = intent.getIntExtra("weight", 0)
         val height = intent.getIntExtra("height", 0)
-        Log.d("userdata",intent.getIntExtra("weight",0).toString())
+        Log.d("userdata:weight",intent.getIntExtra("weight",0).toString())
 
         binding.nextButton.setOnClickListener {
             if (binding.ageEditText.text.isNotEmpty()) {
