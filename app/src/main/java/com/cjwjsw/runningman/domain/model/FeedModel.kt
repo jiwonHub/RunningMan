@@ -9,5 +9,6 @@ data class FeedModel(
     val title: String,
     val content: String,
     val timestamp: Timestamp,
+    val profileURL : String
 )
 

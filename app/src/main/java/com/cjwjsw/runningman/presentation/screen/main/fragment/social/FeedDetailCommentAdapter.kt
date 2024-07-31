@@ -13,8 +13,6 @@ import com.cjwjsw.runningman.domain.model.CommentModel
 
 class FeedDetailCommentAdapter(
     private val comment : List<CommentModel>,
-    private val profileImage : String,
-    private val userName : String
 ): RecyclerView.Adapter<FeedDetailCommentAdapter.ViewHolder>() {
     @SuppressLint("SuspiciousIndentation")
     override fun onCreateViewHolder(
@@ -31,17 +29,18 @@ class FeedDetailCommentAdapter(
     }
 
     override fun onBindViewHolder(holder: FeedDetailCommentAdapter.ViewHolder, position: Int) {
-        holder.bind(profileImage)
-        holder.commentUpload(comment[position].comment,userName)
-        holder.bind(userName)
+        holder.bind(comment[position].profileUrl)
+        holder.commentUpload(comment[position].comment,comment[position].userName)
+        //아이템 간 간격 설정
+        val layoutParams = holder.itemView.layoutParams
+        layoutParams.height = 150
+        holder.itemView.requestLayout()
     }
 
     inner class ViewHolder(view : View) : RecyclerView.ViewHolder(view){
         private val view : ImageView = itemView.findViewById(R.id.commentProfileImage)
         private val commentText : TextView = itemView.findViewById(R.id.comment)
         private val userName : TextView = itemView.findViewById(R.id.userName)
-
-        //private val commentTime : TextView = itemView.findViewById(R.id.timeTextView) 시간 관련
 
         fun bind(item : String){
             Glide.with(view)
@@ -55,5 +54,4 @@ class FeedDetailCommentAdapter(
                 userName.text = name
         }
     }
-
 }

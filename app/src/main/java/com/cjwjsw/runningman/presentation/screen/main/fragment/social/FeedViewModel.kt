@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
 import com.cjwjsw.runningman.domain.model.FeedModel
 import com.google.firebase.database.DataSnapshot
@@ -28,7 +27,7 @@ class FeedViewModel @Inject constructor(
 
     private val _commentArr = MutableLiveData<MutableList<CommentModel>?>()
     val commentArr : LiveData<MutableList<CommentModel>?> get() = _commentArr
-    private val userUid = UserManager.getInstance()?.id
+   // private val userUid = UserManager.getInstance()?.id
 
 
     private val arr : MutableList<FeedModel> = mutableListOf()
@@ -61,6 +60,7 @@ class FeedViewModel @Inject constructor(
 
     fun fetchCommentData(uid : String){
         val ref = fbRef.getReference(uid).child("comments")
+        Log.d("FeedViewModel", "uid = $uid")
 
         ref.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -80,53 +80,15 @@ class FeedViewModel @Inject constructor(
             }
 
         })
-
-
-
-//        val ref = fbRef.getReference(uid)
-//        ref.child(uid).get().addOnSuccessListener {snapshot ->
-//            val commentList = mutableListOf<CommentModel>()
-//            for(data in snapshot.children){
-//                val comment = data.getValue(CommentModel::class.java)
-//                Log.d("FeedViewModel","snapShot CommentModel로 캐스팅 성공 : ${comment.toString()}")
-//                commentList.add(comment!!)
-//            }
-//            _commentArr.value = commentList
-//            Log.d("FeedViewModel","댓글 불러오기 성공 : ${snapshot.value.toString()}")
-//        }.addOnFailureListener {
-//            Log.d("FeedViewModel","댓글 불러오기 실패 : ${it.message.toString()}")
-//        }
-
-//        val commentRef = fbRef.getReference(uid)
-//        commentRef.addValueEventListener(object : ValueEventListener{
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val commentList = mutableListOf<CommentModel>()
-//                Log.d("FeedViewModel","스냅샷 : ${snapshot.value}")
-//                for(commentSnapshot in snapshot.children){
-//                    val comment = commentSnapshot.getValue(CommentModel::class.java)
-//                    Log.d("FeedViewModel","댓글 정보 불러오기 성공2 : $comment")
-//                    if(comment!=null){
-//                        commentList.add(comment)
-//                    }
-//                }
-//                _commentArr.value = commentList
-//                Log.d("FeedViewModel","댓글 정보 불러오기 성공 : $commentList")
-//
-//            }
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.d("FeedViewModel","댓글 정보 불러오기 실패 : ${error.toString()}")
-//            }
-//
-//        })
-
     }
 
-    fun uploadComment(comment : String, feedUid : String ) {
+    fun uploadComment(comment: String, feedUid: String, userName: String,profileImg: String) {
         val ref = fbRef.getReference(feedUid).child("comments")
         val newComment = CommentModel(
             comment = comment,
             timestamp = System.currentTimeMillis() / 1000,
-            userUid = userUid.toString()
+            userName = userName,
+            profileUrl = profileImg
         )
 
         val newCommentKey = ref.push().key
@@ -139,16 +101,6 @@ class FeedViewModel @Inject constructor(
                 }
             }
         }
-
-//        val comment = translateData(comment) //코멘트 정의
-//        val final : HashMap<String,Comments> = hashMapOf()
-//        final.put(userUid.toString(),comment)
-//
-//        ref.updateChildren(final as Map<String, Any>).addOnSuccessListener {
-//            Log.d("FeedViewModel","댓글 저장 성공 : $comment")
-//        }.addOnFailureListener {
-//            Log.d("FeedViewModel","댓글 저장 실패 : ${it.message.toString()}")
-//        }
     }
 
 
@@ -157,18 +109,6 @@ class FeedViewModel @Inject constructor(
         var transUID = uid.filter { it != ',' && it != ' ' }.joinToString("")
         return transUID
     }
-
-//    fun translateData(com: String): Comments { //Comments 데이터 타입 변경
-//        val time = Timestamps(
-//            nanoseconds = System.currentTimeMillis() * 1000000 % 1000000000,
-//            seconds = System.currentTimeMillis() / 1000
-//        )
-//        val comArr : MutableList<String> = mutableListOf()
-//        comArr.add(com)
-//
-//        val arr = Comments(comment = comArr, userUid = userUid.toString(), timestamp = time)
-//        return arr
-//    }
 
     private inline fun <reified T> Map<String, Any>.toDataClass(): T? {
             val json = Gson().toJson(this)

@@ -35,6 +35,7 @@ class FeedDetailViewAdapter(
                 .load(item)
                 .placeholder(R.drawable.sun)
                 .error(R.drawable.calories)
+                .centerCrop()
                 .into(view)
         }
     }

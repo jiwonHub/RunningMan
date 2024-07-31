@@ -18,7 +18,13 @@ class ViewAdapter (
 
 ) : RecyclerView.Adapter<ViewAdapter.Holder>() {
     interface OnItemClickListener{
-        fun onItemClick(imageUrl: MutableList<String>,feedUid : MutableList<Char>)
+        fun onItemClick(
+            imageUrl: MutableList<String>,
+            feedUid: MutableList<Char>,
+            profileURL: String,
+            title: String,
+            content: String
+        )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -41,7 +47,11 @@ class ViewAdapter (
             .into(holder.feedImageView)
 
         holder.itemView.setOnClickListener {
-            clickListener.onItemClick(imageList[position].imageUrls.toMutableList(),imageList[position].feedUID.toMutableList())
+            clickListener.onItemClick(imageList[position].imageUrls.toMutableList()
+                ,imageList[position].feedUID.toMutableList()
+                ,imageList[position].profileURL
+                ,imageList[position].title
+                ,imageList[position].content)
         }
     }
 

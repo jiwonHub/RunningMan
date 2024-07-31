@@ -54,7 +54,13 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         _binding = null
     }
 
-    override fun onItemClick(imageUrl: MutableList<String>, feedUid: MutableList<Char>) {
+    override fun onItemClick(
+        imageUrl: MutableList<String>,
+        feedUid: MutableList<Char>,
+        profileURL: String,
+        title: String,
+        content: String
+    ) {
         val feedInfo : ArrayList<String> = arrayListOf()
         Log.d("SocialFragment","피드 UID : ${feedUid}")
         val uid = viewModel.charToString(feedUid)
@@ -62,6 +68,9 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         val intent = Intent(requireContext(),FeedDetailScreen::class.java).apply {
             putStringArrayListExtra("URL",feedInfo)
             putExtra("UID",uid)
+            putExtra("profileUrl",profileURL)
+            putExtra("title",title)
+            putExtra("content",content)
             Log.d("onclick", uid)
             Log.d("onclick", feedInfo.toString())
         }

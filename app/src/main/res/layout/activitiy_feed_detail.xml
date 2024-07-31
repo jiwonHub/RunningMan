@@ -40,23 +40,24 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:weightSum="5"
+        app:layout_constraintBottom_toTopOf="@id/feedImgViewPager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolBar">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_weight="0.3"
             android:id="@+id/feedDetailProfileImage"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="0.5"
             android:src="@drawable/ic_android_black_24dp" />
 
 
         <LinearLayout
-            android:layout_weight="0.2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_weight="0.2"
             android:orientation="vertical">
 
             <TextView
@@ -76,10 +77,11 @@
                 android:textColor="@color/white"
                 android:textSize="8dp" />
         </LinearLayout>
+
         <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4.6"/>
+            android:layout_weight="4.6" />
     </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2
@@ -97,35 +99,48 @@
         android:id="@+id/indicatorLayer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:weightSum="5"
         app:layout_constraintBottom_toTopOf="@id/titleLayer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.03"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/feedImgViewPager">
-        <ImageButton
-            android:background="@color/black"
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:src="@drawable/like_icon" />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="8dp"
-            tools:text="10명이 좋아합니다" />
+            android:layout_weight="1.5"
+            android:weightSum="3">
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/black"
+                android:src="@drawable/like_icon" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8dp"
+                tools:text="10명이 좋아합니다" />
+        </LinearLayout>
 
         <me.relex.circleindicator.CircleIndicator3
-            android:layout_weight="2"
             android:id="@+id/indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"/>
+            android:layout_weight="2" />
+
+        <View
+            android:layout_width="1.5dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
 
     </LinearLayout>
 
@@ -133,29 +148,37 @@
         android:id="@+id/titleLayer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/commentRecycerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/indicatorLayer">
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:text="제목"
             android:textColor="@color/white"
-            android:textSize="24dp"
-            android:text="제목" />
+            android:textSize="24dp" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/feedDetailRecycerView"
+    <LinearLayout
+        android:id="@+id/commentRecycerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/inputTextLayer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleLayer" />
+        app:layout_constraintTop_toBottomOf="@id/titleLayer">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/feedDetailRecycerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inputTextLayer"
@@ -164,9 +187,9 @@
         android:background="@color/gray15"
         android:gravity="center"
         android:hint="댓글을 입력하세요"
+        android:paddingStart="10dp"
         android:textColorHint="@color/white"
         android:weightSum="4"
-        android:paddingStart="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
@@ -186,16 +209,17 @@
             android:layout_weight="3.2"
             android:gravity="center"
             android:hint="댓글을 입력하세요"
-            android:textColorHint="@color/white"
             android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:textSize="16dp" />
+
         <ImageButton
             android:id="@+id/commentUploadBtn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.4"
-            android:src="@drawable/comment_upload_btn"
-            android:background="@color/black"/>
+            android:background="@color/black"
+            android:src="@drawable/comment_upload_btn" />
     </LinearLayout>
 
 

@@ -21,8 +21,8 @@ class FeedDetailScreen: AppCompatActivity() {
     private lateinit var commentAdapter: FeedDetailCommentAdapter
     private lateinit var recyclerView: RecyclerView
     private val viewModel : FeedViewModel by viewModels()
-    private val profileUrl = UserManager.getInstance()?.profileUrl
-    private val userName = UserManager.getInstance()?.nickName
+    private val profileUrl = userData?.profileUrl
+    private val userName = userData?.nickName
     private var comment : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +31,9 @@ class FeedDetailScreen: AppCompatActivity() {
         setContentView(binding.root)
         val uid = intent.getStringExtra("UID")
         val image = intent.getStringArrayListExtra("URL")
+        val profileImg = intent.getStringExtra("profileUrl") //socialFragment에서 받아온 데이터들
+        val feedTitle = intent.getStringExtra("title")
+        val content = intent.getStringExtra("content")
         Log.d("FeedDetailScreen",uid.toString())
         Log.d("FeedDetailScreen",image.toString())
         adapter = FeedDetailViewAdapter(image)
@@ -40,46 +43,43 @@ class FeedDetailScreen: AppCompatActivity() {
 
         binding.indicator.setViewPager(binding.feedImgViewPager)
 
-        loadProfileImg()
+        //loadProfileImg()
         loadTextProfileImg()
         viewModel.fetchCommentData(uid.toString())
         recyclerView = binding.feedDetailRecycerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        commentAdapter = FeedDetailCommentAdapter(emptyList(),profileUrl.toString(),userName.toString())
+        commentAdapter = FeedDetailCommentAdapter(emptyList())
         recyclerView.adapter = commentAdapter
 
         binding.backBtn.setOnClickListener {
             finish()
         }
 
+
         viewModel.commentArr.observe(this){ arr ->
             //TODO 댓글 RecycerView 텍스트 입력 정의 이곳에
             Log.d("FeedDetailScreen","Livedata 댓글 : ${userName.toString()}")
-            commentAdapter = arr?.let { FeedDetailCommentAdapter(arr,profileUrl.toString(),userName.toString()) }!!
+            commentAdapter = arr?.let { FeedDetailCommentAdapter(arr) }!!
             recyclerView.adapter = commentAdapter
         }
 
 
         binding.commentUploadBtn.setOnClickListener {
             comment = binding.editText.text.toString()
-            viewModel.uploadComment(comment,uid.toString())
+            viewModel.uploadComment(comment,uid.toString(),userName.toString(),profileUrl.toString())
         }
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        viewModel.fetchCommentData(uid.toString())
+
+//    private fun loadProfileImg(){
+//        if (profileUrl != null) {
+//            Glide.with(this)
+//                .load()
+//                .placeholder(R.drawable.sun)
+//                .error(R.drawable.calories)
+//                .into(binding.feedDetailProfileImage)
+//        }
 //    }
-
-    private fun loadProfileImg(){
-        if (profileUrl != null) {
-            Glide.with(this)
-                .load(profileUrl)
-                .placeholder(R.drawable.sun)
-                .error(R.drawable.calories)
-                .into(binding.feedDetailProfileImage)
-        }
-    }
 
     private fun loadTextProfileImg(){
         val profileUrl = UserManager.getInstance()?.profileUrl
@@ -90,5 +90,18 @@ class FeedDetailScreen: AppCompatActivity() {
                 .error(R.drawable.calories)
                 .into(binding.textFeedDetailImg)
         }
+    }
+
+    private fun feedDataFetch(profileImg: String, feedTitle: CharSequence){
+        Glide.with(this)
+            .load(profileImg)
+            .placeholder(R.drawable.sun)
+            .error(R.drawable.calories)
+            .into(binding.feedDetailProfileImage)
+        binding.title.text = feedTitle
+    }
+
+    companion object{
+        val userData = UserManager.getInstance()
     }
 }
