@@ -86,7 +86,7 @@
         <activity android:name=".presentation.screen.onboarding.HeightScreen"/>
         <activity android:name=".presentation.screen.onboarding.AgeScreen"/>
         <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
-        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailScreen" />
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailScreen"/>
         <activity android:name=".presentation.screen.main.fragment.main.settings.SettingsActivity"/>
         <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.AddFeedActivity" />
         <activity

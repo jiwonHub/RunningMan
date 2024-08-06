@@ -27,6 +27,12 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     ): View {
         _binding = FragmentSocialBinding.inflate(inflater, container, false)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         adapter = ViewAdapter(mutableListOf(),this)
         binding.recyclerView.adapter = adapter
         viewModel.feedArr.observe (viewLifecycleOwner) { urls ->
@@ -40,13 +46,8 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
             }
             adapter.updateImages(feedArr)
         }
-
-
         viewModel.fetchFeedData()
-
-        return binding.root
     }
-
 
 
     override fun onDestroyView() {
@@ -59,7 +60,9 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         feedUid: MutableList<Char>,
         profileURL: String,
         title: String,
-        content: String
+        content: String,
+        likedCount : Int,
+        isLiked : Boolean
     ) {
         val feedInfo : ArrayList<String> = arrayListOf()
         Log.d("SocialFragment","피드 UID : ${feedUid}")
@@ -71,8 +74,11 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
             putExtra("profileUrl",profileURL)
             putExtra("title",title)
             putExtra("content",content)
+            putExtra("likedCount",likedCount)
+            putExtra("isLiked",isLiked)
+
             Log.d("onclick", uid)
-            Log.d("onclick", feedInfo.toString())
+            Log.d("onclick", likedCount.toString())
         }
         startActivity(intent)
     }

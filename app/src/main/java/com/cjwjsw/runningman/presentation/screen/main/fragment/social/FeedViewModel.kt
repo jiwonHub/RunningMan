@@ -26,8 +26,8 @@ class FeedViewModel @Inject constructor(
     val feedArr: LiveData<MutableList<FeedModel>> get() = _feedArr
 
     private val _commentArr = MutableLiveData<MutableList<CommentModel>?>()
+
     val commentArr : LiveData<MutableList<CommentModel>?> get() = _commentArr
-   // private val userUid = UserManager.getInstance()?.id
 
 
     private val arr : MutableList<FeedModel> = mutableListOf()

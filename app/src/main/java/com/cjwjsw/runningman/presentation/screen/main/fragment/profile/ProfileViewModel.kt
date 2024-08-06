@@ -54,7 +54,7 @@ class ProfileViewModel @Inject constructor(
                         uploadedImageUrls.add(downloadUrl.toString())
                         if (uploadedImageUrls.size == imageUris.size) {
                             val feedUID = UUID.randomUUID().toString()
-                            savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName)
+                            savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName,0,false)
                         }
                     }.addOnFailureListener { e ->
                         _uploadStatus.value = false
@@ -75,7 +75,9 @@ class ProfileViewModel @Inject constructor(
         imageUrls: List<String>,
         feedUID: String,
         profileImg: String,
-        userName: String
+        userName: String,
+        likedCount : Int,
+        isLiked : Boolean,
     ) {
         val postMetadata = hashMapOf(
             "postId" to postId,
@@ -86,6 +88,8 @@ class ProfileViewModel @Inject constructor(
             "feedUID" to feedUID,
             "profileURL" to profileImg,
             "userName" to userName,
+            "likedCount" to likedCount,
+            "isLiked" to isLiked
         )
 
         fbsManager.collection("posts").document(feedUID)
@@ -121,6 +125,7 @@ class ProfileViewModel @Inject constructor(
                 Log.d("ProfileViewModel","파이어베이스에서 유저 피드 정보 호출 실패 +${it.toString()}")
             }
     }
+
 
     inline fun <reified T> Map<String, Any>.toDataClass(): T {
         val json = JSONObject(this).toString()

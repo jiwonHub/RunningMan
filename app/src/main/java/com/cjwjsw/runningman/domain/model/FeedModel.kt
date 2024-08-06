@@ -9,6 +9,8 @@ data class FeedModel(
     val title: String,
     val content: String,
     val timestamp: Timestamp,
-    val profileURL : String
+    val profileURL : String,
+    val likedCount : Int,
+    val isLiked : Boolean
 )
 

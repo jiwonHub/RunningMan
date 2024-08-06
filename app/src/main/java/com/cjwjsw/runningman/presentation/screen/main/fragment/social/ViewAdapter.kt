@@ -23,7 +23,9 @@ class ViewAdapter (
             feedUid: MutableList<Char>,
             profileURL: String,
             title: String,
-            content: String
+            content: String,
+            likedCount: Int,
+            isLiked : Boolean
         )
     }
 
@@ -51,7 +53,9 @@ class ViewAdapter (
                 ,imageList[position].feedUID.toMutableList()
                 ,imageList[position].profileURL
                 ,imageList[position].title
-                ,imageList[position].content)
+                ,imageList[position].content
+                ,imageList[position].likedCount
+                ,imageList[position].isLiked)
         }
     }
 
