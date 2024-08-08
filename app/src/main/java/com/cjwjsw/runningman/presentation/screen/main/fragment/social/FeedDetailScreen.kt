@@ -74,6 +74,10 @@ class FeedDetailScreen: AppCompatActivity() {
             }
         }
 
+        binding.commentBtn.setOnClickListener {
+            modalBottomSheet()
+        }
+
         //loadProfileImg()
 //        loadTextProfileImg()
         //viewModel.fetchCommentData(uid.toString())
@@ -127,6 +131,13 @@ class FeedDetailScreen: AppCompatActivity() {
 //            .into(binding.feedDetailProfileImage)
 //        binding.title.text = feedTitle
 //    }
+
+    private fun modalBottomSheet() {
+        val modal = CommentModalBottomSheet()
+
+        modal.show(supportFragmentManager, CommentModalBottomSheet.TAG)
+    }
+    
 
     private fun isLikedImg(liked : Boolean){
         if(!liked){
