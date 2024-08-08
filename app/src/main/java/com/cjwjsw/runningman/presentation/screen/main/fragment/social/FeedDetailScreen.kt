@@ -66,10 +66,10 @@ class FeedDetailScreen: AppCompatActivity() {
         binding.likeBtn.setOnClickListener {
             when(isLiked){
                 false -> {
-                    viewModel.setLikedCount(uid.toString(),true)
+                    viewModel.getLikedCount(uid.toString())
                 }
                 true ->{
-                    viewModel.setLikedCount(uid.toString(),false)
+                    viewModel.getLikedCount(uid.toString())
                 }
             }
         }

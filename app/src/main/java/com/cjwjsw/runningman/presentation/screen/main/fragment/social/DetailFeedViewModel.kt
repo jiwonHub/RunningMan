@@ -20,42 +20,44 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
     val isLiked : LiveData<Boolean> get() = _isLiked
 
 
-    fun setLikedCount(uid : String, isLikeds : Boolean){
+    fun getLikedCount(uid : String){
         val ref = firebaseFirestore.collection("posts").document(uid)
-        ref.addSnapshotListener{snapshot, e ->
-            if(e != null){
-                return@addSnapshotListener
+
+        //데이터 받아오기
+        ref.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                Log.d("FeedViewModel", "받아온 데이터: ${document.data}")
+                val data = document.data?.toDataClass<FeedModel>()
+
+                val currentLikeCount = data?.likedCount ?: 0
+                val currentIsLiked = data?.isLiked ?: false
+
+                // 받아온 데이터 처리
+                val newCount = if (currentIsLiked) {
+                    currentLikeCount -1
+                } else {
+                    currentLikeCount +1
+                }
+
+                val newIsLiked = !currentIsLiked
+
+                Log.d("FeedViewModel",newIsLiked.toString())
+
+                ref.update("likedCount", newCount,"isLiked",newIsLiked)
+                    .addOnSuccessListener {
+                        Log.d("FeedViewModel", "LikedCount 업데이트 성공")
+                        _likeCount.value = newCount // Update the LiveData to reflect the new count
+                        _isLiked.value = newIsLiked
+                    }
+                    .addOnFailureListener { Log.d("FeedViewModel", "LikedCount 업데이트 실패") }
+            } else {
+                Log.d("FeedViewModel", "해당하는 UID의 피드가 없습니다")
             }
-            if(snapshot != null && snapshot.exists()){
-                Log.d("FeedViewModel","데이터 : ${snapshot.data}")
-                val data = snapshot.data?.toDataClass<FeedModel>()
-                _likeCount.value = data?.likedCount
-                _isLiked.value = data?.isLiked
-            }else{
-                Log.d("FeedViewModel","데이터 : null")
-            }
+        }.addOnFailureListener { e ->
+            Log.w("FeedViewModel", "피드를 불러오는중 오류 발생", e)
         }
-
-        ref
-            .update("likedCount",if(isLikeds){
-               likeCount.value?.plus(1)
-            }else{
-                likeCount.value?.minus(1)
-            })
-            .addOnSuccessListener { Log.d("FeedViewModel","LikedCount 변경 성공") }
-            .addOnFailureListener { Log.d("FeedViewModel","LikedCount 변경 실패")  }
-
-        ref
-            .update("isLiked",isLikeds)
-            .addOnSuccessListener { Log.d("FeedViewModel","LikedCount 변경 성공") }
-            .addOnFailureListener { Log.d("FeedViewModel","LikedCount 변경 실패")  }
-
     }
 
-    fun getLikedCount(uid: String){
-        val ref = firebaseFirestore.collection("posts").document(uid)
-
-    }
 
     private inline fun <reified T> Map<String, Any>.toDataClass(): T? {
         val json = Gson().toJson(this)
