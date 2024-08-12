@@ -2,6 +2,7 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.social
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,8 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
-import com.cjwjsw.runningman.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cjwjsw.runningman.databinding.DialogCommentBottomEdittextBinding
 import com.cjwjsw.runningman.databinding.DialogCommentBottomSheetModalBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -19,18 +21,24 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class CommentModalBottomSheet : BottomSheetDialogFragment() {
+class CommentModalBottomSheet(uid: String, userName: String, profileUrl: String) : BottomSheetDialogFragment() {
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var commentAdapter: FeedDetailCommentAdapter
     lateinit var binding: DialogCommentBottomSheetModalBinding
     lateinit var editBinding: DialogCommentBottomEdittextBinding
     private val viewModel: DetailFeedViewModel by viewModels()
+    private val _uid = uid
+    private val _userName = userName
+    private val _profileUrl = profileUrl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = DialogCommentBottomSheetModalBinding.inflate(inflater, container, false)
-        editBinding = DialogCommentBottomEdittextBinding.inflate(inflater, container, false)
-        return inflater.inflate(R.layout.dialog_comment_bottom_sheet_modal, container, false)
+        editBinding = DialogCommentBottomEdittextBinding.inflate(inflater, container, false) //초기설정 함수화 하기
+
+        return binding.root
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -59,6 +67,11 @@ class CommentModalBottomSheet : BottomSheetDialogFragment() {
                     binding.root.setPadding(0, 0, 0, height)
                 }
             })
+
+            editTextBinding.commentUploadBtn.setOnClickListener {
+                val comment = editTextBinding.commentEditText.text.toString()
+                viewModel.uploadComment(comment,_uid,_userName,_profileUrl)
+            }
         }
 
         return bottomSheetDialog
@@ -69,8 +82,19 @@ class CommentModalBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.fetchCommentData(_uid)
 
-        //버튼 리스너 등록
+        recyclerView = binding.commentRecycerView
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        commentAdapter = FeedDetailCommentAdapter(emptyList())
+        recyclerView.adapter = commentAdapter
+
+        viewModel.commentArr.observe(this) { arr ->
+            Log.d("FeedDetailScreen", "Livedata 댓글 : ${arr.toString()}")
+            commentAdapter = arr?.let { FeedDetailCommentAdapter(arr) }!!
+            recyclerView.adapter = commentAdapter
+        }
+
     }
 
     override fun onStart() {
@@ -93,6 +117,7 @@ class CommentModalBottomSheet : BottomSheetDialogFragment() {
                     }
                 }
             }
+
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
             }
         }

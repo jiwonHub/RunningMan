@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#262626"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#262626">
 
     <EditText
 
@@ -13,6 +13,7 @@
         android:backgroundTint="@color/light_gray"
         android:gravity="center"
         android:hint="텍스트를 입력하세요"
+        android:textColor="@color/white"
         android:textColorHint="@color/light_gray"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
