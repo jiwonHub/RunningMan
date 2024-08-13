@@ -11,6 +11,7 @@ data class FeedModel(
     val timestamp: Timestamp,
     val profileURL : String,
     val likedCount : Int,
-    val isLiked : Boolean
+    val isLiked : Boolean,
+    val userUID : String,
 )
 

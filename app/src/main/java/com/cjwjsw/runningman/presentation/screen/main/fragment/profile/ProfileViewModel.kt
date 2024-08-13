@@ -54,7 +54,8 @@ class ProfileViewModel @Inject constructor(
                         uploadedImageUrls.add(downloadUrl.toString())
                         if (uploadedImageUrls.size == imageUris.size) {
                             val feedUID = UUID.randomUUID().toString()
-                            savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName,0,false)
+                            savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName,0,false,
+                                userData!!.idToken)
                         }
                     }.addOnFailureListener { e ->
                         _uploadStatus.value = false
@@ -78,6 +79,7 @@ class ProfileViewModel @Inject constructor(
         userName: String,
         likedCount : Int,
         isLiked : Boolean,
+        userUID : String
     ) {
         val postMetadata = hashMapOf(
             "postId" to postId,
@@ -89,7 +91,8 @@ class ProfileViewModel @Inject constructor(
             "profileURL" to profileImg,
             "userName" to userName,
             "likedCount" to likedCount,
-            "isLiked" to isLiked
+            "isLiked" to isLiked,
+            "userUID" to userUID
         )
 
         fbsManager.collection("posts").document(feedUID)
