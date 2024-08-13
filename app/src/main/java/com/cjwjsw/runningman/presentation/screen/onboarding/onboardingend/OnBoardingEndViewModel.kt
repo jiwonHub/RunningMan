@@ -18,6 +18,7 @@ class OnBoardingEndViewModel @Inject constructor() : ViewModel() {
             Log.d("OnBoardingEndViewModel",userId + gender + weight + height + age)
             val userRef = db.collection("user_info").document(userId)
             val userData = hashMapOf(
+                "uid" to userId,
                 "gender" to gender,
                 "weight" to weight,
                 "height" to height,

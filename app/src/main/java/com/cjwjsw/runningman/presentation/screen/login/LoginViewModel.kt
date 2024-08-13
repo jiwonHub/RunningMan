@@ -58,7 +58,7 @@ class LoginViewModel @Inject constructor(
                                     uid,
                                     user.kakaoAccount?.profile?.nickname.toString(),
                                     user.kakaoAccount?.email.toString(),
-                                    user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
+                                    user.kakaoAccount?.profile?.profileImageUrl.toString()
                                 )
                             }.onFailure {
                                 Log.e("FirebaseAuth", "signInWithCredential:failure", )
@@ -155,6 +155,7 @@ class LoginViewModel @Inject constructor(
                     Log.e("KakaoLogin", "사용자 정보 요청 실패", error)
                     cont.resume(null)
                 } else if (user != null) {
+                    Log.d("LoginViewModel",user.kakaoAccount?.profile.toString())
                     cont.resume(user)
                 }
             }
