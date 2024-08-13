@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
 import com.cjwjsw.runningman.domain.model.FeedModel
 import com.google.firebase.database.DataSnapshot
@@ -97,7 +98,8 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
             comment = comment,
             timestamp = System.currentTimeMillis() / 1000,
             userName = userName,
-            profileUrl = profileImg
+            profileUrl = profileImg,
+            userUid = userData?.idToken.toString()
         )
 
         val newCommentKey = ref.push().key
@@ -118,6 +120,10 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
     private inline fun <reified T> Map<String, Any>.toDataClass(): T? {
         val json = Gson().toJson(this)
         return Gson().fromJson(json, T::class.java)
+    }
+
+    companion object{
+        val userData =  UserManager.getInstance()
     }
 
 }
