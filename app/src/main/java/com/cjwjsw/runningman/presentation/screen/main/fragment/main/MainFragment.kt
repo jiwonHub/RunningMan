@@ -1,5 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,8 +15,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import android.Manifest
-import androidx.lifecycle.Observer
 import com.cjwjsw.runningman.core.LocationManager
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
@@ -163,7 +162,7 @@ class MainFragment : Fragment() {
         if (permissionsNeeded.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
         } else {
-            startPedometerService()
+            //startPedometerService()
             fetchLocation()
         }
     }

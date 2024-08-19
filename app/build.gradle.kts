@@ -91,6 +91,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
     implementation ("com.google.android.gms:play-services-oss-licenses:17.1.0")
 
+    implementation("me.relex:circleindicator:1.3.2")
+    implementation("me.relex:circleindicator:2.1.6")
+
     implementation("com.naver.maps:map-sdk:3.18.0")
 
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")

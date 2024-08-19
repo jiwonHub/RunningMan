@@ -118,5 +118,4 @@ object AppModule {
     fun provideWalkDao(appDatabase: AppDatabase): WalkDao {
         return appDatabase.walkDao()
     }
-
 }
