@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".RunningManApplication"
@@ -24,11 +25,22 @@
         android:theme="@style/Theme.RunningMan"
         tools:targetApi="31"
         tools:ignore="ForegroundServicePermission">
-
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="@string/naver_map_api_key" />
         <service
             android:name=".service.PedometerService"
             android:foregroundServiceType="location"
             android:exported="false"/>
+        <service
+            android:name=".service.LocationUpdateService"
+            android:foregroundServiceType="location"
+            android:exported="false" />
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
         <activity
             android:name=".presentation.screen.main.MainActivity"
             android:exported="true">
@@ -76,6 +88,7 @@
             android:theme="@style/OssLicensesTheme"/>
         <activity android:name=".presentation.screen.main.fragment.main.settings.WebViewActivity"/>
         <activity android:name=".presentation.screen.main.fragment.main.graph.GraphActivity"/>
+        <activity android:name=".presentation.screen.main.fragment.main.weather.WeatherDetailActivity"/>
 
     </application>
 
