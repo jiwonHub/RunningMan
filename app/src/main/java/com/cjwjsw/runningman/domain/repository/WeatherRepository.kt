@@ -6,5 +6,5 @@ import com.cjwjsw.runningman.domain.model.weather.HourlyWeatherModel
 interface WeatherRepository {
     suspend fun getCurrentWeather(lat: Double, lng: Double): CurrentWeatherModel
 
-    suspend fun getHourlyWeather(): HourlyWeatherModel
+    suspend fun getHourlyWeather(lat: Double, lng: Double): HourlyWeatherModel
 }
