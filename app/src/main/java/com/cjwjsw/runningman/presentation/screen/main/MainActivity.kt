@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -36,8 +37,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_social -> {
-//                    val intent : Intent =  Intent(this,feedScreen::class.java)
-//                    startActivity(intent)
                     loadFragment(SocialFragment())
                     true
                 }

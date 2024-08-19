@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.AddFeedActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
+        <LinearLayout
+            android:id="@+id/topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:weightSum="3"
+            app:layout_constraintBottom_toTopOf="@id/previewImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_weight="0.2">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/toptext"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="새 게시물"
+                android:textColor="@color/white"
+                android:textSize="24dp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/addImageBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/black"
+                android:gravity="right|center"
+                android:paddingEnd="8dp"
+                android:text="완료"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/previewImage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/addPictureBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topLayout"
+            app:layout_constraintVertical_weight="2" />
+        <me.relex.circleindicator.CircleIndicator3
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/titleEditText"
+            app:layout_constraintTop_toBottomOf="@id/previewImage"
+            app:layout_constraintStart_toStartOf="parent"/>
+        <ImageButton
+            android:id="@+id/addPictureBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/black"
+            android:src="@drawable/outline_add_photo_alternate_24"
+            app:layout_constraintBottom_toTopOf="@id/titleEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/previewImage"
+            app:layout_constraintVertical_weight="0.2" />
+
+        <ImageButton
+            android:id="@+id/cameraBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/black"
+            android:src="@drawable/baseline_add_a_photo_24"
+            app:layout_constraintBottom_toTopOf="@id/titleEditText"
+            app:layout_constraintEnd_toStartOf="@id/addPictureBtn"
+            app:layout_constraintTop_toBottomOf="@id/previewImage"
+            app:layout_constraintVertical_weight="0.2" />
+
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/titleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:hint="제목을 입력하세요"
+            android:inputType="text"
+            android:textColor="@color/gray"
+            android:textColorHint="@color/gray"
+            app:layout_constraintBottom_toTopOf="@id/contentsEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/addPictureBtn"
+            app:layout_constraintVertical_weight="0.8" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/contentsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:hint="상세 내용을 입력하세요"
+            android:inputType="text"
+            android:textColor="@color/gray"
+            android:textColorHint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleEditText"
+            app:layout_constraintVertical_weight="0.8" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

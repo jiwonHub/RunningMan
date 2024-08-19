@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -9,7 +14,11 @@
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
     <application
         android:name=".RunningManApplication"
@@ -25,6 +34,16 @@
         tools:targetApi="31"
         tools:ignore="ForegroundServicePermission">
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <service
             android:name=".service.PedometerService"
             android:foregroundServiceType="location"
@@ -35,15 +54,15 @@
         </activity>
         <activity android:name=".presentation.screen.SplashScreen"
             android:exported="true">
+
+        </activity>
+        <activity android:name=".presentation.screen.login.LoginScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-        </activity>
-        <activity android:name=".presentation.screen.login.LoginScreen"
-            android:exported="true">
 
         </activity>
 
@@ -67,15 +86,16 @@
         <activity android:name=".presentation.screen.onboarding.HeightScreen"/>
         <activity android:name=".presentation.screen.onboarding.AgeScreen"/>
         <activity android:name=".presentation.screen.onboarding.onboardingend.OnBoardingEndScreen"/>
-
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.SocialDetailScreen" />
         <activity android:name=".presentation.screen.main.fragment.main.settings.SettingsActivity"/>
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.AddFeedActivity" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/OssLicensesTheme" />
         <activity android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
             android:theme="@style/OssLicensesTheme"/>
         <activity android:name=".presentation.screen.main.fragment.main.settings.WebViewActivity"/>
-
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity" />
     </application>
 
 </manifest>

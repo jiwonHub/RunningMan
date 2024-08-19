@@ -7,6 +7,7 @@ import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
@@ -42,6 +43,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context {
+        return context
+    }
+
+    @Provides
+    @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(WEATHER_BASE_URL)
@@ -53,6 +60,12 @@ object AppModule {
     @Singleton
     fun provideFirebaseStorage() : FirebaseStorage{
         return FirebaseStorage.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun proviedFirebaseFireStore() : FirebaseFirestore{
+        return FirebaseFirestore.getInstance()
     }
 
 
