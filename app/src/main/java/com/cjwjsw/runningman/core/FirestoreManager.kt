@@ -12,7 +12,7 @@ class FirestoreManager @Inject constructor(
 
     suspend fun saveWalk(walk: WalkModel) {
         try {
-            val userId = UserManager.getInstance()?.id ?: 1
+            val userId = UserManager.getInstance()?.idToken ?: 1
             val userDocRef = firestore.collection("walks").document(userId.toString())
 
             // userId 문서 아래에 dates 컬렉션을 만들고, 날짜를 문서 ID로 설정하여 walk 데이터를 저장

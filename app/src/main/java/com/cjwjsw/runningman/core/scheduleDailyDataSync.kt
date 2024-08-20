@@ -17,14 +17,22 @@ fun scheduleDailyDataSync(context: Context) {
     // 자정까지의 시간을 계산
     val now = Calendar.getInstance()
     val target = Calendar.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, 0)
-        set(Calendar.MINUTE, 0)
+        set(Calendar.HOUR_OF_DAY, 19)
+        set(Calendar.MINUTE, 52)
         set(Calendar.SECOND, 0)
         if (before(now)) add(Calendar.DAY_OF_YEAR, 1)
     }
     val initialDelay = target.timeInMillis - now.timeInMillis
-    val currentDistance = WalkDataSingleton.distance
-    val data: Data = workDataOf("distance" to currentDistance)
+    val currentDistance = WalkDataSingleton.distance.value ?: 0.0
+    val currentStepCount = WalkDataSingleton.stepCount.value ?: 0
+    val currentCalories = WalkDataSingleton.calorie.value ?: 0.0
+    val currentTime = WalkDataSingleton.time.value ?: 0L
+    val data: Data = workDataOf(
+        "distance" to currentDistance,
+        "stepCount" to currentStepCount,
+        "calories" to currentCalories,
+        "time" to currentTime
+    )
 
 
     // 주기적 워크 요청 설정 (매일 반복)

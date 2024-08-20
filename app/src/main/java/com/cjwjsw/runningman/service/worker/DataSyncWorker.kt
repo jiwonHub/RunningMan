@@ -29,6 +29,10 @@ import java.util.Locale
 import javax.inject.Inject
 
 const val DISTANCE = "distance"
+const val STEPS = "stepCount"
+const val CALORIES = "calories"
+const val TIME = "time"
+
 
 @HiltWorker
 class DataSyncWorker @AssistedInject constructor(
@@ -42,14 +46,34 @@ class DataSyncWorker @AssistedInject constructor(
         return try {
             val today = getCurrentDate()
             val distance = inputData.getDouble(DISTANCE, 0.0)
+            val stepCount = inputData.getInt(STEPS, 0)
+            val calories = inputData.getDouble(CALORIES, 0.0)
+            val time = inputData.getLong(TIME, 0L)
 
             // Room에 데이터 저장
-            val dailyWalk = DailyWalk(date = today, distance = distance)
+            val dailyWalk = DailyWalk(
+                date = today,
+                distance = distance,
+                stepCount = stepCount,
+                calories = calories,
+                time = time
+            )
             walkRepository.insertWalk(dailyWalk)
 
             // Firestore에 저장
-            val walk = walkRepository.getWalkByDate(today)
-            firestoreManager.saveWalk(WalkModel(date = today, distance = walk.distance))
+            firestoreManager.saveWalk(WalkModel(
+                date = today,
+                distance = distance,
+                stepCount = stepCount,
+                calories = calories,
+                time = time
+            ))
+
+            //저장 후 데이터 초기화
+            WalkDataSingleton.resetDistance()
+            WalkDataSingleton.resetStepCount()
+            WalkDataSingleton.resetCalorie()
+            WalkDataSingleton.resetTime()
 
             Result.success()
         } catch (e: Exception) {

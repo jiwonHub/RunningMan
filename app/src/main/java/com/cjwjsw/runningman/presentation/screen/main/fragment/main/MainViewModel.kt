@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cjwjsw.runningman.core.WalkDataSingleton
 import com.cjwjsw.runningman.domain.model.weather.CurrentWeatherModel
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
 import com.cjwjsw.runningman.service.PedometerService
@@ -17,10 +18,10 @@ class MainViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository
 ): ViewModel(){
 
-    val stepCount: LiveData<Int> = PedometerService.stepCountLiveData
-    val caloriesBurned: LiveData<Double> = PedometerService.caloriesBurnedLiveData
-    val distanceWalked: LiveData<Double> = PedometerService.distanceWalkedLiveData
-    val elapsedTime: LiveData<Long> = PedometerService.elapsedTimeLiveData
+    val stepCount: LiveData<Int> = WalkDataSingleton.stepCount
+    val caloriesBurned: LiveData<Double> = WalkDataSingleton.calorie
+    val distanceWalked: LiveData<Double> = WalkDataSingleton.distance
+    val elapsedTime: LiveData<Long> = WalkDataSingleton.time
 
     private val _currentWeather = MutableLiveData<CurrentWeatherModel>()
     val currentWeather: LiveData<CurrentWeatherModel> get() = _currentWeather

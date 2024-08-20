@@ -6,5 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "daily_walk")
 data class DailyWalk(
     @PrimaryKey val date: String,
-    val distance: Double
+    val distance: Double,
+    val stepCount: Int,
+    val calories: Double,
+    val time: Long
 )

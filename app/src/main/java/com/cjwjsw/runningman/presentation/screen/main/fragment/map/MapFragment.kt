@@ -68,6 +68,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.locationText.text = address
         }
 
+        WalkDataSingleton.distance.observe(viewLifecycleOwner) { distance ->
+            updateDistanceUI(distance)
+        }
 
         binding.resetButton.setOnClickListener {
             viewModel.resetData()
@@ -108,9 +111,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
-
-        // 현재 거리 UI 업데이트
-        updateDistanceUI(WalkDataSingleton.distance)
 
         // 위치 업데이트 콜백 설정
         naverMap.addOnLocationChangeListener { location ->

@@ -18,6 +18,7 @@ import androidx.lifecycle.MutableLiveData
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import androidx.core.app.NotificationCompat
+import com.cjwjsw.runningman.core.WalkDataSingleton
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -146,16 +147,16 @@ class PedometerService : Service(), SensorEventListener {
             }
         }
 
-        stepCount = totalSteps - initialStepCount
-        caloriesBurned = stepCount * 0.04
-        distanceWalked = stepCount * 0.762 / 1000 // km
+        val stepCount = totalSteps - initialStepCount
+        val caloriesBurned = stepCount * 0.04
+        val distanceWalked = stepCount * 0.762 / 1000 // km
 
-        stepCountLiveData.postValue(stepCount)
-        caloriesBurnedLiveData.postValue(caloriesBurned)
-        totalStepCountLiveData.postValue(totalSteps)
-        distanceWalkedLiveData.postValue(
-            BigDecimal(distanceWalked).setScale(2, RoundingMode.HALF_UP).toDouble()
-        )
+        WalkDataSingleton.updateStepCount(stepCount)
+        WalkDataSingleton.updateCalorie(caloriesBurned)
+//        WalkDataSingleton.updateDistance(
+//            BigDecimal(distanceWalked).setScale(2, RoundingMode.HALF_UP).toDouble()
+//        )
+        WalkDataSingleton.updateTime(elapsedTime)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
