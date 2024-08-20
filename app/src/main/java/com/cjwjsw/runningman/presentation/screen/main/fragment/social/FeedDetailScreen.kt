@@ -21,6 +21,7 @@ class FeedDetailScreen: AppCompatActivity() {
     private var profileImg = ""
     private var uid = ""
     private var feedTitle = ""
+    private var userNumber = ""
     private var IL = false
     private var Lc = 0
 
@@ -46,6 +47,7 @@ class FeedDetailScreen: AppCompatActivity() {
         binding.indicator.setViewPager(binding.feedImgViewPager)
         binding.title.text = feedTitle
         binding.likedCountText.text = "${Lc}명이 좋아합니다"
+        userNumber = userData.userNumber
         isLikedImg(IL)
         loadProfileImg()
 
@@ -91,7 +93,7 @@ class FeedDetailScreen: AppCompatActivity() {
 
 
     private fun modalBottomSheet(uid : String,userName : String,profileUrl : String) {
-        val modal = CommentModalBottomSheet(uid,userName,profileUrl)
+        val modal = CommentModalBottomSheet(uid,userName,profileUrl,userNumber)
 
         modal.show(supportFragmentManager, CommentModalBottomSheet.TAG)
     }

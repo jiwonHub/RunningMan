@@ -92,14 +92,15 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
         })
     }
 
-    fun uploadComment(comment: String, feedUid: String, userName: String,profileImg: String) {
+    fun uploadComment(comment: String, feedUid: String, userName: String,profileImg: String,userNumber: String) {
         val ref = FeedViewModel.fbRef.getReference(feedUid).child("comments")
         val newComment = CommentModel(
             comment = comment,
             timestamp = System.currentTimeMillis() / 1000,
             userName = userName,
             profileUrl = profileImg,
-            userUid = userData?.idToken.toString()
+            userUid = userData?.idToken.toString(),
+            userNumber = userData?.userNumber.toString()
         )
 
         val newCommentKey = ref.push().key

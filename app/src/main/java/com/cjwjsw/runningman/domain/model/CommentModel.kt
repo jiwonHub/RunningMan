@@ -5,6 +5,7 @@ data class CommentModel(
     val userName: String = "",
     val timestamp: Long = 0,
     val profileUrl : String = "",
-    val userUid : String = ""
+    val userUid : String = "",
+    val userNumber : String = ""
 )
 
