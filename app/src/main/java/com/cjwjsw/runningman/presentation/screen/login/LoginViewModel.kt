@@ -46,6 +46,7 @@ class LoginViewModel @Inject constructor(
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 성공")
                 viewModelScope.launch {
                     try {
+                        Log.d("LoginViewModel","액세스 토큰 : ${token.accessToken}");
                         val user = withContext(Dispatchers.IO) { fetchUser(token, auth) }
                         user?.let {
                             val uidResult = fbUsecase.execute(auth, token.idToken.toString(), onSuccess = {
