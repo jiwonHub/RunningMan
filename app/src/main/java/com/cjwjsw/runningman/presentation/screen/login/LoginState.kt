@@ -12,7 +12,8 @@ sealed class LoginState{
             val token : String,
             val userName: String,
             val profileImageUri: String?,
-            val email : String
+            val email : String,
+            val userNumber: String
         ): Success()
         data object NotRegistered: Success()
 

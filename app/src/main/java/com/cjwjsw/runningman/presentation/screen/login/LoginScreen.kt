@@ -114,7 +114,8 @@ class LoginScreen : AppCompatActivity() {
             idToken = loginState.token,
             nickName = loginState.userName ,
             profileImageUrl = loginState.profileImageUri.toString(),
-            email = loginState.email)
+            email = loginState.email,
+            userNumber = loginState.userNumber)
     }
 
 

@@ -42,6 +42,7 @@ class MainFragment : Fragment() {
             this.viewModel = this@MainFragment.viewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
         return binding.root
     }
 

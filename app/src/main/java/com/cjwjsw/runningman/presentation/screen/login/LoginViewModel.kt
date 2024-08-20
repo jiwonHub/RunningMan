@@ -33,6 +33,7 @@ class LoginViewModel @Inject constructor(
     val myStateLiveData = MutableLiveData<LoginState2>(LoginState2.Uninitialized)
     val kakaoStateLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
     val fbUsecase = FBStoreUserSignInCase()
+    val userInfo = UserManager.getInstance();
 
 
     fun kakaoLogin(context: Context,auth:FirebaseAuth,onSuccess: () -> Unit, onFailure: (Throwable) -> Unit) {
@@ -59,7 +60,8 @@ class LoginViewModel @Inject constructor(
                                     uid,
                                     user.kakaoAccount?.profile?.nickname.toString(),
                                     user.kakaoAccount?.email.toString(),
-                                    user.kakaoAccount?.profile?.profileImageUrl.toString()
+                                    user.kakaoAccount?.profile?.profileImageUrl.toString(),
+                                    user.id.toString()
                                 )
                             }.onFailure {
                                 Log.e("FirebaseAuth", "signInWithCredential:failure", )
@@ -130,12 +132,15 @@ class LoginViewModel @Inject constructor(
     fun setKakaoUserInfo(firebaseUser: FirebaseUser?){
         firebaseUser?.let{ user ->
             Log.d("LoginScreen","handleRegisterState")
-            kakaoStateLiveData.value = LoginState.Success.Registered(
-                token = user.uid,
-                userName = user.displayName ?: "익명",
-                profileImageUri = user.photoUrl.toString(),
-                email = user.email.toString()
-            )
+            kakaoStateLiveData.value = userInfo?.let {
+                LoginState.Success.Registered(
+                    token = user.uid,
+                    userName = user.displayName ?: "익명",
+                    profileImageUri = user.photoUrl.toString(),
+                    email = user.email.toString(),
+                    userNumber = it.userNumber
+                )
+            }
         }?: kotlin.run {
             Log.d("LoginScreen","handleNotRegisterState")
             kakaoStateLiveData.value = LoginState.Success.NotRegistered
