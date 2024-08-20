@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -58,7 +59,10 @@ dependencies {
     implementation ("com.kakao.sdk:v2-user:2.20.1")
 
     implementation ("com.google.dagger:hilt-android:2.51.1")
+    implementation ("androidx.work:work-runtime-ktx:2.7.1")
+    implementation ("androidx.hilt:hilt-work:1.0.0")
     kapt("com.google.dagger:hilt-compiler:2.51.1")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
 
     implementation ("com.google.firebase:firebase-firestore:25.0.0")
 
@@ -90,6 +94,17 @@ dependencies {
 
     implementation("me.relex:circleindicator:1.3.2")
     implementation("me.relex:circleindicator:2.1.6")
+
+    implementation("com.naver.maps:map-sdk:3.18.0")
+
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation ("androidx.room:room-ktx:$room_version")
+
+    // To use Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
 }
 
 kapt {

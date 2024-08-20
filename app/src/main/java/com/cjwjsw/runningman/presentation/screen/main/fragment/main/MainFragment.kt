@@ -15,9 +15,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.cjwjsw.runningman.core.LocationManager
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.settings.SettingsActivity
+import com.cjwjsw.runningman.presentation.screen.main.fragment.main.weather.WeatherDetailActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +38,10 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false).apply {
+            this.viewModel = this@MainFragment.viewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
         return binding.root
     }
 
@@ -45,7 +50,6 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        initFetchData()
         observeData()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -58,6 +62,11 @@ class MainFragment : Fragment() {
 
         binding.runningContainer.setOnClickListener {
             val intent = Intent(requireContext(), GraphActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.weatherLayout.setOnClickListener {
+            val intent = Intent(requireContext(), WeatherDetailActivity::class.java)
             startActivity(intent)
         }
 
@@ -74,14 +83,6 @@ class MainFragment : Fragment() {
 //    }
 
     private fun observeData() {
-        viewModel.currentWeather.observe(viewLifecycleOwner) { currentWeather ->
-            currentWeather?.let {
-                binding.weatherCode.text = "오늘 날씨: ${setWeatherCodeText(currentWeather.weather_code)}"
-                binding.weatherTemp.text = "${currentWeather.temperature_2m}℃"
-                binding.weatherPrecipitation.text = "${currentWeather.precipitation}%"
-            }
-        }
-
         viewModel.stepCount.observe(viewLifecycleOwner) { stepCount ->
             binding.runningCountText.text = "$stepCount"
             updateProgressBar(stepCount)
@@ -100,10 +101,6 @@ class MainFragment : Fragment() {
             val minutes = (elapsedTime % 3600) / 60
             binding.time.text = "%02d:%02d".format(hours, minutes)
         }
-    }
-
-    private fun initFetchData() {
-        viewModel.fetchCurrentWeather()
     }
 
     private fun updateProgressBar(stepCount: Int) {
@@ -136,19 +133,7 @@ class MainFragment : Fragment() {
         waterProgressBar.setProgress(50)
     }
 
-    private fun setWeatherCodeText(weatherCode: Int): String {
-        return when (weatherCode) {
-            0 -> "맑음"
-            1, 2, 3 -> "흐림"
-            45, 48 -> "안개"
-            51, 53, 55, 56, 57 -> "이슬비"
-            61, 63, 65, 66, 67 -> "비"
-            71, 73, 75, 77 -> "눈"
-            80, 81, 82 -> "소나기"
-            95, 96, 99 -> "뇌우"
-            else -> "알 수 없는 날씨 코드"
-        }
-    }
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun checkAndRequestPermissions() {
@@ -167,6 +152,12 @@ class MainFragment : Fragment() {
                 permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14 이상
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissionsNeeded.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
+            }
+        }
+
         if (permissionsNeeded.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
         } else {
@@ -200,6 +191,7 @@ class MainFragment : Fragment() {
             location?.let {
                 val latitude = it.latitude
                 val longitude = it.longitude
+                LocationManager.updateLocation(latitude, longitude)
                 viewModel.setLocation(latitude, longitude)
             }
         }
