@@ -118,9 +118,11 @@ class LoginViewModel @Inject constructor(
     fun setUserInfo(firebaseUser: FirebaseUser?) = viewModelScope.launch{
             firebaseUser?.let{ user ->
                 myStateLiveData.value = LoginState2.Success.Registered(
+                    idToken = user.uid,
                     userName = user.displayName ?: "익명",
                     profileImageUri = user.photoUrl,
                 )
+                UserManager.setUser(user.uid, user.displayName ?: "", user.email.toString(), user.photoUrl.toString())
             }?: kotlin.run {
                 myStateLiveData.value = LoginState2.Success.NotRegistered
             }
