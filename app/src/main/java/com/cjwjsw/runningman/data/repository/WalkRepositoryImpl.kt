@@ -45,6 +45,10 @@ class WalkRepositoryImpl @Inject constructor(
         walkDao.getAllWalks()
     }
 
+    override suspend fun getWalksBetweenDates(startDate: String, endDate: String): List<DailyWalk> = withContext(Dispatchers.IO) {
+        walkDao.getWalksBetweenDates(startDate, endDate)
+    }
+
     override suspend fun getWalkCount(): Int = withContext(Dispatchers.IO) {
         walkDao.getWalkCount()
     }
