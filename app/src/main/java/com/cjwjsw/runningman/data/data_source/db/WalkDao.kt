@@ -19,4 +19,7 @@ interface WalkDao {
 
     @Query("SELECT COUNT(*) FROM daily_walk")
     suspend fun getWalkCount(): Int
+
+    @Query("SELECT * FROM daily_walk WHERE date BETWEEN :startDate AND :endDate")
+    suspend fun getWalksBetweenDates(startDate: String, endDate: String): List<DailyWalk>
 }
