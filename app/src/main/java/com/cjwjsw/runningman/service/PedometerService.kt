@@ -20,7 +20,6 @@ import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import androidx.core.app.NotificationCompat
 import com.cjwjsw.runningman.core.WalkDataSingleton
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
@@ -28,16 +27,11 @@ import java.math.RoundingMode
 import java.util.Calendar
 
 class PedometerService : Service(), SensorEventListener {
-    private var mockDataJob: Job? = null
-
     // 센서 매니저
     private lateinit var sensorManager: SensorManager
     // 걸음 센서
     private var stepCounterSensor: Sensor? = null
-    private var stepCount = 0 // 걸음 수
-    private var caloriesBurned = 0.0 // 칼로리 소모
     private var initialStepCount = 0 // 이전에 걸었던 수
-    private var distanceWalked = 0.0 // 거리 계산
     private var elapsedTime = 0L // 시간 계산
     private var lastCheckedDay = -1
     private lateinit var sharedPreferences: SharedPreferences
@@ -48,17 +42,12 @@ class PedometerService : Service(), SensorEventListener {
     private val notificationId = 1
     private val channelId = "PedometerServiceChannel"
 
-    // 라이브 데이터
-    companion object {
-        val stepCountLiveData = MutableLiveData<Int>()
-        val caloriesBurnedLiveData = MutableLiveData<Double>()
-        val totalStepCountLiveData = MutableLiveData<Int>()
-        val distanceWalkedLiveData = MutableLiveData<Double>()
-        val elapsedTimeLiveData = MutableLiveData<Long>()
-    }
+    private val elapsedTimeLiveData = MutableLiveData<Long>()
+
 
     override fun onCreate() {
         super.onCreate()
+        Log.d("PedometerService", "Service created")
         sharedPreferences = getSharedPreferences("PedometerPreferences", Context.MODE_PRIVATE)
         initializeSensorManager()
         initializeNotification()
@@ -66,23 +55,32 @@ class PedometerService : Service(), SensorEventListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("PedometerService", "Service started")
         startForeground(notificationId, notificationBuilder.build())
         return START_STICKY
     }
 
     private fun initializeSensorManager() {
+        Log.d("PedometerService", "Initializing Sensor Manager")
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        stepCounterSensor?.let {
-            if (!sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)) {
-                stopSelf()
-            }
-        } ?: stopSelf()
+        if (stepCounterSensor == null) {
+            Log.e("PedometerService", "Step counter sensor not available!")
+            stopSelf()
+            return
+        }
+        if (!sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL)) {
+            Log.e("PedometerService", "Failed to register sensor listener!")
+            stopSelf()
+        } else {
+            Log.d("PedometerService", "Sensor listener registered successfully.")
+        }
         initialStepCount = sharedPreferences.getInt("initialStepCount", 0)
         lastCheckedDay = sharedPreferences.getInt("lastCheckedDay", -1)
     }
 
     private fun initializeNotification() {
+        Log.d("PedometerService", "Initializing Notification")
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannel()
         notificationBuilder = createNotificationBuilder()
@@ -102,6 +100,7 @@ class PedometerService : Service(), SensorEventListener {
     }
 
     private fun createNotificationBuilder(): NotificationCompat.Builder {
+        Log.d("PedometerService", "Creating Notification Builder")
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -115,6 +114,7 @@ class PedometerService : Service(), SensorEventListener {
     }
 
     private fun startElapsedTimeCounter() {
+        Log.d("PedometerService", "Starting Elapsed Time Counter")
         GlobalScope.launch {
             while (true) {
                 delay(1000)
@@ -153,10 +153,11 @@ class PedometerService : Service(), SensorEventListener {
 
         WalkDataSingleton.updateStepCount(stepCount)
         WalkDataSingleton.updateCalorie(caloriesBurned)
-//        WalkDataSingleton.updateDistance(
-//            BigDecimal(distanceWalked).setScale(2, RoundingMode.HALF_UP).toDouble()
-//        )
+        WalkDataSingleton.updateDistance(
+            BigDecimal(distanceWalked).setScale(2, RoundingMode.HALF_UP).toDouble()
+        )
         WalkDataSingleton.updateTime(elapsedTime)
+        Log.d("walkdata", WalkDataSingleton.stepCount.value.toString())
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -165,6 +166,7 @@ class PedometerService : Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("PedometerService", "Service destroyed")
         sensorManager.unregisterListener(this)
         sharedPreferences.edit().apply {
             putInt("initialStepCount", initialStepCount)
