@@ -4,16 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 object WalkDataSingleton {
-    private val _distance = MutableLiveData<Double>().apply { value = 0.0 }
+    private val _distance = MutableLiveData<Double>()
     val distance: LiveData<Double> = _distance
 
-    private val _stepCount = MutableLiveData<Int>().apply { value = 0 }
+    private val _stepCount = MutableLiveData<Int>()
     val stepCount: LiveData<Int> = _stepCount
 
-    private val _calorie = MutableLiveData<Double>().apply { value = 0.0 }
+    private val _calorie = MutableLiveData<Double>()
     val calorie: LiveData<Double> = _calorie
 
-    private val _time = MutableLiveData<Long>().apply { value = 0L }
+    private val _time = MutableLiveData<Long>()
     val time: LiveData<Long> = _time
 
     fun updateDistance(newDistance: Double) {
