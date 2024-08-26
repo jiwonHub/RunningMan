@@ -2,18 +2,13 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.map
 
 import android.content.Context
 import android.location.Geocoder
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.core.LocationTrackerManager
 import com.cjwjsw.runningman.core.WalkDataSingleton
-import com.cjwjsw.runningman.data.data_source.db.DailyWalk
-import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,8 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val locationTrackerManager: LocationTrackerManager,
-    private val walkRepository: WalkRepository,
+    private val locationTrackerManager: LocationTrackerManager
 ): ViewModel() {
 
     private val _path = MutableLiveData<List<LatLng>>()
@@ -33,14 +27,6 @@ class MapViewModel @Inject constructor(
 
     private var currentDate: String = getCurrentDate()
 
-    init {
-        viewModelScope.launch {
-            val today = getCurrentDate()
-            val walk = walkRepository.getWalkByDate(today)
-            WalkDataSingleton.updateDistance(walk.distance)
-        }
-    }
-
     fun addLocation(latLng: LatLng, context: Context) {
         val today = getCurrentDate()
         if (currentDate != today) {
@@ -50,7 +36,7 @@ class MapViewModel @Inject constructor(
 
         locationTrackerManager.addLocation(latLng)
         _path.value = locationTrackerManager.getPath()
-        WalkDataSingleton.updateDistance(locationTrackerManager.getDistance())
+//        WalkDataSingleton.updateDistance(locationTrackerManager.getDistance())
         _address.value = getAddressFromLocation(latLng.latitude, latLng.longitude, context)
     }
 
