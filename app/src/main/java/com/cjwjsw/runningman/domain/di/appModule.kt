@@ -1,6 +1,7 @@
 package com.cjwjsw.runningman.domain.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
@@ -52,6 +53,13 @@ class GlideModule : AppGlideModule() {}
 @InstallIn(SingletonComponent::class)
 object AppModule {
     private const val WEATHER_BASE_URL = "https://api.open-meteo.com/"
+    private const val PREFS_NAME = "WalkDataPrefs"
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    }
 
     @Provides
     @Singleton

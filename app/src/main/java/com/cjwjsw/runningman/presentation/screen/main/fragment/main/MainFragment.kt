@@ -15,8 +15,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.cjwjsw.runningman.core.LocationManager
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
+import com.cjwjsw.runningman.presentation.component.MainRunningDailyProgressBar
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.settings.SettingsActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.weather.WeatherDetailActivity
@@ -24,6 +24,10 @@ import com.cjwjsw.runningman.service.PedometerService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -34,11 +38,14 @@ class MainFragment : Fragment() {
     private val viewModel: MainViewModel by viewModels()
     private var maxSteps = 1000
 
+    private lateinit var progressBarMap: Map<String, MainRunningDailyProgressBar>
+    private lateinit var todayDayOfWeek: String
+
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false).apply {
             this.viewModel = this@MainFragment.viewModel
             lifecycleOwner = viewLifecycleOwner
@@ -56,37 +63,21 @@ class MainFragment : Fragment() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         checkAndRequestPermissions()
 
-        binding.setting.setOnClickListener {
-            val intent = Intent(requireContext(), SettingsActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.runningContainer.setOnClickListener {
-            val intent = Intent(requireContext(), GraphActivity::class.java)
-            startActivity(intent)
-        }
-
-        binding.weatherLayout.setOnClickListener {
-            val intent = Intent(requireContext(), WeatherDetailActivity::class.java)
-            startActivity(intent)
-        }
-
-        viewModel.currentWeather
+        viewModel.fetchWeeklyWalks()
     }
 
-    private fun startPedometerService() {
-        val serviceIntent = Intent(requireContext(), PedometerService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireActivity().startForegroundService(serviceIntent)
-        } else {
-            requireActivity().startService(serviceIntent)
+    private fun updateProgressBarForDay(dayOfWeek: String, steps: Int) {
+        progressBarMap[dayOfWeek]?.let {
+            val progress = (steps * 100) / maxSteps
+            it.setProgress(progress.coerceAtMost(100))
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun observeData() {
         viewModel.stepCount.observe(viewLifecycleOwner) { stepCount ->
             binding.runningCountText.text = "$stepCount"
-            updateProgressBar(stepCount)
+            updateProgressBarForDay(todayDayOfWeek, stepCount)
         }
 
         viewModel.caloriesBurned.observe(viewLifecycleOwner) { caloriesBurned ->
@@ -102,39 +93,45 @@ class MainFragment : Fragment() {
             val minutes = (elapsedTime % 3600) / 60
             binding.time.text = "%02d:%02d".format(hours, minutes)
         }
+
+        viewModel.weeklyWalks.observe(viewLifecycleOwner) { walks ->
+            walks?.forEach { walk ->
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val date = LocalDate.parse(walk.date, formatter)
+                val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+                updateProgressBarForDay(dayOfWeek, walk.stepCount)
+            }
+        }
     }
 
-    private fun updateProgressBar(stepCount: Int) {
-        val progress = (stepCount * 100) / maxSteps
-        val cappedProgress = progress.coerceAtMost(100)
-
-        // Update the progress of runningProgressBar
-        binding.runningProgressBar.setProgress(cappedProgress)
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initViews() {
-        val progressBar = binding.runningProgressBar
-        val sundayProgressBar = binding.sundayProgressBar
-        val mondayProgressBar = binding.mondayProgressBar
-        val tuesdayProgressBar = binding.tuesdayProgressBar
-        val wednesdayProgressBar = binding.wednesdayProgressBar
-        val thursdayProgressBar = binding.thursdayProgressBar
-        val fridayProgressBar = binding.fridayProgressBar
-        val saturdayProgressBar = binding.saturdayProgressBar
-        val waterProgressBar = binding.waterProgressBar
+        todayDayOfWeek = LocalDate.now().dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
 
-        progressBar.setProgress(0)
-        sundayProgressBar.setProgress(50)
-        mondayProgressBar.setProgress(50)
-        tuesdayProgressBar.setProgress(50)
-        wednesdayProgressBar.setProgress(50)
-        thursdayProgressBar.setProgress(50)
-        fridayProgressBar.setProgress(50)
-        saturdayProgressBar.setProgress(50)
-        waterProgressBar.setProgress(50)
+        progressBarMap = mapOf(
+            "일요일" to binding.sundayProgressBar,
+            "월요일" to binding.mondayProgressBar,
+            "화요일" to binding.tuesdayProgressBar,
+            "수요일" to binding.wednesdayProgressBar,
+            "목요일" to binding.thursdayProgressBar,
+            "금요일" to binding.fridayProgressBar,
+            "토요일" to binding.saturdayProgressBar
+        )
+
+        progressBarMap.values.forEach { it.setProgress(0) }
+
+        binding.setting.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
+
+        binding.runningContainer.setOnClickListener {
+            startActivity(Intent(requireContext(), GraphActivity::class.java))
+        }
+
+        binding.weatherLayout.setOnClickListener {
+            startActivity(Intent(requireContext(), WeatherDetailActivity::class.java))
+        }
     }
-
-
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun checkAndRequestPermissions() {
@@ -148,22 +145,27 @@ class MainFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14 이상
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                permissionsNeeded.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.FOREGROUND_SERVICE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.FOREGROUND_SERVICE_LOCATION)
         }
 
         if (permissionsNeeded.isNotEmpty()) {
             requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
         } else {
-            //startPedometerService()
+            startPedometerService()
             fetchLocation()
+        }
+    }
+
+    private fun startPedometerService() {
+        val serviceIntent = Intent(requireContext(), PedometerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireActivity().startForegroundService(serviceIntent)
+        } else {
+            requireActivity().startService(serviceIntent)
         }
     }
 
@@ -180,29 +182,19 @@ class MainFragment : Fragment() {
     }
 
     private fun fetchLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // 권한이 없을 경우 예외 처리
-            return
-        }
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            location?.let {
-                val latitude = it.latitude
-                val longitude = it.longitude
-                LocationManager.updateLocation(latitude, longitude)
-                viewModel.setLocation(latitude, longitude)
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    viewModel.setLocation(it.latitude, it.longitude)
+                }
             }
         }
     }
 
-    fun updateMaxSteps(steps: Int) {
-        maxSteps = steps
-    }
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.saveLiveDataToPreferences()
         _binding = null
     }
 }

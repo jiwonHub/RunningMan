@@ -16,6 +16,7 @@ sealed class LoginState2 {
     sealed class Success: LoginState2() {
 
         data class Registered(
+            val idToken: String,
             val userName: String,
             val profileImageUri: Uri?,
         ): Success()
