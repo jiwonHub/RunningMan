@@ -12,5 +12,7 @@ interface WalkRepository {
 
     suspend fun getAllWalks(): List<DailyWalk>
 
+    suspend fun getWalksBetweenDates(startDate: String, endDate: String): List<DailyWalk>
+
     suspend fun getWalkCount(): Int
 }
