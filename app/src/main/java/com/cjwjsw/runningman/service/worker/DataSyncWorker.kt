@@ -1,38 +1,20 @@
 package com.cjwjsw.runningman.service.worker
 
-import android.app.Service
 import android.content.Context
-import android.content.Intent
-import android.os.IBinder
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.cjwjsw.runningman.core.FirestoreManager
-import com.cjwjsw.runningman.core.LocationTrackerManager
 import com.cjwjsw.runningman.core.WalkDataSingleton
 import com.cjwjsw.runningman.data.data_source.db.DailyWalk
 import com.cjwjsw.runningman.domain.model.WalkModel
 import com.cjwjsw.runningman.domain.repository.WalkRepository
-import com.cjwjsw.runningman.presentation.screen.main.fragment.map.MapViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
-import javax.inject.Inject
-
-const val DISTANCE = "distance"
-const val STEPS = "stepCount"
-const val CALORIES = "calories"
-const val TIME = "time"
-
 
 @HiltWorker
 class DataSyncWorker @AssistedInject constructor(
@@ -44,11 +26,12 @@ class DataSyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
+            Log.d("DataSyncWorker", "Work started at: ${System.currentTimeMillis()}")
             val today = getCurrentDate()
-            val distance = inputData.getDouble(DISTANCE, 0.0)
-            val stepCount = inputData.getInt(STEPS, 0)
-            val calories = inputData.getDouble(CALORIES, 0.0)
-            val time = inputData.getLong(TIME, 0L)
+            val distance = WalkDataSingleton.distance.value ?: 0.0
+            val stepCount = WalkDataSingleton.stepCount.value ?: 0
+            val calories = WalkDataSingleton.calorie.value ?: 0.0
+            val time = WalkDataSingleton.time.value ?: 0L
 
             // Room에 데이터 저장
             val dailyWalk = DailyWalk(
@@ -58,6 +41,8 @@ class DataSyncWorker @AssistedInject constructor(
                 calories = calories,
                 time = time
             )
+            Log.d("DataSyncWorker", "DailyWalk Data: $dailyWalk")
+
             walkRepository.insertWalk(dailyWalk)
 
             // Firestore에 저장
