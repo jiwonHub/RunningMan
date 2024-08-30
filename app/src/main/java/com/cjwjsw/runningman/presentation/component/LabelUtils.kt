@@ -2,6 +2,7 @@ package com.cjwjsw.runningman.presentation.component
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
@@ -27,6 +28,12 @@ object LabelUtils {
             val averageValue = if (nonZeroAverages.isNotEmpty()) nonZeroAverages.average() else 0.0
             val height = 290 * (averageValue / maxSteps)
             val averagePx = (height + 13).toInt().dpToPx(constraintLayout.context)
+
+            Log.d("average", average.toString())
+            Log.d("average", nonZeroAverages.toString())
+            Log.d("average", averageValue.toString())
+            Log.d("average", height.toString())
+            Log.d("average", averagePx.toString())
 
             // ImageView constraints
             connect(imageView.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)

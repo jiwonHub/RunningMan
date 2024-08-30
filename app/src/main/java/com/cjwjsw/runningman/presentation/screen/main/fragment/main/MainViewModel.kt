@@ -15,9 +15,12 @@ import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,10 +41,14 @@ class MainViewModel @Inject constructor(
     private val _weeklyWalks = MutableLiveData<List<DailyWalk>>()
     val weeklyWalks: LiveData<List<DailyWalk>> get() = _weeklyWalks
 
+    private val _weatherCodeText = MutableLiveData<String>()
+    val weatherCodeText: LiveData<String> get() = _weatherCodeText
+
     private val sharedPreferences = appContext.getSharedPreferences("WalkDataPrefs", Context.MODE_PRIVATE)
 
     init {
         restoreLiveDataFromPreferences()
+        insertTestWalkData()
     }
 
     fun setLocation(latitude: Double, longitude: Double) {
@@ -52,6 +59,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val currentWeather = weatherRepository.getCurrentWeather(latitude, longitude)
             _currentWeather.value = currentWeather
+            _weatherCodeText.value = getWeatherCodeDescription(currentWeather.weather_code)
             Log.d("MainViewModel", "Current Weather: $currentWeather")
         }
     }
@@ -61,6 +69,20 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             val walks = walkRepository.getWalksBetweenDates(getStartOfWeek(), getEndOfWeek())
             _weeklyWalks.value = walks
+        }
+    }
+
+    private fun getWeatherCodeDescription(weatherCode: Int): String {
+        // Weather code를 설명 텍스트로 변환하는 로직 (예시)
+        return when (weatherCode) {
+            0, 1 -> "맑음"
+            2, 3 -> "흐림"
+            45, 48 -> "안개"
+            51, 53, 55 -> "약한 비"
+            61, 63, 65 -> "비"
+            71, 73, 75 -> "눈"
+            80, 81, 82 -> "소나기"
+            else -> "알 수 없음"
         }
     }
 
@@ -92,5 +114,41 @@ class MainViewModel @Inject constructor(
         WalkDataSingleton.updateTime(sharedPreferences.getLong("time", 0L))
 
         Log.d("MainViewModel", "Data restored from SharedPreferences")
+    }
+
+    // 10시간 동안의 임시 데이터를 추가하는 함수
+    fun insertTestWalkData() {
+        viewModelScope.launch {
+            walkRepository.deleteAllWalks()
+            // 현재 날짜와 시간 설정
+            val calendar = Calendar.getInstance()
+            val sdf = SimpleDateFormat("yyyy-MM-dd-HH", Locale.getDefault())
+
+            // 10시간 동안의 데이터를 생성하여 삽입
+            for (i in 1..10) {
+                // 시간 간격 설정 (1시간 간격으로 추가)
+                calendar.add(Calendar.HOUR_OF_DAY, -1)
+
+                // 임의의 걷기 데이터 생성
+                val date = sdf.format(calendar.time)
+                val distance = (1000 + (i * 10)).toDouble() // 거리 값을 100에서 10씩 증가
+                val stepCount = 1000 + (i * 10) // 걸음 수 값을 100에서 10씩 증가
+                val calories = 1000.0 + (i * 10) // 칼로리 값을 100에서 10씩 증가
+                val time = 1000L + (i * 10) // 시간을 100에서 10씩 증가
+
+                // DailyWalk 객체 생성
+                val dailyWalk = DailyWalk(
+                    date = date,
+                    distance = distance,
+                    stepCount = stepCount,
+                    calories = calories,
+                    time = time
+                )
+
+                // Room에 데이터 삽입
+                walkRepository.insertWalk(dailyWalk)
+                Log.d("MainViewModel", walkRepository.getAllWalks().toString())
+            }
+        }
     }
 }

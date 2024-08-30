@@ -1,5 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.weekly
 
+import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
@@ -15,12 +16,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.databinding.FragmentWeeklyStatisticsBinding
 import com.cjwjsw.runningman.presentation.component.LabelUtils
 import com.cjwjsw.runningman.presentation.component.StatisticsDotLine
 
 import com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
+import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphViewModel
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,6 +34,7 @@ import java.util.Locale
 class WeeklyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
     private var _binding: FragmentWeeklyStatisticsBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: GraphViewModel by activityViewModels()
     private var maxSteps = 1000
 
     private lateinit var progressBars: List<StatisticsProgressBar>
@@ -48,9 +52,14 @@ class WeeklyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.progressData.observe(viewLifecycleOwner) { progressValues ->
+            updateProgressBars(progressValues)
+        }
 
         average = MutableList(7) { 0 }
 
@@ -62,16 +71,14 @@ class WeeklyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
             binding.fridayProgressBar,
             binding.saturdayProgressBar,
             binding.sundayProgressBar
-        ).apply {
-            forEach { it.setOnTouchListener { v, event ->
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    onProgressBarTouched(it as StatisticsProgressBar)
-                    true
-                } else {
-                    false
-                }
-            }}
-        }
+        ).onEach { it.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                onProgressBarTouched(it)
+                true
+            } else {
+                false
+            }
+        }}
 
         averageLabel = LabelUtils.createImageView(requireContext())
         averageLabelTextView = LabelUtils.createTextView(requireContext(), "평균")
@@ -88,22 +95,37 @@ class WeeklyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
         binding.weeklyStatisticsLayout.addView(textView6k)
         binding.weeklyStatisticsLayout.addView(dotLine6k)
 
-        updateProgressBar(20000, 0)
-        updateProgressBar(8000, 1)
-        updateProgressBar(6000, 2)
-        updateProgressBar(3000, 3)
-        updateProgressBar(6000, 4)
-        updateProgressBar(8000, 5)
-        updateProgressBar(11000, 6)
-
         updateLabels()
         LabelUtils.addStepLabels(binding.weeklyStatisticsLayout, maxSteps, average)
+
+        viewModel.progressData.observe(viewLifecycleOwner) { progressValues ->
+            Log.d("WeeklyGraphFragment", "Progress Values Received: $progressValues")
+            updateProgressBars(progressValues)
+        }
 
         binding.root.setOnClickListener {
             hideAllBubbles()
         }
 
         binding.timeLine.text = getCurrentWeekDateRange()
+    }
+
+    private fun updateProgressBars(progressValues: List<Int>) {
+        progressValues.forEachIndexed { index, stepCount ->
+            if (stepCount > maxSteps) {
+                maxSteps = stepCount
+                progressBars.forEach { it.setMaxSteps(maxSteps) }
+            }
+
+            average[index] = stepCount
+            val progressBar = progressBars.getOrNull(index)
+            progressBar?.let {
+                it.setProgressColor(stepCount > 6000) // 값이 6000 이상일 때 색상 설정
+                it.animateProgress(stepCount) // 애니메이션을 적용하여 ProgressBar 업데이트
+                Log.d("WeeklyGraphFragment", "ProgressBar index $index updated with stepCount: $stepCount")
+            }
+        }
+        updateLabels()
     }
 
     private fun updateLabels() {
@@ -114,19 +136,6 @@ class WeeklyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
         LabelUtils.set6kLabel(
             binding.weeklyStatisticsLayout, label6k, textView6k, dotLine6k, maxSteps
         )
-    }
-
-    private fun updateProgressBar(stepCount: Int, index: Int) = with(binding) {
-        if (stepCount > maxSteps) {
-            maxSteps = stepCount
-            progressBars.forEach { it.setMaxSteps(maxSteps) }
-            updateLabels()
-        }
-
-        average[index] = stepCount
-        val progressBar = progressBars[index]
-        progressBar.setProgressColor(stepCount > 6000)
-        progressBar.animateProgress(stepCount)
     }
 
     override fun onDestroyView() {

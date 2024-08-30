@@ -1,9 +1,12 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -12,11 +15,15 @@ import com.cjwjsw.runningman.databinding.ActivityGraphBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.daily.DailyGraphFragment
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.month.MonthlyGraphFragment
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.weekly.WeeklyGraphFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GraphActivity : AppCompatActivity() {
     lateinit var binding: ActivityGraphBinding
     private var selectedButton: Button? = null
     private var selectedTextView: TextView? = null
+    private val viewModel: GraphViewModel by viewModels()
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGraphBinding.inflate(layoutInflater)
@@ -24,6 +31,7 @@ class GraphActivity : AppCompatActivity() {
 
         setSelectedButton(binding.weekOptionButton)
         setSelectedTextView(binding.stepOption)
+        viewModel.setSelectedOption(GraphViewModel.OPTION_STEPS)
         replaceFragment(WeeklyGraphFragment())
 
         binding.dailyOptionButton.setOnClickListener {
@@ -42,18 +50,22 @@ class GraphActivity : AppCompatActivity() {
         }
         binding.stepOption.setOnClickListener {
             setSelectedTextView(it as TextView)
+            viewModel.setSelectedOption(GraphViewModel.OPTION_STEPS)
         }
 
         binding.calorieOption.setOnClickListener {
             setSelectedTextView(it as TextView)
+            viewModel.setSelectedOption(GraphViewModel.OPTION_CALORIES)
         }
 
         binding.timeOption.setOnClickListener {
             setSelectedTextView(it as TextView)
+            viewModel.setSelectedOption(GraphViewModel.OPTION_TIME)
         }
 
         binding.distanceOption.setOnClickListener {
             setSelectedTextView(it as TextView)
+            viewModel.setSelectedOption(GraphViewModel.OPTION_DISTANCE)
         }
 
     }

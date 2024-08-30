@@ -66,6 +66,11 @@ class MainFragment : Fragment() {
         viewModel.fetchWeeklyWalks()
     }
 
+    private fun updateProgressBar(steps: Int) {
+        val progress = (steps * 100) / maxSteps
+        binding.runningProgressBar.setProgress(progress.coerceAtMost(100))
+    }
+
     private fun updateProgressBarForDay(dayOfWeek: String, steps: Int) {
         progressBarMap[dayOfWeek]?.let {
             val progress = (steps * 100) / maxSteps
