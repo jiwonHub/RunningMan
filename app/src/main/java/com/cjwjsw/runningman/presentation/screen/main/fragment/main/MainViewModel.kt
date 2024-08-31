@@ -124,31 +124,36 @@ class MainViewModel @Inject constructor(
             val calendar = Calendar.getInstance()
             val sdf = SimpleDateFormat("yyyy-MM-dd-HH", Locale.getDefault())
 
-            // 10시간 동안의 데이터를 생성하여 삽입
-            for (i in 1..10) {
-                // 시간 간격 설정 (1시간 간격으로 추가)
-                calendar.add(Calendar.HOUR_OF_DAY, -1)
+            // 3일 동안의 데이터를 생성하여 삽입
+            for (day in 1..3) {
+                // 하루 동안 10시간의 데이터를 추가
+                for (hour in 1..10) {
+                    // 시간 간격 설정 (1시간 간격으로 추가)
+                    calendar.add(Calendar.HOUR_OF_DAY, -1)
 
-                // 임의의 걷기 데이터 생성
-                val date = sdf.format(calendar.time)
-                val distance = (1000 + (i * 10)).toDouble() // 거리 값을 100에서 10씩 증가
-                val stepCount = 1000 + (i * 10) // 걸음 수 값을 100에서 10씩 증가
-                val calories = 1000.0 + (i * 10) // 칼로리 값을 100에서 10씩 증가
-                val time = 1000L + (i * 10) // 시간을 100에서 10씩 증가
+                    // 임의의 걷기 데이터 생성
+                    val date = sdf.format(calendar.time)
+                    val distance = (1000 + (day * 10) + (hour * 5)).toDouble() // 거리 값을 일정하게 증가
+                    val stepCount = 1000 + (day * 10) + (hour * 5) // 걸음 수 값을 일정하게 증가
+                    val calories = 1000.0 + (day * 10) + (hour * 5) // 칼로리 값을 일정하게 증가
+                    val time = 1000L + (day * 10) + (hour * 5) // 시간을 일정하게 증가
 
-                // DailyWalk 객체 생성
-                val dailyWalk = DailyWalk(
-                    date = date,
-                    distance = distance,
-                    stepCount = stepCount,
-                    calories = calories,
-                    time = time
-                )
+                    // DailyWalk 객체 생성
+                    val dailyWalk = DailyWalk(
+                        date = date,
+                        distance = distance,
+                        stepCount = stepCount,
+                        calories = calories,
+                        time = time
+                    )
 
-                // Room에 데이터 삽입
-                walkRepository.insertWalk(dailyWalk)
-                Log.d("MainViewModel", walkRepository.getAllWalks().toString())
+                    // Room에 데이터 삽입
+                    walkRepository.insertWalk(dailyWalk)
+                }
+                // 날짜를 하루 전으로 설정
+                calendar.add(Calendar.DAY_OF_MONTH, -1)
             }
+            Log.d("MainViewModel", walkRepository.getAllWalks().toString())
         }
     }
 }

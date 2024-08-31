@@ -82,6 +82,7 @@ class MainFragment : Fragment() {
     private fun observeData() {
         viewModel.stepCount.observe(viewLifecycleOwner) { stepCount ->
             binding.runningCountText.text = "$stepCount"
+            updateProgressBar(stepCount)
             updateProgressBarForDay(todayDayOfWeek, stepCount)
         }
 

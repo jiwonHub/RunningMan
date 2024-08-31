@@ -4,6 +4,7 @@ import android.app.Application
 
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.cjwjsw.runningman.core.StepsSettings
 import com.cjwjsw.runningman.core.scheduleHourlyDataSync
 import com.cjwjsw.runningman.core.scheduleMidnightDataReset
 import com.cjwjsw.runningman.service.LocationUpdateService
@@ -23,6 +24,7 @@ class RunningManApplication : Application(), Configuration.Provider {
         scheduleHourlyDataSync(this)
         scheduleMidnightDataReset(this)
         startLocationService()
+        StepsSettings.init(this)
     }
 
     private fun startLocationService() {
