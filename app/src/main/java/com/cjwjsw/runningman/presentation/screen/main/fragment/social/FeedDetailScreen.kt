@@ -1,7 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.social
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -38,8 +37,6 @@ class FeedDetailScreen: AppCompatActivity() {
         Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
 
 
-        Log.d("FeedDetailScreen",uid.toString())
-
         adapter = FeedDetailViewAdapter(image)
         adapter = image?.let { FeedDetailViewAdapter(it) }!!
         viewPager = binding.feedImgViewPager
@@ -50,6 +47,7 @@ class FeedDetailScreen: AppCompatActivity() {
         userNumber = userData.userNumber
         isLikedImg(IL)
         loadProfileImg()
+        viewModel.getFeedUploadTime(uid)
 
 
 

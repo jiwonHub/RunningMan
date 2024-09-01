@@ -52,6 +52,7 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
                 Log.d("FeedViewModel",newIsLiked.toString())
 
+                //좋아요 카운트 업
                 ref.update("likedCount", newCount,"isLiked",newIsLiked)
                     .addOnSuccessListener {
                         Log.d("FeedViewModel", "LikedCount 업데이트 성공")
@@ -113,6 +114,43 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
                 }
             }
         }
+    }
+
+    fun getFeedUploadTime(uid : String) : String{
+        val ref = firebaseFirestore.collection("posts").document(uid)
+        var final_time = ""
+
+
+        ref.get().addOnSuccessListener {document ->
+            if (document != null && document.exists()) {
+                Log.d("FeedViewModel", "받아온 데이터: ${document.data}")
+                val data = document.data?.toDataClass<FeedModel>()
+
+                val time = data?.timestamp
+                Log.d("DetailFeedViewModel",time.toString())
+
+                // 피드 업로드 시간 가져오기
+                val uploadTimeInMillis = time?.seconds?.times(1000L) ?: 0L
+
+                // 현재 시간 가져오기
+                val currentTimeInMillis = System.currentTimeMillis()
+
+                // 업로드 시간과 현재 시간 뺴서 차이 구하기
+                val timeDifferenceInMillis = currentTimeInMillis - uploadTimeInMillis
+
+                // 밀리 세컨드 시간으로 변경
+                val hoursPassed = timeDifferenceInMillis / (1000 * 60 * 60)
+
+                if(hoursPassed < 13){
+                    //12시간이 안지났다면
+                    final_time = "${hoursPassed.toInt()}시간 전"
+                }else{
+                    //12시간 초과
+                    final_time =  "${hoursPassed.toInt() / 12}일 전"
+                }
+            }
+        }
+        return final_time
     }
 
 
