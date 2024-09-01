@@ -127,7 +127,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@color/black"
-                android:src="@drawable/baseline_add_comment_24" />
+                android:src="@drawable/outline_add_comment_24" />
         </LinearLayout>
 
         <me.relex.circleindicator.CircleIndicator3
