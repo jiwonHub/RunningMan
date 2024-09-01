@@ -59,7 +59,7 @@ class SettingsActivity : AppCompatActivity() {
         confirmButton.setOnClickListener {
             val number = stepEditText.text.toString()
             binding.stepMax.text = number
-            mainFragment.updateMaxSteps(number.toInt())
+//            mainFragment.updateMaxSteps(number.toInt())
             dialog.dismiss()
         }
 

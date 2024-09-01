@@ -2,14 +2,14 @@ package com.cjwjsw.runningman
 
 import android.app.Application
 
-import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.cjwjsw.runningman.core.scheduleDailyDataSync
+import com.cjwjsw.runningman.core.StepsSettings
+import com.cjwjsw.runningman.core.scheduleHourlyDataSync
+import com.cjwjsw.runningman.core.scheduleMidnightDataReset
 import com.cjwjsw.runningman.service.LocationUpdateService
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltAndroidApp
 class RunningManApplication : Application(), Configuration.Provider {
@@ -21,8 +21,10 @@ class RunningManApplication : Application(), Configuration.Provider {
         super.onCreate()
 
         // 매일 자정에 Room과 Firestore에 데이터를 저장하는 작업을 예약
-        scheduleDailyDataSync(this)
+        scheduleHourlyDataSync(this)
+        scheduleMidnightDataReset(this)
         startLocationService()
+        StepsSettings.init(this)
     }
 
     private fun startLocationService() {
