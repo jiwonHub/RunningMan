@@ -28,6 +28,9 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
     val commentArr : LiveData<MutableList<CommentModel>?> get() = _commentArr
 
+    private val _feed_time = MutableLiveData<String>()
+    val feed_time : LiveData<String> get() = _feed_time
+
 
     fun getLikedCount(uid : String){
         val ref = firebaseFirestore.collection("posts").document(uid)
@@ -116,11 +119,8 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
         }
     }
 
-    fun getFeedUploadTime(uid : String) : String{
+    fun getFeedUploadTime(uid : String){
         val ref = firebaseFirestore.collection("posts").document(uid)
-        var final_time = ""
-
-
         ref.get().addOnSuccessListener {document ->
             if (document != null && document.exists()) {
                 Log.d("FeedViewModel", "받아온 데이터: ${document.data}")
@@ -143,14 +143,13 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
                 if(hoursPassed < 13){
                     //12시간이 안지났다면
-                    final_time = "${hoursPassed.toInt()}시간 전"
+                    _feed_time.value = "${hoursPassed.toInt()}시간 전"
                 }else{
                     //12시간 초과
-                    final_time =  "${hoursPassed.toInt() / 12}일 전"
+                    _feed_time.value =  "${hoursPassed.toInt() / 12}일 전"
                 }
             }
         }
-        return final_time
     }
 
 

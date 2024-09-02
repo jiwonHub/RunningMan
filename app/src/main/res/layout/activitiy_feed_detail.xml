@@ -1,178 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:id="@+id/toolBar"
+    <data>
+        <variable
+            name="viewModel"
+            type="com.cjwjsw.runningman.presentation.screen.main.fragment.social.DetailFeedViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.03"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageButton
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
-            android:background="@color/black"
-            android:src="@drawable/arrow_back" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="피드"
-            android:textColor="@color/white"
-            android:textSize="24dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/feedText"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:weightSum="5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.05"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolBar">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/feedDetailProfileImage"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:src="@drawable/ic_android_black_24dp" />
-
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:orientation="vertical"
-            android:weightSum="3">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:gravity="bottom|center"
-                android:text="정성욱"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:gravity="top|center"
-                android:text="2시간전"
-                android:textColor="@color/white"
-                android:textSize="8dp" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4.6" />
-    </LinearLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/feedImgViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/indicatorLayer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.7"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedText" />
-
-    <LinearLayout
-        android:id="@+id/indicatorLayer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:weightSum="5"
-        app:layout_constraintBottom_toTopOf="@id/titleLayer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/feedImgViewPager">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1.5"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <ImageButton
-                android:id="@+id/likeBtn"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/black"
-                android:src="@drawable/like_icon" />
-
-            <ImageButton
-                android:id="@+id/commentBtn"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/black"
-                android:src="@drawable/outline_add_comment_24" />
-        </LinearLayout>
-
-        <me.relex.circleindicator.CircleIndicator3
-            android:id="@+id/indicator"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5">
-
-            <TextView
-                android:id="@+id/likedCountText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="12dp"
-                tools:text="10명이 좋아합니다" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/titleLayer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/indicatorLayer">
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:id="@+id/toolBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="24dp"
-            tools:text="제목" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:paddingEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.03"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:background="@color/black"
+                android:src="@drawable/arrow_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="피드"
+                android:textColor="@color/white"
+                android:textSize="24dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/feedText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:weightSum="5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolBar">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/feedDetailProfileImage"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:src="@drawable/ic_android_black_24dp" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:orientation="vertical"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="bottom|center"
+                    android:text="정성욱"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/feedTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="top|center"
+                    android:text="시간"
+                    android:textColor="@color/white"
+                    android:textSize="8dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4.6" />
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/feedImgViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/indicatorLayer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.7"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/feedText" />
+
+        <LinearLayout
+            android:id="@+id/indicatorLayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:weightSum="5"
+            app:layout_constraintBottom_toTopOf="@id/titleLayer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/feedImgViewPager">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1.5"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <ImageButton
+                    android:id="@+id/likeBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/black"
+                    android:src="@drawable/like_icon" />
+
+                <ImageButton
+                    android:id="@+id/commentBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/black"
+                    android:src="@drawable/outline_add_comment_24" />
+            </LinearLayout>
+
+            <me.relex.circleindicator.CircleIndicator3
+                android:id="@+id/indicator"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.5">
+
+                <TextView
+                    android:id="@+id/likedCountText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="12dp"
+                    tools:text="10명이 좋아합니다" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/titleLayer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/indicatorLayer">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="24dp"
+                tools:text="제목" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

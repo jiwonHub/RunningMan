@@ -30,7 +30,6 @@ class FeedDetailScreen: AppCompatActivity() {
         setContentView(binding.root)
         uid = intent.getStringExtra("UID").toString()
         val image = intent.getStringArrayListExtra("URL")
-        //profileImg = intent.getStringExtra("profileUrl").toString() //socialFragment에서 받아온 데이터들
         profileImg = userData?.profileUrl!!
         feedTitle = intent.getStringExtra("title").toString()
         IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
@@ -45,6 +44,7 @@ class FeedDetailScreen: AppCompatActivity() {
         binding.title.text = feedTitle
         binding.likedCountText.text = "${Lc}명이 좋아합니다"
         userNumber = userData.userNumber
+
         isLikedImg(IL)
         loadProfileImg()
         viewModel.getFeedUploadTime(uid)
@@ -53,6 +53,10 @@ class FeedDetailScreen: AppCompatActivity() {
 
         binding.backBtn.setOnClickListener {
             finish()
+        }
+
+        viewModel.feed_time.observe(this){
+            binding.feedTime.text = it
         }
 
         viewModel.isLiked.observe(this){
