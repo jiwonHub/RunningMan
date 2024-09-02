@@ -5,4 +5,5 @@ data class UserModel (
     val nickName: String,
     val email: String,
     val profileUrl: String,
+    val userNumber: String
 )

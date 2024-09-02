@@ -110,7 +110,12 @@ class LoginScreen : AppCompatActivity() {
     private fun handleKakaoRegisteredState(
         loginState: LoginState.Success.Registered,
     ) {
-        UserManager.setUser(loginState.token,loginState.userName ,loginState.profileImageUri.toString(),loginState.email)
+        UserManager.setUser(
+            idToken = loginState.token,
+            nickName = loginState.userName ,
+            profileImageUrl = loginState.profileImageUri.toString(),
+            email = loginState.email,
+            userNumber = loginState.userNumber)
     }
 
 

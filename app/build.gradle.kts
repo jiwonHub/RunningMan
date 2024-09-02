@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.database.ktx)
     val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)

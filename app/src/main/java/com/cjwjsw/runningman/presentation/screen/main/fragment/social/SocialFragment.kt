@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cjwjsw.runningman.databinding.FragmentSocialBinding
+import com.cjwjsw.runningman.domain.model.FeedModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,37 +19,67 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     private val viewModel : FeedViewModel by viewModels()
     private lateinit var adapter: ViewAdapter
     private val binding get() = _binding!!
+    private var feedArr = mutableListOf<FeedModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         _binding = FragmentSocialBinding.inflate(inflater, container, false)
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-        adapter = ViewAdapter(emptyList(),this)
-        binding.recyclerView.adapter = adapter
-
-        viewModel.imageUrls.observe(viewLifecycleOwner) { urls ->
-            adapter.updateImages(urls)
-        }
-        viewModel.fetchImage()
-
 
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = ViewAdapter(mutableListOf(),this)
+        binding.recyclerView.adapter = adapter
+        viewModel.feedArr.observe (viewLifecycleOwner) { urls ->
+            Log.d("SocialFragment",urls.toString())
+            if(urls == null){
+                Log.d("SocialFragment","피드 정보가 없습니다")
+            }else{
+                for(i in 0..<urls.size){
+                    feedArr.add(urls[i])
+                }
+            }
+            adapter.updateImages(feedArr)
+        }
+        viewModel.fetchFeedData()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    override fun onItemClick(imageUrl: String) {
-       val intent = Intent(requireContext(),SocialDetailScreen::class.java).apply {
-           putExtra("URL",imageUrl)
-           Log.d("onclick",imageUrl)
-       }
+    override fun onItemClick(
+        imageUrl: MutableList<String>,
+        feedUid: MutableList<Char>,
+        profileURL: String,
+        title: String,
+        content: String,
+        likedCount : Int,
+        isLiked : Boolean
+    ) {
+        val feedInfo : ArrayList<String> = arrayListOf()
+        Log.d("SocialFragment","피드 UID : ${feedUid}")
+        val uid = viewModel.charToString(feedUid)
+        feedInfo.addAll(imageUrl)
+        val intent = Intent(requireContext(),FeedDetailScreen::class.java).apply {
+            putStringArrayListExtra("URL",feedInfo)
+            putExtra("UID",uid)
+            putExtra("profileUrl",profileURL)
+            putExtra("title",title)
+            putExtra("content",content)
+            putExtra("likedCount",likedCount)
+            putExtra("isLiked",isLiked)
+
+            Log.d("onclick", uid)
+            Log.d("onclick", likedCount.toString())
+        }
         startActivity(intent)
     }
 

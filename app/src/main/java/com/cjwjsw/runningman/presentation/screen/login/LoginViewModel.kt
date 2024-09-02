@@ -33,10 +33,11 @@ class LoginViewModel @Inject constructor(
     val myStateLiveData = MutableLiveData<LoginState2>(LoginState2.Uninitialized)
     val kakaoStateLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
     val fbUsecase = FBStoreUserSignInCase()
+    val userInfo = UserManager.getInstance();
 
 
     fun kakaoLogin(context: Context,auth:FirebaseAuth,onSuccess: () -> Unit, onFailure: (Throwable) -> Unit) {
-       kakaoStateLiveData.value = LoginState.Loading
+        kakaoStateLiveData.value = LoginState.Loading
         Log.d("LoginScreen","handleKakaoLoadingState")
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
@@ -46,6 +47,7 @@ class LoginViewModel @Inject constructor(
                 Log.e("KakaoLoginwithOutApp", "카카오계정으로 로그인 성공")
                 viewModelScope.launch {
                     try {
+                        Log.d("LoginViewModel","액세스 토큰 : ${token.accessToken}");
                         val user = withContext(Dispatchers.IO) { fetchUser(token, auth) }
                         user?.let {
                             val uidResult = fbUsecase.execute(auth, token.idToken.toString(), onSuccess = {
@@ -58,7 +60,8 @@ class LoginViewModel @Inject constructor(
                                     uid,
                                     user.kakaoAccount?.profile?.nickname.toString(),
                                     user.kakaoAccount?.email.toString(),
-                                    user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
+                                    user.kakaoAccount?.profile?.profileImageUrl.toString(),
+                                    user.id.toString()
                                 )
                             }.onFailure {
                                 Log.e("FirebaseAuth", "signInWithCredential:failure", )
@@ -116,27 +119,28 @@ class LoginViewModel @Inject constructor(
     }
 
     fun setUserInfo(firebaseUser: FirebaseUser?) = viewModelScope.launch{
-            firebaseUser?.let{ user ->
-                myStateLiveData.value = LoginState2.Success.Registered(
-                    idToken = user.uid,
-                    userName = user.displayName ?: "익명",
-                    profileImageUri = user.photoUrl,
-                )
-                UserManager.setUser(user.uid, user.displayName ?: "", user.email.toString(), user.photoUrl.toString())
-            }?: kotlin.run {
-                myStateLiveData.value = LoginState2.Success.NotRegistered
-            }
+        firebaseUser?.let{ user ->
+            myStateLiveData.value = LoginState2.Success.Registered(
+                userName = user.displayName ?: "익명",
+                profileImageUri = user.photoUrl,
+            )
+        }?: kotlin.run {
+            myStateLiveData.value = LoginState2.Success.NotRegistered
+        }
     }
 
     fun setKakaoUserInfo(firebaseUser: FirebaseUser?){
         firebaseUser?.let{ user ->
             Log.d("LoginScreen","handleRegisterState")
-            kakaoStateLiveData.value = LoginState.Success.Registered(
-                token = user.uid,
-                userName = user.displayName ?: "익명",
-                profileImageUri = user.photoUrl.toString(),
-                email = user.email.toString()
-            )
+            kakaoStateLiveData.value = userInfo?.let {
+                LoginState.Success.Registered(
+                    token = user.uid,
+                    userName = user.displayName ?: "익명",
+                    profileImageUri = user.photoUrl.toString(),
+                    email = user.email.toString(),
+                    userNumber = it.userNumber
+                )
+            }
         }?: kotlin.run {
             Log.d("LoginScreen","handleNotRegisterState")
             kakaoStateLiveData.value = LoginState.Success.NotRegistered
@@ -157,6 +161,7 @@ class LoginViewModel @Inject constructor(
                     Log.e("KakaoLogin", "사용자 정보 요청 실패", error)
                     cont.resume(null)
                 } else if (user != null) {
+                    Log.d("LoginViewModel",user.kakaoAccount?.profile.toString())
                     cont.resume(user)
                 }
             }
