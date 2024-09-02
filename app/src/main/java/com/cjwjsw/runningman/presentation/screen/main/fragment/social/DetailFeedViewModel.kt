@@ -141,12 +141,18 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
                 // 밀리 세컨드 시간으로 변경
                 val hoursPassed = timeDifferenceInMillis / (1000 * 60 * 60)
 
-                if(hoursPassed < 13){
+                // 밀리세컨드 분으로 변경
+                val minute = timeDifferenceInMillis / (1000 * 60)
+
+                if(hoursPassed in 1..12){
                     //12시간이 안지났다면
                     _feed_time.value = "${hoursPassed.toInt()}시간 전"
-                }else{
+                }else if(hoursPassed > 12){
                     //12시간 초과
                     _feed_time.value =  "${hoursPassed.toInt() / 12}일 전"
+                }else{
+                    // 1시간 미만이라면
+                    _feed_time.value = "${minute.toInt()}분 전"
                 }
             }
         }
