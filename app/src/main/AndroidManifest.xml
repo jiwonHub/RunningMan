@@ -110,6 +110,7 @@
         <activity android:name=".presentation.screen.main.fragment.main.settings.WebViewActivity"/>
         <activity android:name=".presentation.screen.main.fragment.main.graph.GraphActivity"/>
         <activity android:name=".presentation.screen.main.fragment.main.weather.WeatherDetailActivity"/>
+        <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailScreen" />
 
     </application>
 

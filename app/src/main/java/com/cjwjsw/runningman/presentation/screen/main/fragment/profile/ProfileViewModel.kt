@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.FeedModel
-import com.cjwjsw.runningman.domain.model.UserModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -29,7 +28,10 @@ class ProfileViewModel @Inject constructor(
     private val _feedArr = MutableLiveData<MutableList<FeedModel>?>()
     val feedArr: LiveData<MutableList<FeedModel>?> get() = _feedArr
 
-    private val userUid : UserModel? = UserManager.getInstance()
+    private val userUid : String = userData?.idToken.toString()
+    private val profileImg : String = userData?.profileUrl.toString()
+    private val userName : String = userData?.nickName.toString()
+    private val userNumber : String = userData?.userNumber.toString()
 
     private val _uploadStatus = MutableLiveData<Boolean>()
     val uploadStatus: LiveData<Boolean> get() = _uploadStatus
@@ -41,19 +43,20 @@ class ProfileViewModel @Inject constructor(
         Log.d("ProfileViewModel", uri.toString())
     }
     fun upLoadPost(title : String, content : String){
-        val postId = userUid?.idToken
-        Log.d("ProfileViewModel", postId!!)
+        Log.d("ProfileViewModel", userUid)
         val uploadedImageUrls = mutableListOf<String>()
         val imageUris = _photoArr.value ?: return
 
         imageUris.forEachIndexed { index, imguri ->
-            val imageRef = fbManager.reference.child("Post/$postId-$index.jpg")
+            val imageRef = fbManager.reference.child("Post/$userUid-$index.jpg")
             imageRef.putFile(imguri)
                 .addOnSuccessListener {
                     imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                         uploadedImageUrls.add(downloadUrl.toString())
                         if (uploadedImageUrls.size == imageUris.size) {
-                            savePostMetadata(postId, title, content, uploadedImageUrls)
+                            val feedUID = UUID.randomUUID().toString()
+                            savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName,0,false,
+                                userData!!.idToken,userNumber)
                         }
                     }.addOnFailureListener { e ->
                         _uploadStatus.value = false
@@ -67,17 +70,35 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun savePostMetadata(postId: String, title: String, content: String, imageUrls: List<String>) {
+    private fun savePostMetadata(
+        postId: String,
+        title: String,
+        content: String,
+        imageUrls: List<String>,
+        feedUID: String,
+        profileImg: String,
+        userName: String,
+        likedCount : Int,
+        isLiked : Boolean,
+        userUID : String,
+        userNumber : String
+    ) {
         val postMetadata = hashMapOf(
             "postId" to postId,
             "title" to title,
             "content" to content,
             "imageUrls" to imageUrls,
-            "timestamp" to FieldValue.serverTimestamp()
+            "timestamp" to FieldValue.serverTimestamp(),
+            "feedUID" to feedUID,
+            "profileURL" to profileImg,
+            "userName" to userName,
+            "likedCount" to likedCount,
+            "isLiked" to isLiked,
+            "userUID" to userUID,
+            "userNumber" to userNumber
         )
-        val documentName = UUID.randomUUID().toString()
 
-        fbsManager.collection("posts").document(documentName)
+        fbsManager.collection("posts").document(feedUID)
             .set(postMetadata)
             .addOnSuccessListener {
                 _uploadStatus.value = true
@@ -111,9 +132,14 @@ class ProfileViewModel @Inject constructor(
             }
     }
 
+
     inline fun <reified T> Map<String, Any>.toDataClass(): T {
         val json = JSONObject(this).toString()
         return Gson().fromJson(json, T::class.java)
+    }
+
+    companion object{
+        val userData = UserManager.getInstance()
     }
 
 }
