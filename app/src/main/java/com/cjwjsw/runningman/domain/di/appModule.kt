@@ -7,6 +7,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.cjwjsw.runningman.core.LocationTrackerManager
 import com.cjwjsw.runningman.data.data_source.db.AppDatabase
+import com.cjwjsw.runningman.data.data_source.db.MIGRATION_1_2
 import com.cjwjsw.runningman.data.data_source.db.WalkDao
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
@@ -117,7 +118,9 @@ object AppModule {
             context,
             AppDatabase::class.java,
             "app_database" // 데이터베이스 이름
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2) // 마이그레이션 추가
+            .build()
     }
 
     // DAO 등록
