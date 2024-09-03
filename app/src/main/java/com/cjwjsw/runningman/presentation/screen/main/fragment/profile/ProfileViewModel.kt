@@ -133,6 +133,14 @@ class ProfileViewModel @Inject constructor(
     }
 
 
+    fun charToString(uid: MutableList<Char>) : String{
+        Log.d("onclick",uid.toString())
+        var transUID = uid.filter { it != ',' && it != ' ' }.joinToString("")
+        return transUID
+    }
+
+
+
     inline fun <reified T> Map<String, Any>.toDataClass(): T {
         val json = JSONObject(this).toString()
         return Gson().fromJson(json, T::class.java)
