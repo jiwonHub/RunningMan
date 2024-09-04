@@ -105,7 +105,7 @@ class StatisticsProgressBar(context: Context, attrs: AttributeSet) : View(contex
         val parent = parent as? ConstraintLayout ?: return
         if (bubbleTextView == null) {
             bubbleTextView = TextView(context).apply {
-                text = "$progress 걸음"
+                text = "$progress"
                 setBackgroundResource(R.drawable.blue_background) //bubble_background 파일이 없음
                 setPadding(16.dpToPx(), 8.dpToPx(), 16.dpToPx(), 8.dpToPx())
                 setTextColor(Color.WHITE)
@@ -115,7 +115,7 @@ class StatisticsProgressBar(context: Context, attrs: AttributeSet) : View(contex
             parent.addView(bubbleTextView)
         } else {
             bubbleTextView?.visibility = View.VISIBLE
-            bubbleTextView?.text = "$progress 걸음"
+            bubbleTextView?.text = "$progress"
         }
 
         val constraintSet = ConstraintSet().apply {
