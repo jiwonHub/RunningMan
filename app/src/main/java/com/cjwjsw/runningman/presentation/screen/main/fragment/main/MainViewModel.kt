@@ -9,18 +9,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.core.WalkDataSingleton
-import com.cjwjsw.runningman.data.data_source.db.DailyWalk
+import com.cjwjsw.runningman.data.data_source.db.walk.DailyWalkEntity
 import com.cjwjsw.runningman.domain.model.weather.CurrentWeatherModel
 import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,8 +35,8 @@ class MainViewModel @Inject constructor(
     private val _currentWeather = MutableLiveData<CurrentWeatherModel>()
     val currentWeather: LiveData<CurrentWeatherModel> get() = _currentWeather
 
-    private val _weeklyWalks = MutableLiveData<List<DailyWalk>>()
-    val weeklyWalks: LiveData<List<DailyWalk>> get() = _weeklyWalks
+    private val _weeklyWalks = MutableLiveData<List<DailyWalkEntity>>()
+    val weeklyWalks: LiveData<List<DailyWalkEntity>> get() = _weeklyWalks
 
     private val _weatherCodeText = MutableLiveData<String>()
     val weatherCodeText: LiveData<String> get() = _weatherCodeText
