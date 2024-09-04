@@ -45,19 +45,19 @@ class GraphViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     fun setSelectedOption(option: String) {
         _selectedOption.value = option
-        fetchTodayProgressData(getStartOfWeek(), getEndOfWeek())
+        fetchTodayProgressData(getTodayDate())
         fetchWeeklyProgressData(getStartOfWeek(), getEndOfWeek())
         fetchMonthlyProgressData(getStartOfWeek(), getEndOfWeek())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun fetchTodayProgressData(startDate: LocalDate, endDate: LocalDate) {
+    fun fetchTodayProgressData(date: LocalDate) {
         val option = _selectedOption.value ?: OPTION_STEPS
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // 오늘 날짜 설정
-                val startDateString = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-00"
-                val endDateString = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-23"
+                val startDateString = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-00"
+                val endDateString = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-23"
 
                 // 오늘 날짜 범위의 데이터 조회
                 val todayData = walkRepository.getWalksBetweenDates(startDateString, endDateString)
@@ -82,7 +82,7 @@ class GraphViewModel @Inject constructor(
                     // 데이터 합산
                     val totalSteps = entry.value.sumOf { it.stepCount }
                     val totalCalories = entry.value.sumOf { it.calories.toInt() }
-                    val totalTime = entry.value.sumOf { (it.time / 60).toInt() }
+                    val totalTime = entry.value.sumOf { it.time.toInt() }
                     val totalDistance = entry.value.sumOf { it.distance.toInt() }
 
                     // 옵션에 따라 합산 값을 시간 인덱스에 맞게 저장
@@ -133,7 +133,7 @@ class GraphViewModel @Inject constructor(
 
                     val totalSteps = entry.value.sumOf { it.stepCount }
                     val totalCalories = entry.value.sumOf { it.calories.toInt() }
-                    val totalTime = entry.value.sumOf { (it.time / 60).toInt() }
+                    val totalTime = entry.value.sumOf { it.time.toInt() }
                     val totalDistance = entry.value.sumOf { it.distance.toInt() }
 
                     when (option) {
@@ -155,7 +155,7 @@ class GraphViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun fetchMonthlyProgressData(startDate: LocalDate, endDate: LocalDate) {
+    fun fetchMonthlyProgressData(startDate: LocalDate, endDate: LocalDate) {
         val option = _selectedOption.value ?: OPTION_STEPS
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -189,7 +189,7 @@ class GraphViewModel @Inject constructor(
                     // 데이터 합산
                     val totalSteps = entry.value.sumOf { it.stepCount }
                     val totalCalories = entry.value.sumOf { it.calories.toInt() }
-                    val totalTime = entry.value.sumOf { (it.time / 60).toInt() }
+                    val totalTime = entry.value.sumOf { it.time.toInt() }
                     val totalDistance = entry.value.sumOf { it.distance.toInt() }
 
                     // 옵션에 따라 합산 값을 해당 일자 인덱스에 맞게 저장 (1일은 index 0, 31일은 index 30)
@@ -220,5 +220,10 @@ class GraphViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getEndOfWeek(): LocalDate {
         return LocalDate.now().with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getTodayDate(): LocalDate {
+        return LocalDate.now() // 현재 날짜를 반환
     }
 }
