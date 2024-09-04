@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import com.cjwjsw.runningman.R
+import com.cjwjsw.runningman.core.StepsSettings
 import com.cjwjsw.runningman.databinding.ActivitySettingsBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.MainFragment
 import com.google.android.gms.oss.licenses.OssLicensesActivity
@@ -21,23 +22,27 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
-    private lateinit var mainFragment: MainFragment
     private lateinit var binding: ActivitySettingsBinding
+    private val step = StepsSettings.steps
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        mainFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as MainFragment
         backButtonClick()
         switchAlarmToggle()
-        binding.stepMaximumButton.setOnClickListener {
+        initViews()
+    }
+
+    private fun initViews() = with(binding) {
+        stepMax.text = step.toString()
+        stepMaximumButton.setOnClickListener {
             showEditStepMaxiMumDialog()
         }
-        binding.openSourceLicense.setOnClickListener {
+        openSourceLicense.setOnClickListener {
             showOssLicense()
         }
-        binding.privacyPolicy.setOnClickListener {
-            val intent = Intent(this, WebViewActivity::class.java)
+        privacyPolicy.setOnClickListener {
+            val intent = Intent(this@SettingsActivity, WebViewActivity::class.java)
             startActivity(intent)
         }
     }
@@ -56,11 +61,26 @@ class SettingsActivity : AppCompatActivity() {
         val dialog = Dialog(this, R.style.CustomDialog)
         dialog.setContentView(dialogView)
 
+
         confirmButton.setOnClickListener {
-            val number = stepEditText.text.toString()
-            binding.stepMax.text = number
-//            mainFragment.updateMaxSteps(number.toInt())
-            dialog.dismiss()
+            val inputText = stepEditText.text.toString()
+            val stepsValue = inputText.toIntOrNull()
+
+            // 입력값이 비어있거나 숫자가 아닌 경우 처리
+            if (stepsValue == null) {
+                Toast.makeText(this, "값을 입력해주세요!", Toast.LENGTH_SHORT).show()
+            }
+            // 값이 1000 이하인 경우 처리
+            else if (stepsValue < 1000) {
+                Toast.makeText(this, "1000 이상의 값으로 입력해주세요!", Toast.LENGTH_SHORT).show()
+            }
+            // 올바른 값인 경우 StepsSettings에 설정
+            else {
+                StepsSettings.steps = stepsValue
+                binding.stepMax.text = stepsValue.toString() // 설정된 값을 텍스트에 반영
+                Toast.makeText(this, "목표 걸음 수가 설정되었습니다: $stepsValue", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
         }
 
         cancelButton.setOnClickListener {
