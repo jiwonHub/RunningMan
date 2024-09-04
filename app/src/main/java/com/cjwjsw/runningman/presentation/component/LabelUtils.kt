@@ -26,14 +26,8 @@ object LabelUtils {
             clone(constraintLayout)
             val nonZeroAverages = average.filter { it > 0 }
             val averageValue = if (nonZeroAverages.isNotEmpty()) nonZeroAverages.average() else 0.0
-            val height = 290 * (averageValue / maxSteps)
+            val height = 305 * (averageValue / maxSteps)
             val averagePx = (height + 13).toInt().dpToPx(constraintLayout.context)
-
-            Log.d("average", average.toString())
-            Log.d("average", nonZeroAverages.toString())
-            Log.d("average", averageValue.toString())
-            Log.d("average", height.toString())
-            Log.d("average", averagePx.toString())
 
             // ImageView constraints
             connect(imageView.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
@@ -64,7 +58,7 @@ object LabelUtils {
     ) {
         val constraintSet = ConstraintSet().apply {
             clone(constraintLayout)
-            val height = 290 * (6000 / maxSteps.toFloat())
+            val height = 290 * (maxSteps.toFloat() / maxSteps)
             val px6k = (height + 30).toInt().dpToPx(constraintLayout.context)
 
             // ImageView constraints
@@ -189,7 +183,7 @@ object LabelUtils {
     fun create6kTextView(context: Context): TextView {
         return TextView(context).apply {
             id = View.generateViewId()
-            text = "6k"
+            text = "목표"
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
             setTextColor(ContextCompat.getColor(context, R.color.white))
             setTypeface(typeface, android.graphics.Typeface.BOLD)
