@@ -30,7 +30,7 @@ class FeedDetailScreen: AppCompatActivity() {
         setContentView(binding.root)
         uid = intent.getStringExtra("UID").toString()
         val image = intent.getStringArrayListExtra("URL")
-        profileImg = userData?.profileUrl!!
+        profileImg = intent.getStringExtra("profileUrl").toString()
         feedTitle = intent.getStringExtra("title").toString()
         IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
         Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
@@ -43,7 +43,7 @@ class FeedDetailScreen: AppCompatActivity() {
         binding.indicator.setViewPager(binding.feedImgViewPager)
         binding.title.text = feedTitle
         binding.likedCountText.text = "${Lc}명이 좋아합니다"
-        userNumber = userData.userNumber
+        userNumber = userData?.userNumber ?: ""
 
         isLikedImg(IL)
         loadProfileImg()
