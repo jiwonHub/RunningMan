@@ -7,10 +7,13 @@ import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
 import com.cjwjsw.runningman.domain.model.FeedModel
+import com.cjwjsw.runningman.domain.model.LikeModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -38,7 +41,7 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
         //데이터 받아오기
         ref.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
-                Log.d("FeedViewModel", "받아온 데이터: ${document.data}")
+                Log.d("DetailFeedViewModel", "받아온 데이터: ${document.data}")
                 val data = document.data?.toDataClass<FeedModel>()
 
                 val currentLikeCount = data?.likedCount ?: 0
@@ -53,27 +56,27 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
                 val newIsLiked = !currentIsLiked
 
-                Log.d("FeedViewModel",newIsLiked.toString())
+                Log.d("DetailFeedViewModel",newIsLiked.toString())
 
                 //좋아요 카운트 업
                 ref.update("likedCount", newCount,"isLiked",newIsLiked)
                     .addOnSuccessListener {
-                        Log.d("FeedViewModel", "LikedCount 업데이트 성공")
+                        Log.d("DetailFeedViewModel", "LikedCount 업데이트 성공")
                         _likeCount.value = newCount // Update the LiveData to reflect the new count
                         _isLiked.value = newIsLiked
                     }
-                    .addOnFailureListener { Log.d("FeedViewModel", "LikedCount 업데이트 실패") }
+                    .addOnFailureListener { Log.d("DetailFeedViewModel", "LikedCount 업데이트 실패") }
             } else {
-                Log.d("FeedViewModel", "해당하는 UID의 피드가 없습니다")
+                Log.d("DetailFeedViewModel", "해당하는 UID의 피드가 없습니다")
             }
         }.addOnFailureListener { e ->
-            Log.w("FeedViewModel", "피드를 불러오는중 오류 발생", e)
+            Log.w("DetailFeedViewModel", "피드를 불러오는중 오류 발생", e)
         }
     }
 
     fun fetchCommentData(uid : String){
-        val ref = FeedViewModel.fbRef.getReference(uid).child("comments")
-        Log.d("FeedViewModel", "uid = $uid")
+        val ref = fbRef.getReference(uid).child("comments")
+        Log.d("DetailFeedViewModel", "uid = $uid")
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -85,12 +88,12 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
                     }
                 }
                 _commentArr.value = commentList // _commentArr은 LiveData<List<Comment>> 타입
-                Log.d("FeedViewModel","댓글 불러오기 성공 : ${commentArr.value.toString()}")
-                Log.d("FeedViewModel","댓글 불러오기 성공 : ${snapshot.value.toString()}")
+                Log.d("DetailFeedViewModel","댓글 불러오기 성공 : ${commentArr.value.toString()}")
+                Log.d("DetailFeedViewModel","댓글 불러오기 성공 : ${snapshot.value.toString()}")
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.d("FeedViewModel","댓글 불러오기 실패 : ${error.message}")
+                Log.d("DetailFeedViewModel","댓글 불러오기 실패 : ${error.message}")
             }
 
         })
@@ -98,7 +101,7 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
     fun uploadComment(comment: String, feedUid: String, userName: String,profileImg: String,userNumber: String) {
         val ref = FeedViewModel.fbRef.getReference(feedUid).child("comments")
-        val newComment = CommentModel(
+        val newComment = CommentModel( //데이터 만들기
             comment = comment,
             timestamp = System.currentTimeMillis() / 1000,
             userName = userName,
@@ -107,16 +110,51 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
             userNumber = userData?.userNumber.toString()
         )
 
-        val newCommentKey = ref.push().key
+        val newCommentKey = ref.push().key //고유 키 생성
         if(newCommentKey != null) {
             ref.child(newCommentKey).setValue(newComment).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d("FeedViewModel", "Comment added successfully")
+                    Log.d("DetailFeedViewModel", "Comment added successfully")
                 } else {
-                    Log.d("FeedViewModel", "Failed to add comment: ${task.exception}")
+                    Log.d("DetailFeedViewModel", "Failed to add comment: ${task.exception}")
                 }
             }
         }
+    }
+
+    fun uploadLikeCount(userUid : String, feedUid : String){ //좋아요 등록
+        val ref = fbRef.getReference(feedUid).child("like")
+        val newLike = LikeModel( //데이터 만들기
+            userUid = userUid,
+            feedUid = feedUid
+        )
+
+        if(userUid.isNotEmpty()){
+            ref.child(userUid).setValue(newLike).addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    Log.d("DetailFeedViewModel","Liked added successfully")
+                } else{
+                    Log.d("DetailFeedViewModel","Failed to add Liked : ${task.exception}")
+                }
+            }
+        }
+    }
+
+    fun deleteLikeCount(userUid : String, feedUid : String){
+        val ref = fbRef.getReference(feedUid).child("like")
+
+        if(userUid.isNotEmpty()){
+            ref.child(userUid).removeValue().addOnSuccessListener { task ->
+                try{
+                    Log.d("DetailFeedViewModel","Remove Liked Complete")
+                }catch (e : Exception){
+                    Log.d("DetailFeedViewModel","remove task is failed : ${e.message}" )
+                }
+            }
+        }else{
+            Log.d("DetailFeedViewModel","Remove Liked Failed : ${userUid}")
+        }
+
     }
 
     fun getFeedUploadTime(uid : String){
@@ -168,6 +206,7 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
     companion object{
         val userData =  UserManager.getInstance()
+        val fbRef = Firebase.database
     }
 
 }
