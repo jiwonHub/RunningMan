@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.cjwjsw.runningman.core.StepsSettings
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
 import com.cjwjsw.runningman.presentation.component.MainRunningDailyProgressBar
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
@@ -36,7 +37,7 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel: MainViewModel by viewModels()
-    private var maxSteps = 1000
+    private var maxSteps = StepsSettings.steps
 
     private lateinit var progressBarMap: Map<String, MainRunningDailyProgressBar>
     private lateinit var todayDayOfWeek: String
