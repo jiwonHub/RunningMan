@@ -14,6 +14,7 @@ import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
 import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
+import com.cjwjsw.runningman.presentation.screen.onboarding.AgeScreen
 import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -74,8 +75,14 @@ class LoginScreen : AppCompatActivity() {
         when(state){
             is LoginState2.Success.Registered -> {
                 handleRegisteredState(state)
-                val intent = Intent(this@LoginScreen, MainActivity::class.java)
-                startActivity(intent)
+                val isFirstLogin = UserLoginFirst.isFirstLogin(this@LoginScreen)
+                if (!isFirstLogin) {
+                    val intent = Intent(this@LoginScreen, AgeScreen::class.java)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(this@LoginScreen, MainActivity::class.java)
+                    startActivity(intent)
+                }
             }
             is LoginState2.Success.NotRegistered -> {
                 Log.d("login error", "실패")
