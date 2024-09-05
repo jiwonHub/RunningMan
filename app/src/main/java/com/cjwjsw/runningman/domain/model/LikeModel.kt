@@ -1,6 +1,6 @@
 package com.cjwjsw.runningman.domain.model
 
 class LikeModel(
-    val feedUid : String,
+    val userName : String,
     val userUid : String
 )
