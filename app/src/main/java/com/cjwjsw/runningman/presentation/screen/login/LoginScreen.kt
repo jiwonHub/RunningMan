@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.kakao.sdk.common.KakaoSdk
@@ -74,10 +75,9 @@ class LoginScreen : AppCompatActivity() {
     private fun handleSuccessState(state: LoginState2.Success) = with(binding){
         when(state){
             is LoginState2.Success.Registered -> {
-                handleRegisteredState(state)
                 val isFirstLogin = UserLoginFirst.isFirstLogin(this@LoginScreen)
                 if (!isFirstLogin) {
-                    val intent = Intent(this@LoginScreen, AgeScreen::class.java)
+                    val intent = Intent(this@LoginScreen, GenderScreen::class.java)
                     startActivity(intent)
                 } else {
                     val intent = Intent(this@LoginScreen, MainActivity::class.java)
@@ -89,8 +89,16 @@ class LoginScreen : AppCompatActivity() {
             }
         }
     }
-    private fun handleRegisteredState(state: LoginState2.Success.Registered) = with(binding) {
-
+    private fun handleRegisteredState(user: FirebaseUser?) = with(binding) {
+        user?.let {
+            UserManager.setUser(
+                idToken = it.uid,
+                nickName = it.displayName ?: "Unknown",
+                profileImageUrl = it.photoUrl?.toString() ?: "",
+                email = it.email ?: "",
+                userNumber = it.uid
+            )
+        }
     }
     private fun handleLoginState(state: LoginState2.Login) {
         val credential = GoogleAuthProvider.getCredential(state.idToken, null)
@@ -98,6 +106,7 @@ class LoginScreen : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful){
                     val user = firebaseAuth.currentUser
+                    handleRegisteredState(user)
                     viewModel.setUserInfo(user)
                 }else{
                     firebaseAuth.signOut()
