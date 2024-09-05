@@ -35,9 +35,40 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
     val feed_time : LiveData<String> get() = _feed_time
 
 
-//    fun setLikedCount(){
-//
-//    }
+    fun testsetLikedCount(feedUid: String,userUid: String){ // RDB에 좋아요 카운트 등록
+        val ref = fbRef.getReference(feedUid).child("like")
+
+        if(userUid.isNotEmpty()){
+            ref.child(userUid).setValue(userUid).addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    Log.d("DetailFeedViewModel","Liked added successfully")
+                    val likedCount = ref.get().result.childrenCount.toInt() // Realdatabase에 저장되어있는 좋아요 갯수
+                    _likeCount.value = likedCount
+
+                    if(likedCount < 1){
+                        _isLiked.value = false
+                    }
+
+                    testsetFeedLikedCount(feedUid) // 피드 정보에 좋아요 카운트 등록
+                } else{
+                    Log.d("DetailFeedViewModel","Failed to add Liked : ${task.exception}")
+                }
+            }
+        }
+    }
+
+    fun testsetFeedLikedCount(feedUid: String){
+        val ref = firebaseFirestore.collection("posts").document(feedUid)
+
+        ref.update("likedCount", likeCount.value?.plus(1))
+            .addOnCompleteListener {task ->
+                Log.d("DetailFeedViewModel","피드 정보에 좋아요 카운트 등록 완료 : ${task.result}")
+            }
+            .addOnFailureListener { e ->
+                Log.d("DetailFeedViewModel","피드 정보에 좋아요 카운트 등록 실패 : ${e.message}")
+            }
+
+}
 
     fun testgetLikedCount(feedUid : String){
         val ref = firebaseFirestore.collection("posts").document(feedUid) // 클릭한 피드 데이터 참조 생성
