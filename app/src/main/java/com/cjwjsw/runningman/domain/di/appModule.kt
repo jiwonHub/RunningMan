@@ -7,6 +7,7 @@ import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.cjwjsw.runningman.core.LocationTrackerManager
 import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInfoAppDatabase
+import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInformationDao
 import com.cjwjsw.runningman.data.data_source.db.walk.WalkAppDatabase
 import com.cjwjsw.runningman.data.data_source.db.walk.WalkDao
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
@@ -146,5 +147,11 @@ object AppModule {
     @Singleton
     fun provideWalkDao(appDatabase: WalkAppDatabase): WalkDao {
         return appDatabase.walkDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserInfoDao(appDatabase: UserInfoAppDatabase): UserInformationDao {
+        return appDatabase.userInfoDao()
     }
 }
