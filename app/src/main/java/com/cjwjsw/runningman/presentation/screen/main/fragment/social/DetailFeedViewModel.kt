@@ -35,6 +35,25 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
     val feed_time : LiveData<String> get() = _feed_time
 
 
+//    fun setLikedCount(){
+//
+//    }
+
+    fun testgetLikedCount(feedUid : String){
+        val ref = firebaseFirestore.collection("posts").document(feedUid) // 클릭한 피드 데이터 참조 생성
+
+        ref.get().addOnSuccessListener {document ->
+            if(document != null && document.exists()) {
+                Log.d("DetailFeedViewModel", "좋아요 받아온 데이터: ${document.data}")
+                val data = document.data?.toDataClass<FeedModel>()
+
+                //가져온 데이터 라이브 데이터에 저장
+                _isLiked.value = data?.isLiked
+                _likeCount.value = data?.likedCount
+            }
+        }
+    }
+
     fun getLikedCount(uid : String){
         val ref = firebaseFirestore.collection("posts").document(uid)
 
@@ -138,6 +157,8 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
                 }
             }
         }
+
+
     }
 
     fun deleteLikeCount(userUid : String, feedUid : String){
