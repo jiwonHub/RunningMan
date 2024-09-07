@@ -148,16 +148,8 @@ class PedometerService : Service(), SensorEventListener {
         }
 
         val stepCount = totalSteps - initialStepCount
-        val caloriesBurned = stepCount * 0.04
-        val distanceWalked = stepCount * 0.762 / 1000 // km
 
         WalkDataSingleton.updateStepCount(stepCount)
-        WalkDataSingleton.updateCalorie(caloriesBurned)
-        WalkDataSingleton.updateDistance(
-            BigDecimal(distanceWalked).setScale(2, RoundingMode.HALF_UP).toDouble()
-        )
-        WalkDataSingleton.updateTime(elapsedTime)
-        Log.d("walkdata", WalkDataSingleton.stepCount.value.toString())
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {

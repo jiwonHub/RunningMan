@@ -8,25 +8,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.core.WalkDataSingleton
-import com.cjwjsw.runningman.data.data_source.db.DailyWalk
+import com.cjwjsw.runningman.data.data_source.db.walk.DailyWalkEntity
 import com.cjwjsw.runningman.domain.model.weather.CurrentWeatherModel
+import com.cjwjsw.runningman.domain.repository.UserInfoRepository
 import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.withContext
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val walkRepository: WalkRepository,
+    private val userInfoRepository: UserInfoRepository,
     private val appContext: Context
 ): ViewModel() {
 
@@ -38,8 +42,8 @@ class MainViewModel @Inject constructor(
     private val _currentWeather = MutableLiveData<CurrentWeatherModel>()
     val currentWeather: LiveData<CurrentWeatherModel> get() = _currentWeather
 
-    private val _weeklyWalks = MutableLiveData<List<DailyWalk>>()
-    val weeklyWalks: LiveData<List<DailyWalk>> get() = _weeklyWalks
+    private val _weeklyWalks = MutableLiveData<List<Int>>()
+    val weeklyWalks: LiveData<List<Int>> get() = _weeklyWalks
 
     private val _weatherCodeText = MutableLiveData<String>()
     val weatherCodeText: LiveData<String> get() = _weatherCodeText
@@ -48,6 +52,76 @@ class MainViewModel @Inject constructor(
 
     init {
         restoreLiveDataFromPreferences()
+        observeStepCountChanges()
+    }
+
+    // 걸음 수가 변경될 때마다 호출되는 함수 설정
+    private fun observeStepCountChanges() {
+        stepCount.observeForever { steps ->
+            updateCaloriesAndDistance(steps)
+        }
+    }
+
+    private fun updateCaloriesAndDistance(steps: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // 사용자 정보 가져오기
+                val userInfo = userInfoRepository.getUserInfo(UserManager.getInstance()!!.idToken)
+
+                // 사용자 정보로부터 필요한 데이터 추출
+                val weight = userInfo.weight.toDouble() ?: 70.0 // kg, 기본값 사용
+                val height = userInfo.height.toDouble() ?: 170.0 // cm, 기본값 사용
+                val age = userInfo.age ?: 30 // 기본값 사용
+                val gender = userInfo.gender ?: "man" // 기본값은 남성으로 설정
+
+                // 성별에 따른 BMR(기초 대사량) 계산
+                val bmr = calculateBMR(weight, height, age, gender)
+
+                // 보폭 계산
+                val strideLength = calculateStrideLength(height)
+
+                // 걸음 수 기반 칼로리 소모량 및 거리 계산
+                val caloriesBurned = calculateCalories(steps, bmr)
+                val distanceWalked = calculateDistance(steps, strideLength)
+
+                // 계산된 값 WalkDataSingleton에 업데이트
+                withContext(Dispatchers.Main) {
+                    WalkDataSingleton.updateCalorie(caloriesBurned)
+                    WalkDataSingleton.updateDistance(distanceWalked)
+                }
+
+                Log.d("MainViewModel", "Calories: $caloriesBurned, Distance: $distanceWalked")
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error calculating calories and distance", e)
+            }
+        }
+    }
+
+    // Mifflin-St Jeor 공식에 따른 BMR(기초 대사량) 계산
+    private fun calculateBMR(weight: Double, height: Double, age: Int, gender: String): Double {
+        return if (gender == "man") {
+            10 * weight + 6.25 * height - 5 * age + 5
+        } else {
+            10 * weight + 6.25 * height - 5 * age - 161
+        }
+    }
+
+    // 칼로리 계산 함수 - BMR을 기반으로 걸음 수에 따른 칼로리 계산
+    private fun calculateCalories(stepCount: Int, bmr: Double): Double {
+        // 예시로 BMR의 일부와 걸음 수를 곱하여 칼로리 계산 (기본적인 걸음당 칼로리 소모율 사용)
+        val caloriesPerStep = bmr / 2000 * 0.04 // bmr을 이용해 개인 맞춤형 소모율
+        return stepCount * caloriesPerStep
+    }
+
+    // 보폭 계산 함수 - 사용자 키와 보폭 비율을 사용하여 보폭 계산
+    private fun calculateStrideLength(height: Double): Double {
+        val strideRatio = 0.413 // 보폭 비율 예시
+        return height * strideRatio // cm 단위로 보폭 계산
+    }
+
+    // 거리 계산 함수
+    private fun calculateDistance(stepCount: Int, strideLength: Double): Double {
+        return BigDecimal(stepCount * strideLength / 100000).setScale(2, RoundingMode.HALF_UP).toDouble() // km로 변환 후 반올림
     }
 
     fun setLocation(latitude: Double, longitude: Double) {
@@ -65,9 +139,50 @@ class MainViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun fetchWeeklyWalks() {
-        viewModelScope.launch {
-            val walks = walkRepository.getWalksBetweenDates(getStartOfWeek(), getEndOfWeek())
-            _weeklyWalks.value = walks
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // 주의 시작 날짜와 끝 날짜를 문자열로 포맷하여 가져옴
+                val startDateString = getStartOfWeek() + "-00"
+                val endDateString = getEndOfWeek() + "-23"
+
+                // 지정된 날짜 범위 내의 모든 워킹 데이터를 가져옴
+                val weeklyData = walkRepository.getWalksBetweenDates(startDateString, endDateString)
+
+                // 일주일 동안의 요일별 걸음 수 합산을 위한 리스트 (일요일~토요일)
+                val dailyTotals = MutableList(7) { 0 }
+
+                // 데이터가 비어있으면 기본값으로 0을 설정하여 반환
+                if (weeklyData.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        _weeklyWalks.value = dailyTotals
+                    }
+                    return@launch
+                }
+
+                // 날짜별로 그룹화하여 요일별 걸음 수 합산
+                val dailyDataMap = weeklyData.groupBy { it.date.substring(0, 10) }
+
+                dailyDataMap.forEach { entry ->
+                    val date = LocalDate.parse(entry.key)
+                    val dayOfWeek = date.dayOfWeek.value
+                    val index = if (dayOfWeek == 7) 6 else dayOfWeek - 1  // 일요일을 6번째 인덱스로 처리
+
+                    // 각 날짜의 걸음 수를 합산
+                    val totalSteps = entry.value.sumOf { it.stepCount }
+
+                    // 합산된 걸음 수를 해당 요일의 인덱스에 추가
+                    dailyTotals[index] = totalSteps
+                }
+
+                Log.d("fetchWeeklyWalks", dailyTotals.toString())
+
+                // 합산된 데이터를 메인 스레드로 전환하여 LiveData에 업데이트
+                withContext(Dispatchers.Main) {
+                    _weeklyWalks.value = dailyTotals
+                }
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error fetching weekly walks", e)
+            }
         }
     }
 

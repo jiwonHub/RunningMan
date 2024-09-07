@@ -6,12 +6,16 @@ import androidx.room.Room
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.cjwjsw.runningman.core.LocationTrackerManager
-import com.cjwjsw.runningman.data.data_source.db.AppDatabase
-import com.cjwjsw.runningman.data.data_source.db.WalkDao
+import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInfoAppDatabase
+import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInformationDao
+import com.cjwjsw.runningman.data.data_source.db.walk.WalkAppDatabase
+import com.cjwjsw.runningman.data.data_source.db.walk.WalkDao
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
+import com.cjwjsw.runningman.data.repository.UserInfoRepositoryImpl
 import com.cjwjsw.runningman.data.repository.WalkRepositoryImpl
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
+import com.cjwjsw.runningman.domain.repository.UserInfoRepository
 import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,6 +47,12 @@ abstract class RepositoryModule {
     abstract fun bindWalkRepository(
         walkRepositoryImpl: WalkRepositoryImpl
     ): WalkRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserInfoRepository(
+        walkRepositoryImpl: UserInfoRepositoryImpl
+    ): UserInfoRepository
 }
 
 
@@ -112,11 +122,22 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+    fun provideAppDatabase(@ApplicationContext context: Context): WalkAppDatabase {
         return Room.databaseBuilder(
             context,
-            AppDatabase::class.java,
-            "app_database" // 데이터베이스 이름
+            WalkAppDatabase::class.java,
+            "app_database"
+        )
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserInfoAppDatabase(@ApplicationContext context: Context): UserInfoAppDatabase {
+        return Room.databaseBuilder(
+            context,
+            UserInfoAppDatabase::class.java,
+            "user_info_app_database"
         )
             .build()
     }
@@ -124,7 +145,13 @@ object AppModule {
     // DAO 등록
     @Provides
     @Singleton
-    fun provideWalkDao(appDatabase: AppDatabase): WalkDao {
+    fun provideWalkDao(appDatabase: WalkAppDatabase): WalkDao {
         return appDatabase.walkDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserInfoDao(appDatabase: UserInfoAppDatabase): UserInformationDao {
+        return appDatabase.userInfoDao()
     }
 }
