@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.cjwjsw.runningman.core.StepsSettings
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
 import com.cjwjsw.runningman.presentation.component.MainRunningDailyProgressBar
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
@@ -36,7 +37,7 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel: MainViewModel by viewModels()
-    private var maxSteps = 1000
+    private var maxSteps = StepsSettings.steps
 
     private lateinit var progressBarMap: Map<String, MainRunningDailyProgressBar>
     private lateinit var todayDayOfWeek: String
@@ -71,6 +72,23 @@ class MainFragment : Fragment() {
         binding.runningProgressBar.setProgress(progress.coerceAtMost(100))
     }
 
+    private fun updateTodayProgressBar(stepCount: Int) {
+        // 오늘 요일에 대한 프로그레스 바만 업데이트
+        updateProgressBarForDay(todayDayOfWeek, stepCount)
+    }
+
+    private fun updateWeeklyProgressBars(walks: List<Int>?) {
+        // 요일 이름 리스트: 일요일부터 토요일까지
+        val dayNames = listOf("일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일")
+        walks?.forEachIndexed { index, steps ->
+            val dayOfWeek = dayNames[index]
+            // 오늘이 아닌 요일의 프로그레스 바를 업데이트
+            if (dayOfWeek != todayDayOfWeek) {
+                updateProgressBarForDay(dayOfWeek, steps)
+            }
+        }
+    }
+
     private fun updateProgressBarForDay(dayOfWeek: String, steps: Int) {
         progressBarMap[dayOfWeek]?.let {
             val progress = (steps * 100) / maxSteps
@@ -83,7 +101,7 @@ class MainFragment : Fragment() {
         viewModel.stepCount.observe(viewLifecycleOwner) { stepCount ->
             binding.runningCountText.text = "$stepCount"
             updateProgressBar(stepCount)
-            updateProgressBarForDay(todayDayOfWeek, stepCount)
+            updateTodayProgressBar(stepCount)
         }
 
         viewModel.caloriesBurned.observe(viewLifecycleOwner) { caloriesBurned ->
@@ -101,11 +119,13 @@ class MainFragment : Fragment() {
         }
 
         viewModel.weeklyWalks.observe(viewLifecycleOwner) { walks ->
-            walks?.forEach { walk ->
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                val date = LocalDate.parse(walk.date, formatter)
-                val dayOfWeek = date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
-                updateProgressBarForDay(dayOfWeek, walk.stepCount)
+            // 요일 이름 리스트: 일요일부터 토요일까지
+            val dayNames = listOf("일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일")
+
+            walks?.forEachIndexed { index, steps ->
+                val dayOfWeek = dayNames[index]
+                // 각 요일별 프로그레스 바를 업데이트
+                updateWeeklyProgressBars(walks)
             }
         }
     }
@@ -185,6 +205,20 @@ class MainFragment : Fragment() {
         } else {
             Log.e("MainFragment", "Required permissions not granted")
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onResume() {
+        super.onResume()
+        // StepsSettings에서 최신 maxSteps를 가져옴
+        maxSteps = StepsSettings.steps
+
+        // 전체 걸음 수에 따른 메인 프로그레스 바 업데이트
+        updateProgressBar(viewModel.stepCount.value ?: 0)
+
+        updateTodayProgressBar(viewModel.stepCount.value ?: 0)
+
+        updateWeeklyProgressBars(viewModel.weeklyWalks.value)
     }
 
     private fun fetchLocation() {

@@ -24,4 +24,16 @@
     <string name="thursday_small">목</string>
     <string name="friday_small">금</string>
     <string name="saturday_small">토</string>
+    <string name="targerDistance">목표 거리</string>
+    <string name="targerTime">목표 시간</string>
+    <string name="targerCalorie">목표 칼로리 소모</string>
+    <string name="targerSteps">목표 걸음 수</string>
+    <string name="alarmSwitch">푸시 알림</string>
+    <string name="privacyPolicy">개인정보처리방침</string>
+    <string name="openSourceLicense">오픈소스 라이선스</string>
+    <string name="runningManDevelopers">Made By\nJiwon Choi\nSeongWook Jeong</string>
+    <string name="user_gender">성별</string>
+    <string name="user_weight">몸무게</string>
+    <string name="user_height">키</string>
+    <string name="user_age">나이</string>
 </resources>

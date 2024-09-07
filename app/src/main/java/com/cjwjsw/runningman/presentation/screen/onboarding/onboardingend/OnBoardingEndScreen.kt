@@ -12,7 +12,7 @@ import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class OnBoardingEndScreen: AppCompatActivity() {
+class OnBoardingEndScreen : AppCompatActivity() {
 
     private lateinit var binding: ActivityOnBoardingEndBinding
     private val viewModel: OnBoardingEndViewModel by viewModels()
@@ -23,24 +23,22 @@ class OnBoardingEndScreen: AppCompatActivity() {
 
         val userId = UserManager.getInstance()?.idToken
 
-        Log.d("userdata",userId.toString())
+        Log.d("userdata", userId.toString())
         val gender = intent.getStringExtra("gender")
-        val weight = intent.getIntExtra("weight",0)
-        val height = intent.getIntExtra("height",0)
+        val weight = intent.getIntExtra("weight", 0)
+        val height = intent.getIntExtra("height", 0)
         val age = intent.getIntExtra("age", 0)
-        val intent  = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
 
         binding.nextButton.setOnClickListener {
             userId?.let {
-             viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age, this)
+                viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age, this)
+                viewModel.saveUserInfo(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age)
             }
 
-            if(!UserLoginFirst.isFirstLogin(this)) {
-                UserLoginFirst.setFirstLogin(this,true)
-                startActivity(intent)
-            }else{
-                startActivity(intent)
-            }
+            UserLoginFirst.setFirstLogin(this, true)
+
+            startActivity(intent)
         }
     }
 }

@@ -7,7 +7,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.cjwjsw.runningman.core.PreviousWalkData
 import com.cjwjsw.runningman.core.WalkDataSingleton
-import com.cjwjsw.runningman.data.data_source.db.DailyWalk
+import com.cjwjsw.runningman.data.data_source.db.walk.DailyWalkEntity
 import com.cjwjsw.runningman.domain.repository.WalkRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -41,7 +41,7 @@ class DataSyncWorker @AssistedInject constructor(
 
             // 변화량이 유효한 경우에만 저장
             if (deltaStepCount > 0 || deltaDistance > 0 || deltaCalories > 0 || deltaTime > 0) {
-                val hourlyWalk = DailyWalk(
+                val hourlyWalk = DailyWalkEntity(
                     date = currentDate,
                     distance = deltaDistance,
                     stepCount = deltaStepCount,
