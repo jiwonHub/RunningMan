@@ -48,6 +48,7 @@ class FeedDetailScreen: AppCompatActivity() {
         isLikedImg(IL)
         loadProfileImg()
         viewModel.getFeedUploadTime(uid)
+        viewModel.getFeedLikedCount(uid)
 
 
 
@@ -63,23 +64,17 @@ class FeedDetailScreen: AppCompatActivity() {
             isLikedImg(it)
             isLiked = it
         }
+
         viewModel.likeCount.observe(this){ text ->
              binding.likedCountText.text = "${text}명이 좋아합니다"
         }
 
         binding.likeBtn.setOnClickListener {
-            when(isLiked){
-                false -> {
-                    viewModel.getLikedCount(uid.toString())
-                }
-                true ->{
-                    viewModel.getLikedCount(uid.toString())
-                }
-            }
+            viewModel.setLikedCount(uid,userUid,userName)
         }
 
         binding.commentBtn.setOnClickListener {
-            modalBottomSheet(uid.toString(), userName.toString(),userProfileImg.toString())
+            modalBottomSheet(uid, userName.toString(),userProfileImg.toString())
         }
     }
 
@@ -112,7 +107,8 @@ class FeedDetailScreen: AppCompatActivity() {
     }
     companion object{
         val userData = UserManager.getInstance()
-        val userName = userData?.nickName
+        val userName = userData?.nickName.toString()
         val userProfileImg = userData?.profileUrl
+        val userUid = userData?.idToken.toString()
     }
 }
