@@ -25,4 +25,16 @@ interface UserInformationDao {
 
     @Query("DELETE FROM user_info")
     suspend fun deleteAllUserInfo()
+
+    @Query("UPDATE user_info SET age = :age WHERE id = :id")
+    suspend fun updateAge(id: String, age: Int)
+
+    @Query("UPDATE user_info SET gender = :gender WHERE id = :id")
+    suspend fun updateGender(id: String, gender: String)
+
+    @Query("UPDATE user_info SET height = :height WHERE id = :id")
+    suspend fun updateHeight(id: String, height: Int)
+
+    @Query("UPDATE user_info SET weight = :weight WHERE id = :id")
+    suspend fun updateWeight(id: String, weight: Int)
 }

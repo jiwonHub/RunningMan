@@ -16,4 +16,12 @@ interface UserInfoRepository {
 
     suspend fun deleteAllUserInfo()
 
+    suspend fun updateAge(id: String, age: Int)
+
+    suspend fun updateGender(id: String, gender: String)
+
+    suspend fun updateHeight(id: String, height: Int)
+
+    suspend fun updateWeight(id: String, weight: Int)
+
 }

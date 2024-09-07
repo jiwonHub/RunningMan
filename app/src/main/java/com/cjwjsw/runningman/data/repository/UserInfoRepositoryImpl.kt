@@ -33,4 +33,20 @@ class UserInfoRepositoryImpl @Inject constructor(
     override suspend fun deleteAllUserInfo() = withContext(Dispatchers.IO) {
         userInformationDao.deleteAllUserInfo()
     }
+
+    override suspend fun updateAge(id: String, age: Int) {
+        userInformationDao.updateAge(id, age)
+    }
+
+    override suspend fun updateGender(id: String, gender: String) {
+        userInformationDao.updateGender(id, gender)
+    }
+
+    override suspend fun updateHeight(id: String, height: Int) {
+        userInformationDao.updateHeight(id, height)
+    }
+
+    override suspend fun updateWeight(id: String, weight: Int) {
+        userInformationDao.updateWeight(id, weight)
+    }
 }
