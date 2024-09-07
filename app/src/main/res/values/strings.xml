@@ -32,4 +32,8 @@
     <string name="privacyPolicy">개인정보처리방침</string>
     <string name="openSourceLicense">오픈소스 라이선스</string>
     <string name="runningManDevelopers">Made By\nJiwon Choi\nSeongWook Jeong</string>
+    <string name="user_gender">성별</string>
+    <string name="user_weight">몸무게</string>
+    <string name="user_height">키</string>
+    <string name="user_age">나이</string>
 </resources>
