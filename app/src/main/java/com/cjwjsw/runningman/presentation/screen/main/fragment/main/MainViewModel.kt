@@ -121,7 +121,7 @@ class MainViewModel @Inject constructor(
 
     // 거리 계산 함수
     private fun calculateDistance(stepCount: Int, strideLength: Double): Double {
-        return BigDecimal(stepCount * strideLength / 1000).setScale(2, RoundingMode.HALF_UP).toDouble() // km로 변환 후 반올림
+        return BigDecimal(stepCount * strideLength / 100000).setScale(2, RoundingMode.HALF_UP).toDouble() // km로 변환 후 반올림
     }
 
     fun setLocation(latitude: Double, longitude: Double) {
