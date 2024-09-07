@@ -1,29 +1,28 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main.settings
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.StepsSettings
+import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitySettingsBinding
-import com.cjwjsw.runningman.presentation.screen.main.fragment.main.MainFragment
-import com.google.android.gms.oss.licenses.OssLicensesActivity
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
+    private val viewModel: SettingsViewModel by viewModels()
+    private lateinit var userId : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
@@ -31,6 +30,7 @@ class SettingsActivity : AppCompatActivity() {
         backButtonClick()
         switchAlarmToggle()
         initViews()
+        observeData()
     }
 
     private fun initViews() = with(binding) {
@@ -39,9 +39,12 @@ class SettingsActivity : AppCompatActivity() {
         timeMax.text = StepsSettings.time.toString()
         distanceMax.text = StepsSettings.distance.toString()
 
+        userId = UserManager.getInstance()?.idToken ?: ""
+        viewModel.fetchUserInfo(userId)
+
         // 목표 걸음 수 설정 버튼 클릭 이벤트
         stepMaximumButton.setOnClickListener {
-            showEditDialog(
+            showNumberEditDialog(
                 title = "목표 걸음 수 수정",
                 minValue = 1000,
                 currentSetting = StepsSettings.steps,
@@ -54,7 +57,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // 목표 칼로리 설정 버튼 클릭 이벤트
         calorieMaximumButton.setOnClickListener {
-            showEditDialog(
+            showNumberEditDialog(
                 title = "목표 칼로리 수정",
                 minValue = 50,
                 currentSetting = StepsSettings.calories,
@@ -67,7 +70,7 @@ class SettingsActivity : AppCompatActivity() {
 
         // 목표 시간 설정 버튼 클릭 이벤트
         timeMaximumButton.setOnClickListener {
-            showEditDialog(
+            showNumberEditDialog(
                 title = "목표 시간 수정",
                 minValue = 10,
                 currentSetting = StepsSettings.time,
@@ -80,13 +83,55 @@ class SettingsActivity : AppCompatActivity() {
 
         // 목표 거리 설정 버튼 클릭 이벤트
         distanceMaximumButton.setOnClickListener {
-            showEditDialog(
+            showNumberEditDialog(
                 title = "목표 거리 수정",
                 minValue = 1,
                 currentSetting = StepsSettings.distance,
                 onValueSet = { newDistance ->
                     StepsSettings.distance = newDistance
                     distanceMax.text = newDistance.toString() // 텍스트 업데이트
+                }
+            )
+        }
+
+        userAgeButton.setOnClickListener {
+            showNumberEditDialog(
+                title = "나이 수정",
+                minValue = 1,
+                currentSetting = userAgeMax.text.toString().toInt(),
+                onValueSet = { newAge ->
+                    viewModel.updateAge(userId, newAge) // ViewModel 메서드 호출
+                }
+            )
+        }
+
+        userHeightButton.setOnClickListener {
+            showNumberEditDialog(
+                title = "키 수정",
+                minValue = 50,
+                currentSetting = userHeightMax.text.toString().toInt(),
+                onValueSet = { newHeight ->
+                    viewModel.updateHeight(userId, newHeight) // ViewModel 메서드 호출
+                }
+            )
+        }
+
+        userWeightButton.setOnClickListener {
+            showNumberEditDialog(
+                title = "몸무게 수정",
+                minValue = 20,
+                currentSetting = userWeightMax.text.toString().toInt(),
+                onValueSet = { newWeight ->
+                    viewModel.updateWeight(userId, newWeight) // ViewModel 메서드 호출
+                }
+            )
+        }
+
+        userGenderButton.setOnClickListener {
+            showGenderEditDialog(
+                currentGender = userGenderMax.text.toString(),
+                onGenderSet = { newGender ->
+                    viewModel.updateGender(userId, newGender) // ViewModel 메서드 호출
                 }
             )
         }
@@ -100,12 +145,22 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    // ViewModel의 LiveData 관찰하여 UI 업데이트
+    private fun observeData() {
+        viewModel.userInfo.observe(this) { userInfo ->
+            binding.userAgeMax.text = userInfo.age.toString()
+            binding.userHeightMax.text = userInfo.height.toString()
+            binding.userWeightMax.text = userInfo.weight.toString()
+            binding.userGenderMax.text = userInfo.gender
+        }
+    }
+
     private fun showOssLicense() {
         OssLicensesMenuActivity.setActivityTitle("오픈소스 라이선스")
         startActivity(Intent(this, OssLicensesMenuActivity::class.java))
     }
 
-    private fun showEditDialog(
+    private fun showNumberEditDialog(
         title: String,
         minValue: Int,
         currentSetting: Int,
@@ -136,7 +191,6 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 else -> {
                     onValueSet(inputValue)
-                    Toast.makeText(this, "설정되었습니다: $inputValue", Toast.LENGTH_SHORT).show()
                     dialog.dismiss()
                 }
             }
@@ -148,56 +202,26 @@ class SettingsActivity : AppCompatActivity() {
 
         dialog.show()
     }
-    // 목표 걸음 수 설정 다이얼로그 호출 예시
-    private fun showEditStepMaximumDialog() {
-        showEditDialog(
-            title = "목표 걸음 수 수정",
-            minValue = 1000,
-            currentSetting = StepsSettings.steps,
-            onValueSet = { newSteps ->
-                StepsSettings.steps = newSteps
-                binding.stepMax.text = newSteps.toString()
-            }
-        )
-    }
 
-    // 목표 칼로리 설정 다이얼로그 호출 예시
-    private fun showEditCalorieDialog() {
-        showEditDialog(
-            title = "목표 칼로리 수정",
-            minValue = 50,
-            currentSetting = StepsSettings.calories, // 칼로리 설정 값이 있다고 가정
-            onValueSet = { newCalories ->
-                StepsSettings.calories = newCalories
-                binding.calorieMax.text = newCalories.toString() // UI에 반영
-            }
-        )
-    }
+    // 성별 수정 다이얼로그
+    private fun showGenderEditDialog(
+        currentGender: String,
+        onGenderSet: (String) -> Unit
+    ) {
+        val genderOptions = arrayOf("남성", "여성") // 성별 선택지
+        val currentSelection = if (currentGender == "남성") 0 else 1
 
-    // 목표 시간 설정 다이얼로그 호출 예시
-    private fun showEditTimeDialog() {
-        showEditDialog(
-            title = "목표 시간 수정",
-            minValue = 10,
-            currentSetting = StepsSettings.time, // 시간 설정 값이 있다고 가정 (단위: 분)
-            onValueSet = { newTime ->
-                StepsSettings.time = newTime
-                binding.timeMax.text = newTime.toString() // UI에 반영
-            }
-        )
-    }
-
-    // 목표 거리 설정 다이얼로그 호출 예시
-    private fun showEditDistanceDialog() {
-        showEditDialog(
-            title = "목표 거리 수정",
-            minValue = 1,
-            currentSetting = StepsSettings.distance, // 거리 설정 값이 있다고 가정 (단위: km)
-            onValueSet = { newDistance ->
-                StepsSettings.distance = newDistance
-                binding.distanceMax.text = newDistance.toString() // UI에 반영
-            }
-        )
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("성별 수정")
+        builder.setSingleChoiceItems(genderOptions, currentSelection) { dialog, which ->
+            val selectedGender = genderOptions[which]
+            onGenderSet(selectedGender) // 선택된 성별 업데이트
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
     }
 
     private fun switchAlarmToggle() {
