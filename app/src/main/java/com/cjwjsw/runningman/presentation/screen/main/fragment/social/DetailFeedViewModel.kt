@@ -40,10 +40,10 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
         ref.child(userUid).get().addOnCompleteListener { snapShot ->
             if (snapShot.result.exists()) { // 만약 유저의 좋아요 정보가 있다면,
                 Log.d("DetailFeedViewModel", "유저의 좋아요 정보가 있습니다 : ${snapShot.result.exists()}")
-                callback(false)
-            } else { // 좋아요 정보가 없다면 1
-                Log.d("DetailFeedViewModel", "유저의 좋아요 정보가 없습니다 : ${snapShot.result.exists()}")
                 callback(true)
+            } else { // 좋아요 정보가 없다면
+                Log.d("DetailFeedViewModel", "유저의 좋아요 정보가 없습니다 : ${snapShot.result.exists()}")
+                callback(false)
             }
         }
     }
@@ -52,9 +52,22 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
     fun setLikedCount(feedUid: String, userUid: String, userName: String) { // RDB에 좋아요 카운트 등록
         val ref = fbRef.getReference(feedUid).child("like")
         isLiked(feedUid = feedUid, userUid = userUid) { isLiked ->
-            Log.d("DetailFeedViewModel", "isLiked : $isLiked") // 2
+            Log.d("DetailFeedViewModel", "isLiked : $isLiked")
 
-            if (isLiked) { // 저장이 되어있지 않다면,
+            if (isLiked) { // 저장이 되어 있다면,
+                Log.d("DetailFeedViewModel", "좋아요 삭제 성공")
+                removeLikedCount(
+                    userUid = userUid,
+                    feedUid = feedUid
+                )
+                likeCount.value?.let {
+                    removeFireStoreLikedCount(
+                        feedUid = feedUid,
+                        likedCount = it
+                    )
+                }
+                _isLiked.value = false
+            } else { // 좋아요가 저장되어있지 않다면,
                 val user = LikeModel( //저장할 데이터 셋 만들기
                     userUid = userUid,
                     userName = userName
@@ -62,45 +75,77 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
                 ref.child(userUid).setValue(user).addOnCompleteListener { task ->
                     Log.d("DetailFeedViewModel", "좋아요 등록 성공")
-
                     //getRD 메서드 비동기 구현
+                    //좋아요 누르기 전 RD에 있는 좋아요 조회
                     getRDLikedCount(feedUid) { RDlikeCount ->
+                        Log.d("DetailFeedViewModel","getRDLikedCount : $RDlikeCount")
                         _likeCount.value = RDlikeCount
-                        _isLiked.value = RDlikeCount > 0
+                        _isLiked.value = true
                         setFeedLikedCount(feedUid) // 피드 정보에 좋아요 카운트 등록
                     }
                 }
-            } else { // 좋아요가 저장되어있다면
-                Log.d("DetailFeedViewModel", "좋아요 삭제 성공") //3
-                removeLikedCount(
-                    userUid = userUid,
-                    feedUid = feedUid
-                )
             }
         }
     }
 
     fun setFeedLikedCount(feedUid: String) {
         val ref = firebaseFirestore.collection("posts").document(feedUid)
+        Log.d("DetailFeedViewMode","올라가기 직전 좋아요 수 : ${likeCount.value}")
 
-        ref.update("likedCount", _likeCount.value?.plus(1))
+        ref.update("likedCount", _likeCount.value)
             .addOnCompleteListener { task ->
                 Log.d("DetailFeedViewModel", "피드 정보에 좋아요 카운트 등록 완료 : ${task.result}")
             }
             .addOnFailureListener { e ->
-                Log.d("DetailFeedViewModel", "피드 정보에 좋아요 카운트 등록 실패 : ${e.message}")
+                Log.d("DetailFeedViewModel", "피드 정보에 좋아요 카운 트 등록 실패 : ${e.message}")
+            }
+
+        ref.update("isLiked", true)
+            .addOnSuccessListener { task ->
+                Log.d("DetailFeedViewModel","FiresStore 좋아요 여부 : false")
+                _isLiked.value = true
+            }
+            .addOnFailureListener {e ->
+                Log.d("DetailFeedViewModel","FireStore 좋아요 여부 변경 실패 : ${e.cause.toString()}")
             }
     }
 
     fun removeLikedCount(userUid: String, feedUid: String) {
-        val ref = fbRef.getReference(feedUid).child("like")
+        val ref = fbRef.getReference(feedUid).child("like") //RDB 참조
 
         ref.child(userUid).removeValue().addOnCompleteListener { task ->
-            Log.d("DetailFeedViewModel", "좋아요 카운트 삭제 완료: ${task.result}") // 4
+            Log.d("DetailFeedViewModel", "좋아요 카운트 삭제 완료: ${task.isSuccessful}")
         }.addOnFailureListener { e ->
             Log.d("DetailFeedViewModel", "좋아요 카운트 삭제 실패 : ${e.message}")
         }
+        if(likeCount.value!! > 0 ){
+            _likeCount.value?.minus(1)
+        }else{
+            _likeCount.value = 0
+        }
+    }
 
+    fun removeFireStoreLikedCount(feedUid: String, likedCount : Int){
+        val ref = firebaseFirestore.collection("posts").document(feedUid)
+
+
+        ref.update("likedCount",likedCount-1)
+            .addOnSuccessListener { task ->
+                Log.d("DetailFeedViewModel","FiresStore 좋아요 카운트 삭제 완료")
+                _likeCount.value = likedCount -1
+            }
+            .addOnFailureListener {e ->
+                Log.d("DetailFeedViewModel","FireStore 좋아요 카운트 삭제 실패 : ${e.cause.toString()}")
+            }
+
+        ref.update("isLiked",false)
+            .addOnSuccessListener { task ->
+                Log.d("DetailFeedViewModel","FiresStore 좋아요 여부 : false")
+                _isLiked.value = false
+            }
+            .addOnFailureListener {e ->
+                Log.d("DetailFeedViewModel","FireStore 좋아요 여부 변경 실패 : ${e.cause.toString()}")
+            }
     }
 
     fun getRDLikedCount(feedUid: String, callback: (Int) -> Unit) {
@@ -129,45 +174,6 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
             }
         }
     }
-
-//    fun getLikedCount(uid : String){
-//        val ref = firebaseFirestore.collection("posts").document(uid)
-//
-//        //데이터 받아오기
-//        ref.get().addOnSuccessListener { document ->
-//            if (document != null && document.exists()) {
-//                Log.d("DetailFeedViewModel", "받아온 데이터: ${document.data}")
-//                val data = document.data?.toDataClass<FeedModel>()
-//
-//                val currentLikeCount = data?.likedCount ?: 0
-//                val currentIsLiked = data?.isLiked ?: false
-//
-//                // 받아온 데이터 처리
-//                val newCount = if (currentIsLiked) {
-//                    currentLikeCount -1
-//                } else {
-//                    currentLikeCount +1
-//                }
-//
-//                val newIsLiked = !currentIsLiked
-//
-//                Log.d("DetailFeedViewModel",newIsLiked.toString())
-//
-//                //좋아요 카운트 업
-//                ref.update("likedCount", newCount,"isLiked",newIsLiked)
-//                    .addOnSuccessListener {
-//                        Log.d("DetailFeedViewModel", "LikedCount 업데이트 성공")
-//                        _likeCount.value = newCount // Update the LiveData to reflect the new count
-//                        _isLiked.value = newIsLiked
-//                    }
-//                    .addOnFailureListener { Log.d("DetailFeedViewModel", "LikedCount 업데이트 실패") }
-//            } else {
-//                Log.d("DetailFeedViewModel", "해당하는 UID의 피드가 없습니다")
-//            }
-//        }.addOnFailureListener { e ->
-//            Log.w("DetailFeedViewModel", "피드를 불러오는중 오류 발생", e)
-//        }
-//    }
 
     fun fetchCommentData(uid: String) {
         val ref = fbRef.getReference(uid).child("comments")
