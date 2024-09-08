@@ -107,6 +107,16 @@ class ProfileFeedDetailViewModel @Inject constructor( private val firebaseFirest
         }
     }
 
+    fun deleteFeed(feedUid : String){
+        val ref = firebaseFirestore.collection("posts").document(feedUid)
+        ref.delete().addOnSuccessListener {task ->
+            Log.d("ProfileFeedDetailViewModel","피드 삭제 성공")
+        }.addOnFailureListener { e ->
+            Log.d("ProfileFeedDetailViewModel","피드 삭제 성공")
+        }
+    }
+
+
 
 
 
