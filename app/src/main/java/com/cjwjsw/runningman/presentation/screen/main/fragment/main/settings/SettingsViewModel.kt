@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInformationEntity
 import com.cjwjsw.runningman.domain.repository.UserInfoRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val userInfoRepository: UserInfoRepository
 ) : ViewModel() {
