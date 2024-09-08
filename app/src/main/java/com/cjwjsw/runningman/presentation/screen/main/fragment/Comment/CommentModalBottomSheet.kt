@@ -1,4 +1,4 @@
-package com.cjwjsw.runningman.presentation.screen.main.fragment.social
+package com.cjwjsw.runningman.presentation.screen.main.fragment.Comment
 
 import android.app.Dialog
 import android.os.Bundle
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.DialogCommentBottomEdittextBinding
 import com.cjwjsw.runningman.databinding.DialogCommentBottomSheetModalBinding
+import com.cjwjsw.runningman.presentation.screen.main.fragment.social.DetailFeedViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -22,10 +23,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class CommentModalBottomSheet(uid: String, userName: String, profileUrl: String, userNumber: String) : BottomSheetDialogFragment() {
+class CommentModalBottomSheet(
+    uid: String,
+    userName: String,
+    profileUrl: String,
+    userNumber: String,
+) : BottomSheetDialogFragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var commentAdapter: FeedDetailCommentAdapter
+    private lateinit var commentAdapter: CommentAdapter
     lateinit var binding: DialogCommentBottomSheetModalBinding
     lateinit var editBinding: DialogCommentBottomEdittextBinding
     private val viewModel: DetailFeedViewModel by viewModels()
@@ -74,6 +80,7 @@ class CommentModalBottomSheet(uid: String, userName: String, profileUrl: String,
                 val comment = editTextBinding.commentEditText.text.toString()
                 viewModel.uploadComment(comment,_uid,_userName,_profileUrl, _userNumber)
             }
+
         }
 
         return bottomSheetDialog
@@ -88,12 +95,12 @@ class CommentModalBottomSheet(uid: String, userName: String, profileUrl: String,
 
         recyclerView = binding.commentRecycerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        commentAdapter = FeedDetailCommentAdapter(emptyList())
+        commentAdapter = CommentAdapter(emptyList(),viewModel)
         recyclerView.adapter = commentAdapter
 
         viewModel.commentArr.observe(this) { arr ->
             Log.d("FeedDetailScreen", "Livedata 댓글 : ${arr.toString()}")
-            commentAdapter = arr?.let { FeedDetailCommentAdapter(arr) }!!
+            commentAdapter = arr?.let { CommentAdapter(arr,viewModel) }!!
             recyclerView.adapter = commentAdapter
         }
 
