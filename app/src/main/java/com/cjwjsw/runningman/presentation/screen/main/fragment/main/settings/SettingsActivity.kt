@@ -98,7 +98,7 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "나이 수정",
                 minValue = 1,
-                currentSetting = userAgeMax.text.toString().toInt(),
+                currentSetting = userAge.text.toString().toInt(),
                 onValueSet = { newAge ->
                     viewModel.updateAge(userId, newAge) // ViewModel 메서드 호출
                 }
@@ -109,7 +109,7 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "키 수정",
                 minValue = 50,
-                currentSetting = userHeightMax.text.toString().toInt(),
+                currentSetting = userHeight.text.toString().toInt(),
                 onValueSet = { newHeight ->
                     viewModel.updateHeight(userId, newHeight) // ViewModel 메서드 호출
                 }
@@ -120,7 +120,7 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "몸무게 수정",
                 minValue = 20,
-                currentSetting = userWeightMax.text.toString().toInt(),
+                currentSetting = userWeight.text.toString().toInt(),
                 onValueSet = { newWeight ->
                     viewModel.updateWeight(userId, newWeight) // ViewModel 메서드 호출
                 }
@@ -129,7 +129,7 @@ class SettingsActivity : AppCompatActivity() {
 
         userGenderButton.setOnClickListener {
             showGenderEditDialog(
-                currentGender = userGenderMax.text.toString(),
+                currentGender = userGender.text.toString(),
                 onGenderSet = { newGender ->
                     viewModel.updateGender(userId, newGender) // ViewModel 메서드 호출
                 }
@@ -148,10 +148,10 @@ class SettingsActivity : AppCompatActivity() {
     // ViewModel의 LiveData 관찰하여 UI 업데이트
     private fun observeData() {
         viewModel.userInfo.observe(this) { userInfo ->
-            binding.userAgeMax.text = userInfo.age.toString()
-            binding.userHeightMax.text = userInfo.height.toString()
-            binding.userWeightMax.text = userInfo.weight.toString()
-            binding.userGenderMax.text = userInfo.gender
+            binding.userAge.text = userInfo.age.toString()
+            binding.userHeight.text = userInfo.height.toString()
+            binding.userWeight.text = userInfo.weight.toString()
+            binding.userGender.text = userInfo.gender
         }
     }
 

@@ -29,6 +29,7 @@ class SettingsViewModel @Inject constructor(
     fun updateAge(id: String, age: Int) {
         viewModelScope.launch {
             userInfoRepository.updateAge(id, age)
+            _userInfo.value = userInfoRepository.getUserInfo(id)
         }
     }
 
@@ -36,6 +37,7 @@ class SettingsViewModel @Inject constructor(
     fun updateGender(id: String, gender: String) {
         viewModelScope.launch {
             userInfoRepository.updateGender(id, gender)
+            _userInfo.value = userInfoRepository.getUserInfo(id)
         }
     }
 
@@ -43,6 +45,7 @@ class SettingsViewModel @Inject constructor(
     fun updateHeight(id: String, height: Int) {
         viewModelScope.launch {
             userInfoRepository.updateHeight(id, height)
+            _userInfo.value = userInfoRepository.getUserInfo(id)
         }
     }
 
@@ -50,6 +53,7 @@ class SettingsViewModel @Inject constructor(
     fun updateWeight(id: String, weight: Int) {
         viewModelScope.launch {
             userInfoRepository.updateWeight(id, weight)
+            _userInfo.value = userInfoRepository.getUserInfo(id)
         }
     }
 
