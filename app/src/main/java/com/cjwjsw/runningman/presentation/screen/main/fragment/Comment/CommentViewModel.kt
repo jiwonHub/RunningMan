@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.DetailFeedViewModel
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,13 +44,28 @@ class CommentViewModel @Inject constructor() : ViewModel() {
 
     fun deleteComment(feedUid : String,commentKey : String){
         Log.d(TAG,"댓글 삭제 : $commentKey")
-        val ref = DetailFeedViewModel.fbRef.getReference(feedUid).child("comments")
+        val ref =fbRef.getReference(feedUid).child("comments")
 
         ref.child(commentKey).removeValue().addOnSuccessListener {
             Log.d(TAG,"댓글 삭제 완료")
         }.addOnFailureListener { e ->
             Log.d(TAG,"댓글 삭제 실패 :${e.message}")
         }
+    }
+
+    fun isMyComment(feedUid: String,commentKey: String,userUid: String) : Boolean{ //내 댓글인지 아닌지 판단
+        val ref = fbRef.getReference(feedUid).child("comments")
+        var data = false
+
+        ref.child(commentKey).get().addOnSuccessListener {snapShot ->
+               data = snapShot.child(userUid).exists()
+            Log.d(TAG,"본인 댓글? : $data")
+        }
+            .addOnFailureListener {e ->
+                data = false
+                Log.d(TAG,"본인 댓글인지 판단 불가 : ${e.message}")
+            }
+        return data
     }
 
     companion object{

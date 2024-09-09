@@ -6,16 +6,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
 import com.cjwjsw.runningman.databinding.DialogCommentBottomSheet2thModalBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class Comment2thBottomSheet(val feedUid: String, val commentKey: String) : BottomSheetDialogFragment(){
+class Comment2thBottomSheet(feedUid: String,commentKey: String, userUid: String) : BottomSheetDialogFragment(){
 
     lateinit var binding : DialogCommentBottomSheet2thModalBinding
     val viewModel : CommentViewModel by viewModels()
+    val feedUid = feedUid
+    val commentKey = commentKey
+    val userUid = userUid
 
     override fun onCreateView( // 뷰 초기화
         inflater: LayoutInflater,
@@ -35,6 +39,22 @@ class Comment2thBottomSheet(val feedUid: String, val commentKey: String) : Botto
 
     override fun onStart() {
         super.onStart()
+
+        if(!viewModel.isMyComment(feedUid = feedUid,
+                userUid = userUid,
+                commentKey = commentKey)){
+            binding.deleteBtn.visibility = View.GONE
+
+            //없어진 버튼 비율 맞추기 위해 가중치 조정
+            val layoutParamsReport = binding.reportBtn.layoutParams as LinearLayout.LayoutParams
+            layoutParamsReport.weight = 1.5f
+            binding.reportBtn.layoutParams = layoutParamsReport
+
+            val layoutParamsCancel = binding.cancelBtn.layoutParams as LinearLayout.LayoutParams
+            layoutParamsCancel.weight = 1.5f
+            binding.cancelBtn.layoutParams = layoutParamsCancel
+
+        }
 
         val bottomSheetDialog = dialog as BottomSheetDialog
         val bottomSheet =
@@ -69,7 +89,8 @@ class Comment2thBottomSheet(val feedUid: String, val commentKey: String) : Botto
 
         binding.deleteBtn.setOnClickListener{
             Log.d("Comment2thBottomSheet","피드 UID : ${feedUid}")
-            viewModel.deleteComment(feedUid,commentKey)
+            Log.d("Comment2thBottomSheet","피드 UID : ${userUid}")
+           viewModel.deleteComment(feedUid,commentKey)
             dismiss()
         }
     }

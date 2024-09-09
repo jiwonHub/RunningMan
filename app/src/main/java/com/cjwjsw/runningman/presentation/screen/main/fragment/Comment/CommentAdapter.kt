@@ -38,6 +38,8 @@ class CommentAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.commentUpload(comment[position].comment, comment[position].userName)
         holder.setCommentKey(comment[position].newCommentKey)
+
+        holder.setUserUid(comment[position].userUid)
         holder.bind(comment[position].profileUrl)
         Log.d("FeedDetailCommenAdapter", comment[position].toString())
         //아이템 간 간격 설정
@@ -52,10 +54,18 @@ class CommentAdapter(
         private val userName: TextView = itemView.findViewById(R.id.userName)
         private val deleteBtn : ImageButton = itemView.findViewById(R.id.manageBtn)
         private var commentKey : String = ""
+        private var userUid : String = ""
 
 
-        fun setCommentKey(key : String){
+        fun setUserUid(id : String){
+            userUid = id
+        }
+        fun setCommentKey(key : String){ // onBind에서 댓글 키 가져오기
             commentKey = key
+        }
+
+        fun getUserUid() : String{
+            return userUid
         }
 
         fun getCommentKey() : String{
@@ -69,8 +79,9 @@ class CommentAdapter(
                 .centerCrop()
                 .into(view)
             val modal = Comment2thBottomSheet(
-                feedUid,
-                commentKey = (getCommentKey())
+                feedUid = feedUid,
+                commentKey = (getCommentKey()),
+                userUid = getUserUid()
             )
 
             deleteBtn.setOnClickListener {
