@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitiyFeedDetailBinding
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.CommentModalBottomSheet
+import com.cjwjsw.runningman.presentation.screen.main.fragment.Comment.CommentModalBottomSheet
 import com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailViewAdapter
 import com.cjwjsw.runningman.presentation.screen.main.fragment.social.ProfileFeedDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -91,7 +91,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
             modalBottomSheet(uid.toString(), userName.toString(),userProfileImg.toString())
         }
 
-        binding.feedDelBtn.setOnClickListener {
+        binding.feedDelBtn.setOnClickListener { // 피드 삭제
             alert.show()
         }
     }
@@ -108,7 +108,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
 
 
     private fun modalBottomSheet(uid : String,userName : String,profileUrl : String) {
-        val modal = CommentModalBottomSheet(uid,userName,profileUrl,userNumber)
+        val modal = CommentModalBottomSheet(uid, userName, profileUrl, userNumber)
 
         modal.show(supportFragmentManager, CommentModalBottomSheet.TAG)
     }

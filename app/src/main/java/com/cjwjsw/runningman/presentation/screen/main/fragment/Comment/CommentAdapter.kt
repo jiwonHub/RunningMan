@@ -8,17 +8,20 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
-import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.DetailFeedViewModel
+import com.cjwjsw.runningman.domain.usecase.DeleteCommentUseCase
 
 class CommentAdapter(
     private val comment: List<CommentModel>,
-    private val viewModel: DetailFeedViewModel
+    private val feedUid : String,
+    private val fragmentManager: FragmentManager
 ) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+
+    private val deleteComment = DeleteCommentUseCase()
     @SuppressLint("SuspiciousIndentation")
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,8 +38,9 @@ class CommentAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(comment[position].profileUrl)
         holder.commentUpload(comment[position].comment, comment[position].userName)
+        holder.setCommentKey(comment[position].newCommentKey)
+        holder.bind(comment[position].profileUrl)
         Log.d("FeedDetailCommenAdapter", comment[position].toString())
         //아이템 간 간격 설정
         val layoutParams = holder.itemView.layoutParams
@@ -49,16 +53,30 @@ class CommentAdapter(
         private val commentText: TextView = itemView.findViewById(R.id.comment)
         private val userName: TextView = itemView.findViewById(R.id.userName)
         private val deleteBtn : ImageButton = itemView.findViewById(R.id.manageBtn)
+        private var commentKey : String = ""
 
+
+        fun setCommentKey(key : String){
+            commentKey = key
+        }
+
+        fun getCommentKey() : String{
+            Log.d(TAG,"getCommentKey : $commentKey")
+            return commentKey
+        }
 
         fun bind(item: String) {
             Glide.with(view)
                 .load(item)
                 .centerCrop()
                 .into(view)
+            val modal = Comment2thBottomSheet(
+                feedUid,
+                commentKey = (getCommentKey())
+            )
 
             deleteBtn.setOnClickListener {
-                viewModel.deleteComment(UserManager.getInstance()?.idToken.toString())
+               modal.show(fragmentManager,Comment2thBottomSheet.TAG)
             }
         }
 
@@ -66,6 +84,10 @@ class CommentAdapter(
             commentText.text = item
             userName.text = name
         }
-
     }
+
+    companion object{
+        const val TAG = "CommentAdapter"
+    }
+
 }

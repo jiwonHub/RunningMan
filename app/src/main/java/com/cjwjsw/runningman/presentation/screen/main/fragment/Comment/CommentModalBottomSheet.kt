@@ -35,6 +35,7 @@ class CommentModalBottomSheet(
     lateinit var binding: DialogCommentBottomSheetModalBinding
     lateinit var editBinding: DialogCommentBottomEdittextBinding
     private val viewModel: DetailFeedViewModel by viewModels()
+    private val commentViewModel : CommentViewModel by viewModels()
     private val _uid = uid
     private val _userName = userName
     private val _profileUrl = profileUrl
@@ -78,7 +79,7 @@ class CommentModalBottomSheet(
 
             editTextBinding.commentUploadBtn.setOnClickListener {
                 val comment = editTextBinding.commentEditText.text.toString()
-                viewModel.uploadComment(comment,_uid,_userName,_profileUrl, _userNumber)
+                commentViewModel.uploadComment(comment,_uid,_userName,_profileUrl, _userNumber)
             }
 
         }
@@ -95,12 +96,12 @@ class CommentModalBottomSheet(
 
         recyclerView = binding.commentRecycerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        commentAdapter = CommentAdapter(emptyList(),viewModel)
+        commentAdapter = CommentAdapter(emptyList(), feedUid = _uid,fragmentManager = childFragmentManager)
         recyclerView.adapter = commentAdapter
 
         viewModel.commentArr.observe(this) { arr ->
             Log.d("FeedDetailScreen", "Livedata 댓글 : ${arr.toString()}")
-            commentAdapter = arr?.let { CommentAdapter(arr,viewModel) }!!
+            commentAdapter = arr?.let { CommentAdapter(arr, feedUid = _uid, fragmentManager = childFragmentManager) }!!
             recyclerView.adapter = commentAdapter
         }
 
