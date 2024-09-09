@@ -137,6 +137,8 @@ class PedometerService : Service(), SensorEventListener {
         val calendar = Calendar.getInstance()
         val currentDay = calendar.get(Calendar.DAY_OF_YEAR)
 
+        Log.d("PedometerService", "Total Steps: $totalSteps, Initial Step Count: $initialStepCount")
+
         if (currentDay != lastCheckedDay) {
             initialStepCount = totalSteps
             lastCheckedDay = currentDay
@@ -147,7 +149,14 @@ class PedometerService : Service(), SensorEventListener {
             }
         }
 
+        // totalSteps 값이 초기화되었거나 예상보다 작을 경우, 초기 걸음 수 재설정
+        if (totalSteps < initialStepCount || totalSteps < 1000) {
+            initialStepCount = totalSteps
+            sharedPreferences.edit().putInt("initialStepCount", initialStepCount).apply()
+        }
+
         val stepCount = totalSteps - initialStepCount
+        Log.d("PedometerService", "Calculated Step Count: $stepCount")
 
         WalkDataSingleton.updateStepCount(stepCount)
     }
