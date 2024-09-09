@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.domain.model.CommentModel
-import com.cjwjsw.runningman.domain.usecase.DeleteCommentUseCase
 
 class CommentAdapter(
     private val comment: List<CommentModel>,
@@ -21,7 +20,6 @@ class CommentAdapter(
     private val fragmentManager: FragmentManager
 ) : RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
-    private val deleteComment = DeleteCommentUseCase()
     @SuppressLint("SuspiciousIndentation")
     override fun onCreateViewHolder(
         parent: ViewGroup,
