@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.LocationTrackerManager
-import com.cjwjsw.runningman.core.WalkDataSingleton
+import com.cjwjsw.runningman.core.DataSingleton
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
@@ -42,7 +42,7 @@ class MapViewModel @Inject constructor(
 
     fun resetData() {
         locationTrackerManager.clearPath()
-        WalkDataSingleton.resetDistance()
+        DataSingleton.resetDistance()
         _path.value = locationTrackerManager.getPath()
     }
 

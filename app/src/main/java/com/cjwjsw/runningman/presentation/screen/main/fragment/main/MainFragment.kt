@@ -15,18 +15,18 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.cjwjsw.runningman.core.StepsSettings
+import com.cjwjsw.runningman.core.Settings
 import com.cjwjsw.runningman.databinding.FragmentMainBinding
 import com.cjwjsw.runningman.presentation.component.MainRunningDailyProgressBar
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.settings.SettingsActivity
+import com.cjwjsw.runningman.presentation.screen.main.fragment.main.water.WaterActivity
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.weather.WeatherDetailActivity
 import com.cjwjsw.runningman.service.PedometerService
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -37,7 +37,7 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val viewModel: MainViewModel by viewModels()
-    private var maxSteps = StepsSettings.steps
+    private var maxSteps = Settings.steps
 
     private lateinit var progressBarMap: Map<String, MainRunningDailyProgressBar>
     private lateinit var todayDayOfWeek: String
@@ -157,6 +157,10 @@ class MainFragment : Fragment() {
         binding.weatherLayout.setOnClickListener {
             startActivity(Intent(requireContext(), WeatherDetailActivity::class.java))
         }
+
+        binding.waterButton.setOnClickListener {
+            startActivity(Intent(requireContext(), WaterActivity::class.java))
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -211,7 +215,7 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         // StepsSettings에서 최신 maxSteps를 가져옴
-        maxSteps = StepsSettings.steps
+        maxSteps = Settings.steps
 
         // 전체 걸음 수에 따른 메인 프로그레스 바 업데이트
         updateProgressBar(viewModel.stepCount.value ?: 0)
