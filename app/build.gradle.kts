@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -10,6 +12,14 @@ plugins {
 android {
     namespace = "com.cjwjsw.runningman"
     compileSdk = 34
+    // 필요 시 추가
+    // 필요 시 추가
+    packaging {
+        resources {
+            excludes += ("META-INF/NOTICE.md")
+        }
+    }
+
 
     defaultConfig {
         applicationId = "com.cjwjsw.runningman"
@@ -42,6 +52,11 @@ android {
 
 dependencies {
     implementation(libs.firebase.database.ktx)
+    implementation(files("libs/activation.jar"))
+    implementation(files("libs/additionnal.jar"))
+    implementation(files("libs/mail.jar"))
+
+
     val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
@@ -86,7 +101,6 @@ dependencies {
     kapt ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
 
-
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
@@ -105,6 +119,7 @@ dependencies {
 
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
+
 }
 
 kapt {
