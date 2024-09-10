@@ -93,7 +93,19 @@ class Comment2thBottomSheet(feedUid: String,commentKey: String, userUid: String)
            viewModel.deleteComment(feedUid,commentKey)
             dismiss()
         }
+
+        binding.reportBtn.setOnClickListener {
+            context?.let { it1 ->
+                viewModel.reportComment(
+                    feedUid = feedUid,
+                    userUid = userUid,
+                    context = it1,
+                    text = "hello world"
+                )
+            }
+        }
     }
+
 
     companion object{
         const val TAG = "SecondModalBottomSheet"
