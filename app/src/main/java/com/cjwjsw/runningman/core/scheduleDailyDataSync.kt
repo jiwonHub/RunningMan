@@ -2,12 +2,10 @@ package com.cjwjsw.runningman.core
 
 import android.content.Context
 import android.util.Log
-import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.workDataOf
-import com.cjwjsw.runningman.service.worker.DataResetWorker
+import com.cjwjsw.runningman.service.worker.DailyWorker
 import com.cjwjsw.runningman.service.worker.DataSyncWorker
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -40,7 +38,7 @@ fun scheduleMidnightDataReset(context: Context) {
     val initialDelay = target.timeInMillis - now.timeInMillis
 
     // 주기적 워크 요청 설정 (매일 자정 반복)
-    val workRequest = PeriodicWorkRequestBuilder<DataResetWorker>(1, TimeUnit.DAYS)
+    val workRequest = PeriodicWorkRequestBuilder<DailyWorker>(1, TimeUnit.DAYS)
         .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
         .build()
 

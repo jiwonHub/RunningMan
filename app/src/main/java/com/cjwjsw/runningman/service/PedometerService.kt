@@ -18,12 +18,10 @@ import androidx.lifecycle.MutableLiveData
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import androidx.core.app.NotificationCompat
-import com.cjwjsw.runningman.core.WalkDataSingleton
+import com.cjwjsw.runningman.core.DataSingleton
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.util.Calendar
 
 class PedometerService : Service(), SensorEventListener {
@@ -158,7 +156,7 @@ class PedometerService : Service(), SensorEventListener {
         val stepCount = totalSteps - initialStepCount
         Log.d("PedometerService", "Calculated Step Count: $stepCount")
 
-        WalkDataSingleton.updateStepCount(stepCount)
+        DataSingleton.updateStepCount(stepCount)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {

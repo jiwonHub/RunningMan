@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.cjwjsw.runningman.core.WalkDataSingleton
+import com.cjwjsw.runningman.core.DataSingleton
 import com.cjwjsw.runningman.databinding.FragmentMapBinding
 import com.cjwjsw.runningman.service.LocationUpdateService
 import com.naver.maps.geometry.LatLng
@@ -68,7 +68,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             binding.locationText.text = address
         }
 
-        WalkDataSingleton.distance.observe(viewLifecycleOwner) { distance ->
+        DataSingleton.distance.observe(viewLifecycleOwner) { distance ->
             updateDistanceUI(distance)
         }
 
