@@ -3,7 +3,7 @@ package com.cjwjsw.runningman.core
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-object WalkDataSingleton {
+object DataSingleton {
     private val _distance = MutableLiveData<Double>()
     val distance: LiveData<Double> = _distance
 
@@ -15,6 +15,9 @@ object WalkDataSingleton {
 
     private val _time = MutableLiveData<Long>()
     val time: LiveData<Long> = _time
+
+    private val _drinkingWater = MutableLiveData<Int>()
+    val drinkingWater: LiveData<Int> = _drinkingWater // 마신 물
 
     fun updateDistance(newDistance: Double) {
         _distance.postValue(newDistance)
@@ -46,5 +49,13 @@ object WalkDataSingleton {
 
     fun resetTime() {
         _time.postValue(0L)
+    }
+
+    fun updateDrinkingWater(newWater: Int) {
+        _drinkingWater.postValue(newWater)
+    }
+
+    fun resetDrinkingWater() {
+        _drinkingWater.postValue(0)
     }
 }
