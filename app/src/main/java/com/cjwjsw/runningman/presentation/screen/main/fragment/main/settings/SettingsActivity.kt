@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.cjwjsw.runningman.R
-import com.cjwjsw.runningman.core.StepsSettings
+import com.cjwjsw.runningman.core.Settings
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitySettingsBinding
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -34,10 +34,10 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun initViews() = with(binding) {
-        stepMax.text = StepsSettings.steps.toString()
-        calorieMax.text = StepsSettings.calories.toString()
-        timeMax.text = StepsSettings.time.toString()
-        distanceMax.text = StepsSettings.distance.toString()
+        stepMax.text = Settings.steps.toString()
+        calorieMax.text = Settings.calories.toString()
+        timeMax.text = Settings.time.toString()
+        distanceMax.text = Settings.distance.toString()
 
         userId = UserManager.getInstance()?.idToken ?: ""
         viewModel.fetchUserInfo(userId)
@@ -47,9 +47,9 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "목표 걸음 수 수정",
                 minValue = 1000,
-                currentSetting = StepsSettings.steps,
+                currentSetting = Settings.steps,
                 onValueSet = { newSteps ->
-                    StepsSettings.steps = newSteps
+                    Settings.steps = newSteps
                     stepMax.text = newSteps.toString() // 텍스트 업데이트
                 }
             )
@@ -60,9 +60,9 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "목표 칼로리 수정",
                 minValue = 50,
-                currentSetting = StepsSettings.calories,
+                currentSetting = Settings.calories,
                 onValueSet = { newCalories ->
-                    StepsSettings.calories = newCalories
+                    Settings.calories = newCalories
                     calorieMax.text = newCalories.toString() // 텍스트 업데이트
                 }
             )
@@ -73,9 +73,9 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "목표 시간 수정",
                 minValue = 10,
-                currentSetting = StepsSettings.time,
+                currentSetting = Settings.time,
                 onValueSet = { newTime ->
-                    StepsSettings.time = newTime
+                    Settings.time = newTime
                     timeMax.text = newTime.toString() // 텍스트 업데이트
                 }
             )
@@ -86,9 +86,9 @@ class SettingsActivity : AppCompatActivity() {
             showNumberEditDialog(
                 title = "목표 거리 수정",
                 minValue = 1,
-                currentSetting = StepsSettings.distance,
+                currentSetting = Settings.distance,
                 onValueSet = { newDistance ->
-                    StepsSettings.distance = newDistance
+                    Settings.distance = newDistance
                     distanceMax.text = newDistance.toString() // 텍스트 업데이트
                 }
             )
