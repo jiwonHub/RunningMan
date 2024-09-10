@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.cjwjsw.runningman.core.StepsSettings
+import com.cjwjsw.runningman.core.Settings
 import com.cjwjsw.runningman.databinding.FragmentWeeklyStatisticsBinding
 import com.cjwjsw.runningman.presentation.component.LabelUtils
 
@@ -42,10 +42,10 @@ class WeeklyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
     private lateinit var textView6k: TextView
     private lateinit var dotLine6k: View
 
-    private val stepsMax = StepsSettings.steps
-    private val caloriesMax = StepsSettings.calories
-    private val distanceMax = StepsSettings.distance // km to m
-    private val timeMax = StepsSettings.time * 60
+    private val stepsMax = Settings.steps
+    private val caloriesMax = Settings.calories
+    private val distanceMax = Settings.distance // km to m
+    private val timeMax = Settings.time * 60
 
     private var stepsMaxSteps = stepsMax
     private var caloriesMaxSteps = caloriesMax

@@ -6,7 +6,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.cjwjsw.runningman.core.PreviousWalkData
-import com.cjwjsw.runningman.core.WalkDataSingleton
+import com.cjwjsw.runningman.core.DataSingleton
 import com.cjwjsw.runningman.data.data_source.db.walk.DailyWalkEntity
 import com.cjwjsw.runningman.domain.repository.WalkRepository
 import dagger.assisted.Assisted
@@ -28,10 +28,10 @@ class DataSyncWorker @AssistedInject constructor(
 
             // 현재 상태 가져오기
             val currentDate = getCurrentDate()
-            val currentDistance = WalkDataSingleton.distance.value ?: 0.0
-            val currentStepCount = WalkDataSingleton.stepCount.value ?: 0
-            val currentCalories = WalkDataSingleton.calorie.value ?: 0.0
-            val currentTime = WalkDataSingleton.time.value ?: 0L
+            val currentDistance = DataSingleton.distance.value ?: 0.0
+            val currentStepCount = DataSingleton.stepCount.value ?: 0
+            val currentCalories = DataSingleton.calorie.value ?: 0.0
+            val currentTime = DataSingleton.time.value ?: 0L
 
             // 이전 상태와의 변화량 계산
             val deltaDistance = currentDistance - PreviousWalkData.previousDistance
