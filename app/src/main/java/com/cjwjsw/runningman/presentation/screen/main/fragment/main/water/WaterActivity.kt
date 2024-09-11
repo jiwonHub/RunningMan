@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.cjwjsw.runningman.databinding.ActivityWaterBinding
 import com.cjwjsw.runningman.presentation.component.LabelUtils
@@ -138,6 +139,10 @@ class WaterActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() = with(binding) {
+        cancelButton.setOnClickListener {
+            showCancelConfirmationDialog() // 취소 확인 다이얼로그 호출
+        }
+
         // 저번 주로 이동하는 버튼 설정
         leftButton.setOnClickListener {
             moveToPreviousWeek()
@@ -210,6 +215,22 @@ class WaterActivity : AppCompatActivity() {
 
         // 포맷된 텍스트를 binding.stepText에 설정
         binding.waterTotalText.text = formattedTotal
+    }
+
+    private fun showCancelConfirmationDialog() {
+        // AlertDialog를 생성하여 사용자에게 취소 여부를 확인
+        AlertDialog.Builder(this)
+            .setTitle("취소 확인")
+            .setMessage("정말 취소하시겠습니까?")
+            .setPositiveButton("네") { _, _ ->
+                // 사용자가 "네"를 선택하면 마지막 물 마시기 취소
+                viewModel.cancelLastDrink()
+            }
+            .setNegativeButton("아니요") { dialog, _ ->
+                // 사용자가 "아니요"를 선택하면 다이얼로그 닫기
+                dialog.dismiss()
+            }
+            .show()
     }
 
 
