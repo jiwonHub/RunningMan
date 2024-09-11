@@ -1,14 +1,16 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.profile
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitiyFeedDetailBinding
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.CommentModalBottomSheet
+import com.cjwjsw.runningman.presentation.screen.main.fragment.Comment.CommentModalBottomSheet
 import com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailViewAdapter
 import com.cjwjsw.runningman.presentation.screen.main.fragment.social.ProfileFeedDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +34,9 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         binding = ActivitiyFeedDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val alert = AlertDialog.Builder(this)
+
+
         uid = intent.getStringExtra("UID").toString()
         val image = intent.getStringArrayListExtra("URL")
         profileImg = userData?.profileUrl!!
@@ -39,7 +44,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
         Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
 
-
+        initAlert(alert,uid)
         adapter = FeedDetailViewAdapter(image)
         adapter = image?.let { FeedDetailViewAdapter(it) }!!
         viewPager = binding.feedImgViewPager
@@ -85,6 +90,10 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         binding.commentBtn.setOnClickListener {
             modalBottomSheet(uid.toString(), userName.toString(),userProfileImg.toString())
         }
+
+        binding.feedDelBtn.setOnClickListener { // 피드 삭제
+            alert.show()
+        }
     }
 
 
@@ -99,7 +108,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
 
 
     private fun modalBottomSheet(uid : String,userName : String,profileUrl : String) {
-        val modal = CommentModalBottomSheet(uid,userName,profileUrl,userNumber)
+        val modal = CommentModalBottomSheet(uid, userName, profileUrl, userNumber)
 
         modal.show(supportFragmentManager, CommentModalBottomSheet.TAG)
     }
@@ -114,6 +123,18 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
             isLiked = true
         }
     }
+
+    private fun initAlert(alert: AlertDialog.Builder,uid: String){
+        alert.setTitle("피드를 삭제하시겠습니까?")
+        alert.setPositiveButton("네", DialogInterface.OnClickListener { dialog, which ->
+            viewModel.deleteFeed(uid)
+            this.finish()
+        })
+        alert.setNegativeButton("아니오",DialogInterface.OnClickListener{ dialog, which ->
+            dialog.cancel()
+        })
+    }
+
     companion object{
         val userData = UserManager.getInstance()
         val userName = userData?.nickName

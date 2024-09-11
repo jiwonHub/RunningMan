@@ -8,15 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.FragmentProfileBinding
 import com.cjwjsw.runningman.domain.model.FeedModel
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -80,7 +77,7 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         title: String,
         content: String,
         likedCount: Int,
-        isLiked: Boolean
+        isLiked: Boolean,
     ) {
         val feedInfo : ArrayList<String> = arrayListOf()
         Log.d("ProfileFragment","피드 UID : ${feedUid}")
@@ -95,7 +92,6 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
             putExtra("content", content)
             putExtra("likedCount", likedCount)
             putExtra("isLiked", isLiked)
-
         }
         startActivity(intent)
     }

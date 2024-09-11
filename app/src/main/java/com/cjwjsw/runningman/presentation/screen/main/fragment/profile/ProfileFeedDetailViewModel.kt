@@ -7,9 +7,6 @@ import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
 import com.cjwjsw.runningman.domain.model.FeedModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,54 +68,6 @@ class ProfileFeedDetailViewModel @Inject constructor( private val firebaseFirest
         }
     }
 
-    fun fetchCommentData(uid : String){
-        val ref = FeedViewModel.fbRef.getReference(uid).child("comments")
-        Log.d("FeedViewModel", "uid = $uid")
-
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val commentList = mutableListOf<CommentModel>()
-                for (commentSnapshot in snapshot.children) {
-                    val comment = commentSnapshot.getValue(CommentModel::class.java)
-                    if (comment != null) {
-                        commentList.add(comment)
-                    }
-                }
-                _commentArr.value = commentList // _commentArr은 LiveData<List<Comment>> 타입
-                Log.d("FeedViewModel","댓글 불러오기 성공 : ${commentArr.value.toString()}")
-                Log.d("FeedViewModel","댓글 불러오기 성공 : ${snapshot.value.toString()}")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("FeedViewModel","댓글 불러오기 실패 : ${error.message}")
-            }
-
-        })
-    }
-
-    fun uploadComment(comment: String, feedUid: String, userName: String,profileImg: String,userNumber: String) {
-        val ref = FeedViewModel.fbRef.getReference(feedUid).child("comments")
-        val newComment = CommentModel(
-            comment = comment,
-            timestamp = System.currentTimeMillis() / 1000,
-            userName = userName,
-            profileUrl = profileImg,
-            userUid = userData?.idToken.toString(),
-            userNumber = userData?.userNumber.toString()
-        )
-
-        val newCommentKey = ref.push().key
-        if(newCommentKey != null) {
-            ref.child(newCommentKey).setValue(newComment).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("FeedViewModel", "Comment added successfully")
-                } else {
-                    Log.d("FeedViewModel", "Failed to add comment: ${task.exception}")
-                }
-            }
-        }
-    }
-
     fun getFeedUploadTime(uid : String){
         val ref = firebaseFirestore.collection("posts").document(uid)
         ref.get().addOnSuccessListener {document ->
@@ -157,6 +106,16 @@ class ProfileFeedDetailViewModel @Inject constructor( private val firebaseFirest
             }
         }
     }
+
+    fun deleteFeed(feedUid : String){
+        val ref = firebaseFirestore.collection("posts").document(feedUid)
+        ref.delete().addOnSuccessListener {task ->
+            Log.d("ProfileFeedDetailViewModel","피드 삭제 성공")
+        }.addOnFailureListener { e ->
+            Log.d("ProfileFeedDetailViewModel","피드 삭제 성공")
+        }
+    }
+
 
 
 

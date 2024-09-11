@@ -23,7 +23,7 @@ class ProfileViewAdapter(
             title: String,
             content: String,
             likedCount: Int,
-            isLiked : Boolean
+            isLiked : Boolean,
         )
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

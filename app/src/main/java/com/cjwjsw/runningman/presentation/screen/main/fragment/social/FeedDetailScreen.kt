@@ -1,6 +1,7 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.social
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -8,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitiyFeedDetailBinding
+import com.cjwjsw.runningman.presentation.screen.main.fragment.Comment.CommentModalBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,7 +37,6 @@ class FeedDetailScreen: AppCompatActivity() {
         IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
         Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
 
-
         adapter = FeedDetailViewAdapter(image)
         adapter = image?.let { FeedDetailViewAdapter(it) }!!
         viewPager = binding.feedImgViewPager
@@ -51,6 +52,8 @@ class FeedDetailScreen: AppCompatActivity() {
         viewModel.getFeedLikedCount(uid)
 
 
+
+        binding.feedDelBtn.visibility = View.INVISIBLE
 
         binding.backBtn.setOnClickListener {
             finish()

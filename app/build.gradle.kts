@@ -1,3 +1,9 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
+import java.io.FileInputStream
+import java.util.Properties
+
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -7,9 +13,23 @@ plugins {
     id ("com.google.android.gms.oss-licenses-plugin")
 }
 
+val properties = Properties()
+val localProperties = rootProject.file("local.properties")
+if (localProperties.exists()) {
+    properties.load(FileInputStream(localProperties))
+}
+
 android {
     namespace = "com.cjwjsw.runningman"
     compileSdk = 34
+    // 필요 시 추가
+    // 필요 시 추가
+    packaging {
+        resources {
+            excludes += ("META-INF/NOTICE.md")
+        }
+    }
+
 
     defaultConfig {
         applicationId = "com.cjwjsw.runningman"
@@ -17,6 +37,12 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField( "String", "ReportAppKey", properties["ReportAppKey"].toString())
+        buildConfigField( "String", "ReportMail", properties["ReportMail"].toString())
+        manifestPlaceholders["naver_map_api_key"] = properties["naver_map_api_key"].toString()
+        buildConfigField( "String", "default_web_client_id", properties["default_web_client_id"].toString())
+        buildConfigField( "String", "TestMail", properties["TestMail"].toString())
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,11 +63,17 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation(libs.firebase.database.ktx)
+    implementation(files("libs/activation.jar"))
+    implementation(files("libs/additionnal.jar"))
+    implementation(files("libs/mail.jar"))
+
+
     val room_version = "2.6.1"
 
     implementation(libs.androidx.core.ktx)
@@ -86,7 +118,6 @@ dependencies {
     kapt ("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
 
-
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
@@ -105,6 +136,7 @@ dependencies {
 
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:$room_version")
+
 }
 
 kapt {
