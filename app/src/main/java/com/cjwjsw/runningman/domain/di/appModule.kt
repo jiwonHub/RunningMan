@@ -22,6 +22,7 @@ import com.cjwjsw.runningman.domain.repository.UserInfoRepository
 import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.cjwjsw.runningman.domain.repository.WaterRepository
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
+import com.cjwjsw.runningman.presentation.screen.main.fragment.main.water.WaterCaretaker
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
@@ -180,5 +181,11 @@ object AppModule {
     @Singleton
     fun provideWaterDao(appDatabase: WaterAppDatabase): WaterDao {
         return appDatabase.waterDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWaterCaretaker(): WaterCaretaker {
+        return WaterCaretaker()
     }
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.core.DataSingleton
 import com.cjwjsw.runningman.core.Settings
+import com.cjwjsw.runningman.domain.model.WaterModel
 import com.cjwjsw.runningman.domain.repository.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @RequiresApi(Build.VERSION_CODES.O)
 class WaterViewModel @Inject constructor(
     private val waterRepository: WaterRepository,
-    private val appContext: Context
+    private val appContext: Context,
+    private val caretaker: WaterCaretaker
 ) : ViewModel() {
 
     private val _drinkingWater = MutableLiveData(DataSingleton.drinkingWater.value ?: 0)
@@ -51,6 +53,10 @@ class WaterViewModel @Inject constructor(
         val drinkingWaterAmount = drinkingWater.value ?: 0
         val currentWaterAmount = water
         val updateWater = drinkingWaterAmount + currentWaterAmount
+
+        // 상태를 저장하기 전에 메멘토 생성 및 Caretaker에 저장
+        val lastMemento = saveStateToMemento(drinkingWaterAmount)
+        caretaker.addMemento(lastMemento)
 
         _drinkingWater.value = updateWater
         DataSingleton.updateDrinkingWater(updateWater)
@@ -81,6 +87,26 @@ class WaterViewModel @Inject constructor(
         withContext(Dispatchers.Main) {
             _weeklyWaters.value = dailyWaters
         }
+    }
+
+    // 마지막 마신 물의 양을 취소하는 메서드
+    fun cancelLastDrink() {
+        val lastMemento = caretaker.getLastMemento()
+        lastMemento?.let {
+            restoreStateFromMemento(it)
+            caretaker.removeLastMemento() // 복원 후 메멘토 제거
+        }
+    }
+
+    // 메멘토를 생성하여 현재 상태를 저장
+    private fun saveStateToMemento(waterAmount: Int): WaterModel {
+        return WaterModel(waterAmount)
+    }
+
+    // 메멘토로부터 상태를 복원
+    private fun restoreStateFromMemento(memento: WaterModel) {
+        _drinkingWater.value = memento.drinkingWater
+        DataSingleton.updateDrinkingWater(memento.drinkingWater)
     }
 
     private fun getStartOfWeek(): String {
