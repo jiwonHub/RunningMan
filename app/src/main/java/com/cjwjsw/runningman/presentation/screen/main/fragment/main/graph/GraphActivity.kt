@@ -18,6 +18,7 @@ import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.weekly
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
+@RequiresApi(Build.VERSION_CODES.O)
 class GraphActivity : AppCompatActivity() {
     lateinit var binding: ActivityGraphBinding
     private var selectedButton: Button? = null
@@ -34,6 +35,11 @@ class GraphActivity : AppCompatActivity() {
         viewModel.setSelectedOption(GraphViewModel.OPTION_STEPS)
         replaceFragment(WeeklyGraphFragment())
 
+        setButtons()
+    }
+
+
+    private fun setButtons() {
         binding.dailyOptionButton.setOnClickListener {
             setSelectedButton(it as Button)
             replaceFragment(DailyGraphFragment())
@@ -68,6 +74,9 @@ class GraphActivity : AppCompatActivity() {
             viewModel.setSelectedOption(GraphViewModel.OPTION_DISTANCE)
         }
 
+        binding.backButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun replaceFragment(fragment: Fragment) {

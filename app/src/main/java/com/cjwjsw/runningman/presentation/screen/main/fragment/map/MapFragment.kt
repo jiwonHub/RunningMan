@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.cjwjsw.runningman.core.WalkDataSingleton
+import com.cjwjsw.runningman.core.DataSingleton
 import com.cjwjsw.runningman.databinding.FragmentMapBinding
 import com.cjwjsw.runningman.service.LocationUpdateService
 import com.naver.maps.geometry.LatLng
@@ -50,6 +50,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.getMapAsync(this)
 
         startLocationService()
+        observeData()
 
         // 터치 리스너 설정
         mapView.setOnTouchListener { v, event ->
@@ -64,14 +65,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             false
         }
 
-        viewModel.address.observe(viewLifecycleOwner) { address ->
-            binding.locationText.text = address
-        }
-
-        WalkDataSingleton.distance.observe(viewLifecycleOwner) { distance ->
-            updateDistanceUI(distance)
-        }
-
         binding.resetButton.setOnClickListener {
             viewModel.resetData()
 
@@ -83,6 +76,15 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         requireActivity().startService(LocationUpdateService.newIntent(requireContext()))
+    }
+
+    private fun observeData() {
+        viewModel.address.observe(viewLifecycleOwner) { address ->
+            binding.locationText.text = address
+        }
+        viewModel.distance.observe(viewLifecycleOwner) { distance ->
+            binding.distance.text = distance.toString()
+        }
     }
 
     private fun startLocationService() {
@@ -117,10 +119,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             val latLng = LatLng(location.latitude, location.longitude)
             viewModel.addLocation(latLng, requireContext())
         }
-    }
-
-    private fun updateDistanceUI(distance: Double) {
-        binding.distance.text = String.format("%.1f", distance / 1000)
     }
 
     override fun onStart() {

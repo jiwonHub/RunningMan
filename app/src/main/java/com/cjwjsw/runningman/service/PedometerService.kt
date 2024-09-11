@@ -18,12 +18,10 @@ import androidx.lifecycle.MutableLiveData
 import com.cjwjsw.runningman.R
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
 import androidx.core.app.NotificationCompat
-import com.cjwjsw.runningman.core.WalkDataSingleton
+import com.cjwjsw.runningman.core.DataSingleton
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.util.Calendar
 
 class PedometerService : Service(), SensorEventListener {
@@ -42,7 +40,7 @@ class PedometerService : Service(), SensorEventListener {
     private val notificationId = 1
     private val channelId = "PedometerServiceChannel"
 
-    private val elapsedTimeLiveData = MutableLiveData<Long>()
+    private var isTimerRunning = false // 타이머가 실행 중인지 확인하는 플래그
 
 
     override fun onCreate() {
@@ -114,12 +112,12 @@ class PedometerService : Service(), SensorEventListener {
     }
 
     private fun startElapsedTimeCounter() {
-        Log.d("PedometerService", "Starting Elapsed Time Counter")
+        isTimerRunning = true
         GlobalScope.launch {
-            while (true) {
+            while (isTimerRunning) {
                 delay(1000)
                 elapsedTime++
-                elapsedTimeLiveData.postValue(elapsedTime)
+                DataSingleton.updateTime(elapsedTime)
             }
         }
     }
@@ -158,7 +156,7 @@ class PedometerService : Service(), SensorEventListener {
         val stepCount = totalSteps - initialStepCount
         Log.d("PedometerService", "Calculated Step Count: $stepCount")
 
-        WalkDataSingleton.updateStepCount(stepCount)
+        DataSingleton.updateStepCount(stepCount)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -167,7 +165,7 @@ class PedometerService : Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("PedometerService", "Service destroyed")
+        isTimerRunning = false
         sensorManager.unregisterListener(this)
         sharedPreferences.edit().apply {
             putInt("initialStepCount", initialStepCount)

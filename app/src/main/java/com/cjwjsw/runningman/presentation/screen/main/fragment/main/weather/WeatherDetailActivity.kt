@@ -36,6 +36,9 @@ class WeatherDetailActivity: AppCompatActivity() {
 
         val currentDate = getCurrentDate()
         binding.dateText.text = currentDate
+        binding.backButton.setOnClickListener {
+            finish()
+        }
 
         // 날씨 데이터를 관찰하여 차트를 설정하는 메서드 호출
         observeHourlyWeather()
