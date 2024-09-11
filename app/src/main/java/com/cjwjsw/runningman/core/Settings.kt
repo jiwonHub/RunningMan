@@ -3,18 +3,22 @@ package com.cjwjsw.runningman.core
 import android.content.Context
 import android.content.SharedPreferences
 
-object StepsSettings {
+object Settings {
 
     private const val PREFS_NAME = "steps_settings"
     private const val KEY_STEPS = "key_steps"
     private const val KEY_CALORIES = "key_calories"
     private const val KEY_DISTANCE = "key_distance"
     private const val KEY_TIME = "key_time"
+    private const val KEY_WATER = "water"
+    private const val KEY_TARGET_WATER = "target_water"
 
     private const val DEFAULT_STEPS = 10000
     private const val DEFAULT_CALORIES = 400
     private const val DEFAULT_DISTANCE = 7 // in km
     private const val DEFAULT_TIME = 60 // in minutes
+    private const val DEFAULT_WATER = 300 // in ml
+    private const val DEFAULT_TARGET_WATER = 1250 // in ml
 
     private lateinit var preferences: SharedPreferences
 
@@ -41,4 +45,12 @@ object StepsSettings {
     var time: Int
         get() = preferences.getInt(KEY_TIME, DEFAULT_TIME)
         set(value) = preferences.edit().putInt(KEY_TIME, value).apply()
+
+    var water: Int
+        get() = preferences.getInt(KEY_WATER, DEFAULT_WATER)
+        set(value) = preferences.edit().putInt(KEY_WATER, value).apply()
+
+    var targetWater: Int
+        get() = preferences.getInt(KEY_TARGET_WATER, DEFAULT_TARGET_WATER)
+        set(value) = preferences.edit().putInt(KEY_TARGET_WATER, value).apply()
 }

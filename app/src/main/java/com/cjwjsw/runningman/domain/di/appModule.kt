@@ -10,14 +10,19 @@ import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInfoAppDatabase
 import com.cjwjsw.runningman.data.data_source.db.userInfo.UserInformationDao
 import com.cjwjsw.runningman.data.data_source.db.walk.WalkAppDatabase
 import com.cjwjsw.runningman.data.data_source.db.walk.WalkDao
+import com.cjwjsw.runningman.data.data_source.db.water.WaterAppDatabase
+import com.cjwjsw.runningman.data.data_source.db.water.WaterDao
 import com.cjwjsw.runningman.data.data_source.weather.WeatherService
 import com.cjwjsw.runningman.data.preference.AppPreferenceManager
 import com.cjwjsw.runningman.data.repository.UserInfoRepositoryImpl
 import com.cjwjsw.runningman.data.repository.WalkRepositoryImpl
+import com.cjwjsw.runningman.data.repository.WaterRepositoryImpl
 import com.cjwjsw.runningman.data.repository.WeatherRepositoryImpl
 import com.cjwjsw.runningman.domain.repository.UserInfoRepository
 import com.cjwjsw.runningman.domain.repository.WalkRepository
+import com.cjwjsw.runningman.domain.repository.WaterRepository
 import com.cjwjsw.runningman.domain.repository.WeatherRepository
+import com.cjwjsw.runningman.presentation.screen.main.fragment.main.water.WaterCaretaker
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
@@ -53,6 +58,12 @@ abstract class RepositoryModule {
     abstract fun bindUserInfoRepository(
         walkRepositoryImpl: UserInfoRepositoryImpl
     ): UserInfoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWaterRepository(
+        walkRepositoryImpl: WaterRepositoryImpl
+    ): WaterRepository
 }
 
 
@@ -142,6 +153,17 @@ object AppModule {
             .build()
     }
 
+    @Provides
+    @Singleton
+    fun provideWaterAppDatabase(@ApplicationContext context: Context): WaterAppDatabase {
+        return Room.databaseBuilder(
+            context,
+            WaterAppDatabase::class.java,
+            "water_app_database"
+        )
+            .build()
+    }
+
     // DAO 등록
     @Provides
     @Singleton
@@ -153,5 +175,17 @@ object AppModule {
     @Singleton
     fun provideUserInfoDao(appDatabase: UserInfoAppDatabase): UserInformationDao {
         return appDatabase.userInfoDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWaterDao(appDatabase: WaterAppDatabase): WaterDao {
+        return appDatabase.waterDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWaterCaretaker(): WaterCaretaker {
+        return WaterCaretaker()
     }
 }

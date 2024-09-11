@@ -1,7 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.month
 
 import android.annotation.SuppressLint
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,24 +11,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.cjwjsw.runningman.R
-import com.cjwjsw.runningman.core.StepsSettings
+import com.cjwjsw.runningman.core.Settings
 import com.cjwjsw.runningman.databinding.FragmentMonthStatisticsBinding
 import com.cjwjsw.runningman.presentation.component.LabelUtils
-import com.cjwjsw.runningman.presentation.component.StatisticsDotLine
 import com.cjwjsw.runningman.presentation.component.StatisticsProgressBar
 import com.cjwjsw.runningman.presentation.screen.main.fragment.main.graph.GraphViewModel
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
-import java.util.Calendar
 import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -51,10 +43,10 @@ class MonthlyGraphFragment : Fragment(), StatisticsProgressBar.BubbleListener {
 
     private val daysInCurrentMonth: Int = getLastDayOfCurrentMonth()
 
-    private val stepsMax = StepsSettings.steps / daysInCurrentMonth
-    private val caloriesMax = StepsSettings.calories/ daysInCurrentMonth
-    private val distanceMax = StepsSettings.distance / daysInCurrentMonth // km to m
-    private val timeMax = StepsSettings.time * 60/ daysInCurrentMonth
+    private val stepsMax = Settings.steps / daysInCurrentMonth
+    private val caloriesMax = Settings.calories/ daysInCurrentMonth
+    private val distanceMax = Settings.distance / daysInCurrentMonth // km to m
+    private val timeMax = Settings.time * 60/ daysInCurrentMonth
 
     private var stepsMaxSteps = stepsMax
     private var caloriesMaxSteps = caloriesMax

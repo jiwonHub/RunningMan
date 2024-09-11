@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 
     <application
@@ -61,6 +62,12 @@
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove">
         </provider>
+        <receiver android:name=".receiver.AlarmReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".presentation.screen.main.MainActivity"
             android:exported="true">
@@ -111,6 +118,8 @@
         <activity android:name=".presentation.screen.main.fragment.main.weather.WeatherDetailActivity"/>
         <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailScreen" />
         <activity android:name="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.ProfileFeedDetailScreen" />
+        <activity android:name=".presentation.screen.main.fragment.main.water.WaterActivity"/>
+        <activity android:name=".presentation.screen.main.fragment.main.water.watersetting.WaterSettingActivity"/>
 
     </application>
 

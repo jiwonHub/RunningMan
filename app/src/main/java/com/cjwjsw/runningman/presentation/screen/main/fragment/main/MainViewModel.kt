@@ -9,8 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.core.UserManager
-import com.cjwjsw.runningman.core.WalkDataSingleton
-import com.cjwjsw.runningman.data.data_source.db.walk.DailyWalkEntity
+import com.cjwjsw.runningman.core.DataSingleton
 import com.cjwjsw.runningman.domain.model.weather.CurrentWeatherModel
 import com.cjwjsw.runningman.domain.repository.UserInfoRepository
 import com.cjwjsw.runningman.domain.repository.WalkRepository
@@ -34,10 +33,10 @@ class MainViewModel @Inject constructor(
     private val appContext: Context
 ): ViewModel() {
 
-    val stepCount: LiveData<Int> = WalkDataSingleton.stepCount
-    val caloriesBurned: LiveData<Double> = WalkDataSingleton.calorie
-    val distanceWalked: LiveData<Double> = WalkDataSingleton.distance
-    val elapsedTime: LiveData<Long> = WalkDataSingleton.time
+    val stepCount: LiveData<Int> = DataSingleton.stepCount
+    val caloriesBurned: LiveData<Double> = DataSingleton.calorie
+    val distanceWalked: LiveData<Double> = DataSingleton.distance
+    val elapsedTime: LiveData<Long> = DataSingleton.time
 
     private val _currentWeather = MutableLiveData<CurrentWeatherModel>()
     val currentWeather: LiveData<CurrentWeatherModel> get() = _currentWeather
@@ -86,8 +85,8 @@ class MainViewModel @Inject constructor(
 
                 // 계산된 값 WalkDataSingleton에 업데이트
                 withContext(Dispatchers.Main) {
-                    WalkDataSingleton.updateCalorie(caloriesBurned)
-                    WalkDataSingleton.updateDistance(distanceWalked)
+                    DataSingleton.updateCalorie(caloriesBurned)
+                    DataSingleton.updateDistance(distanceWalked)
                 }
 
                 Log.d("MainViewModel", "Calories: $caloriesBurned, Distance: $distanceWalked")
@@ -212,20 +211,20 @@ class MainViewModel @Inject constructor(
 
     fun saveLiveDataToPreferences() {
         sharedPreferences.edit().apply {
-            putFloat("distance", WalkDataSingleton.distance.value?.toFloat() ?: 0.0f)
-            putInt("stepCount", WalkDataSingleton.stepCount.value ?: 0)
-            putFloat("calorie", WalkDataSingleton.calorie.value?.toFloat() ?: 0.0f)
-            putLong("time", WalkDataSingleton.time.value ?: 0L)
+            putFloat("distance", DataSingleton.distance.value?.toFloat() ?: 0.0f)
+            putInt("stepCount", DataSingleton.stepCount.value ?: 0)
+            putFloat("calorie", DataSingleton.calorie.value?.toFloat() ?: 0.0f)
+            putLong("time", DataSingleton.time.value ?: 0L)
         }.apply()
 
         Log.d("MainViewModel", "Data saved to SharedPreferences")
     }
 
     private fun restoreLiveDataFromPreferences() {
-        WalkDataSingleton.updateDistance(sharedPreferences.getFloat("distance", 0.0f).toDouble())
-        WalkDataSingleton.updateStepCount(sharedPreferences.getInt("stepCount", 0))
-        WalkDataSingleton.updateCalorie(sharedPreferences.getFloat("calorie", 0.0f).toDouble())
-        WalkDataSingleton.updateTime(sharedPreferences.getLong("time", 0L))
+        DataSingleton.updateDistance(sharedPreferences.getFloat("distance", 0.0f).toDouble())
+        DataSingleton.updateStepCount(sharedPreferences.getInt("stepCount", 0))
+        DataSingleton.updateCalorie(sharedPreferences.getFloat("calorie", 0.0f).toDouble())
+        DataSingleton.updateTime(sharedPreferences.getLong("time", 0L))
 
         Log.d("MainViewModel", "Data restored from SharedPreferences")
     }
