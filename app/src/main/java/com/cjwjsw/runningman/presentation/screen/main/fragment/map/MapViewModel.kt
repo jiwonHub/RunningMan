@@ -25,6 +25,9 @@ class MapViewModel @Inject constructor(
     private val _address = MutableLiveData<String>()
     val address: LiveData<String> get() = _address
 
+    private val _distance = MutableLiveData(DataSingleton.distance.value ?: 0.0)
+    val distance: LiveData<Double> get() = _distance
+
     private var currentDate: String = getCurrentDate()
 
     fun addLocation(latLng: LatLng, context: Context) {
@@ -36,7 +39,6 @@ class MapViewModel @Inject constructor(
 
         locationTrackerManager.addLocation(latLng)
         _path.value = locationTrackerManager.getPath()
-//        WalkDataSingleton.updateDistance(locationTrackerManager.getDistance())
         _address.value = getAddressFromLocation(latLng.latitude, latLng.longitude, context)
     }
 

@@ -40,7 +40,7 @@ class PedometerService : Service(), SensorEventListener {
     private val notificationId = 1
     private val channelId = "PedometerServiceChannel"
 
-    private val elapsedTimeLiveData = MutableLiveData<Long>()
+    private var isTimerRunning = false // 타이머가 실행 중인지 확인하는 플래그
 
 
     override fun onCreate() {
@@ -112,12 +112,12 @@ class PedometerService : Service(), SensorEventListener {
     }
 
     private fun startElapsedTimeCounter() {
-        Log.d("PedometerService", "Starting Elapsed Time Counter")
+        isTimerRunning = true
         GlobalScope.launch {
-            while (true) {
+            while (isTimerRunning) {
                 delay(1000)
                 elapsedTime++
-                elapsedTimeLiveData.postValue(elapsedTime)
+                DataSingleton.updateTime(elapsedTime)
             }
         }
     }
@@ -165,7 +165,7 @@ class PedometerService : Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("PedometerService", "Service destroyed")
+        isTimerRunning = false
         sensorManager.unregisterListener(this)
         sharedPreferences.edit().apply {
             putInt("initialStepCount", initialStepCount)
