@@ -120,8 +120,17 @@ class WaterSettingActivity : AppCompatActivity() {
             pendingIntent
         )
 
-        // 알림 설정에 대한 로그 출력
-        Log.d("AlarmSetting", "알림이 설정되었습니다: 주기 = ${intervalMillis / 60000}분마다")
+        val minutes = intervalMillis / 60000 // 총 분
+        val hours = minutes / 60 // 시간 계산
+        val remainingMinutes = minutes % 60 // 시간 외에 남은 분 계산
+
+        val formattedMessage = when {
+            hours > 0 && remainingMinutes > 0 -> "${hours}시간 ${remainingMinutes}분마다 알림이 울립니다!"
+            hours > 0 -> "${hours}시간마다 알림이 울립니다!"
+            else -> "${minutes}분마다 알림이 울립니다!"
+        }
+
+        Toast.makeText(this, formattedMessage, Toast.LENGTH_SHORT).show()
     }
 
     private fun cancelAlarm() {
@@ -135,7 +144,7 @@ class WaterSettingActivity : AppCompatActivity() {
         )
 
         alarmManager.cancel(pendingIntent)
-        Log.d("AlarmSetting", "알림이 해제되었습니다.")
+        Toast.makeText(this, "알림이 해제되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun showNumberEditDialog(
