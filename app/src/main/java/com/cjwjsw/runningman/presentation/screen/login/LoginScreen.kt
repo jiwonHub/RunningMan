@@ -8,13 +8,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.cjwjsw.runningman.R
+import com.cjwjsw.runningman.BuildConfig
 import com.cjwjsw.runningman.core.UserLoginFirst
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivityLoginBinding
 import com.cjwjsw.runningman.domain.usecase.FBStoreUserSignInCase
 import com.cjwjsw.runningman.presentation.screen.main.MainActivity
-import com.cjwjsw.runningman.presentation.screen.onboarding.AgeScreen
 import com.cjwjsw.runningman.presentation.screen.onboarding.GenderScreen
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -38,7 +37,7 @@ class LoginScreen : AppCompatActivity() {
 
     private val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(BuildConfig.default_web_client_id)
             .requestEmail()
             .build()
     }

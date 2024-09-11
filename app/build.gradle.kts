@@ -1,5 +1,9 @@
 @file:Suppress("UNUSED_EXPRESSION")
 
+import java.io.FileInputStream
+import java.util.Properties
+
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -7,6 +11,12 @@ plugins {
     id ("com.google.dagger.hilt.android")
     id ("com.google.gms.google-services")
     id ("com.google.android.gms.oss-licenses-plugin")
+}
+
+val properties = Properties()
+val localProperties = rootProject.file("local.properties")
+if (localProperties.exists()) {
+    properties.load(FileInputStream(localProperties))
 }
 
 android {
@@ -28,6 +38,12 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField( "String", "ReportAppKey", properties["ReportAppKey"].toString())
+        buildConfigField( "String", "ReportMail", properties["ReportMail"].toString())
+        manifestPlaceholders["naver_map_api_key"] = properties["naver_map_api_key"].toString()
+        buildConfigField( "String", "default_web_client_id", properties["default_web_client_id"].toString())
+        buildConfigField( "String", "TestMail", properties["TestMail"].toString())
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -47,6 +63,7 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
 }
 
