@@ -1,7 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.Comment
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ class CommentAdapter(
     }
 
     override fun getItemCount(): Int {
-        Log.d("FeedDetailCommenAdapter",comment.size.toString())
         return comment.size
     }
 
@@ -41,7 +39,6 @@ class CommentAdapter(
 
         holder.setUserUid(comment[position].userUid)
         holder.bind(comment[position].profileUrl)
-        Log.d("FeedDetailCommenAdapter", comment[position].toString())
         //아이템 간 간격 설정
         val layoutParams = holder.itemView.layoutParams
         layoutParams.height = 150
@@ -69,9 +66,9 @@ class CommentAdapter(
         }
 
         fun getCommentKey() : String{
-            Log.d(TAG,"getCommentKey : $commentKey")
             return commentKey
         }
+
 
         fun bind(item: String) {
             Glide.with(view)

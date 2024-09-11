@@ -2,7 +2,6 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.Comment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.DialogCommentBottomEdittextBinding
 import com.cjwjsw.runningman.databinding.DialogCommentBottomSheetModalBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.social.DetailFeedViewModel
@@ -49,6 +47,7 @@ class CommentModalBottomSheet(
 
         return binding.root
     }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -100,7 +99,6 @@ class CommentModalBottomSheet(
         recyclerView.adapter = commentAdapter
 
         viewModel.commentArr.observe(this) { arr ->
-            Log.d("FeedDetailScreen", "Livedata 댓글 : ${arr.toString()}")
             commentAdapter = arr?.let { CommentAdapter(arr, feedUid = _uid, fragmentManager = childFragmentManager) }!!
             recyclerView.adapter = commentAdapter
         }
@@ -136,6 +134,5 @@ class CommentModalBottomSheet(
 
     companion object {
         const val TAG = "ModalBottomSheet"
-        val userData = UserManager.getInstance()
     }
 }

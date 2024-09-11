@@ -2,7 +2,6 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.Comment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,9 +36,11 @@ class Comment2thBottomSheet(feedUid: String,commentKey: String, userUid: String)
         return bottomSheetDialog
     }
 
+
     override fun onStart() {
         super.onStart()
 
+        //본인 소유의 댓글이 아니라면 삭제 버튼 비활성화
         if(!viewModel.isMyComment(feedUid = feedUid,
                 userUid = userUid,
                 commentKey = commentKey)){
@@ -55,6 +56,8 @@ class Comment2thBottomSheet(feedUid: String,commentKey: String, userUid: String)
             binding.cancelBtn.layoutParams = layoutParamsCancel
 
         }
+
+        val modal = CommentReportBottomSheet(feedUid, userUid)
 
         val bottomSheetDialog = dialog as BottomSheetDialog
         val bottomSheet =
@@ -83,28 +86,25 @@ class Comment2thBottomSheet(feedUid: String,commentKey: String, userUid: String)
         }
         behavior.addBottomSheetCallback(bottomSheetCallback)
 
+
+        //취소 버튼
         binding.cancelBtn.setOnClickListener {
             dismiss()
         }
 
+        //삭제 버튼
         binding.deleteBtn.setOnClickListener{
-            Log.d("Comment2thBottomSheet","피드 UID : ${feedUid}")
-            Log.d("Comment2thBottomSheet","피드 UID : ${userUid}")
            viewModel.deleteComment(feedUid,commentKey)
             dismiss()
         }
 
+        //신고 버튼
         binding.reportBtn.setOnClickListener {
-            context?.let { it1 ->
-                viewModel.reportComment(
-                    feedUid = feedUid,
-                    userUid = userUid,
-                    context = it1,
-                    text = "hello world"
-                )
-            }
+              modal.show(childFragmentManager,CommentReportBottomSheet.TAG)
         }
     }
+
+
 
 
     companion object{

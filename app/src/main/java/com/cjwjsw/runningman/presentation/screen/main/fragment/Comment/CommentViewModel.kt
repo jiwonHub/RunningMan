@@ -2,7 +2,11 @@ package com.cjwjsw.runningman.presentation.screen.main.fragment.Comment
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cjwjsw.runningman.BuildConfig
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
 import com.google.firebase.database.ktx.database
@@ -11,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Properties
 import javax.inject.Inject
 import javax.mail.Authenticator
@@ -24,6 +29,9 @@ import javax.mail.internet.MimeMessage
 
 @HiltViewModel
 class CommentViewModel @Inject constructor() : ViewModel() {
+
+    private val _reportStatus = MutableLiveData<Boolean>()
+    val reportStatus: LiveData<Boolean> get() = _reportStatus
 
     fun uploadComment(
         comment: String,
@@ -81,12 +89,17 @@ class CommentViewModel @Inject constructor() : ViewModel() {
         return data
     }
 
-    fun reportComment(feedUid: String, userUid: String, text: String, context: Context) {
-        val fromEmail = "centerfoward7410@gmail.com"
-        val password = "iocq acyd ibfo ccrh"  // 보안에 민감한 정보는 별도의 파일이나 환경 변수로 관리하는 것이 좋습니다.
-        val toEmail = "centerfoward7410@gmail.com" // 받는 사람 이메일 주소
-        val subject = "Report Comment"  // 이메일 제목
-        val messageBody = "Feed UID: $feedUid\nUser UID: $userUid\nComment: $text"  // 이메일 내용
+    fun reportComment(
+        feedUid: String,
+        userUid: String,
+        text: String,
+        context: Context,
+    ) {
+        val fromEmail = BuildConfig.ReportMail
+        val password = BuildConfig.ReportAppKey // 구글 앱 키
+        val toEmail =  BuildConfig.TestMail // 받는 사람 이메일 주소
+        val subject = "댓글 신고"  // 이메일 제목
+        val messageBody = "Feed UID: $feedUid\nUser UID: $userUid\n신고 내용: $text"  // 이메일 내용
 
         CoroutineScope(Dispatchers.IO).launch {
             // SMTP 속성정의
@@ -117,9 +130,19 @@ class CommentViewModel @Inject constructor() : ViewModel() {
 
                 // 이메일 전송
                 Transport.send(message)
-                println("Email sent successfully")
+
+                // 토스트 메시지는 메인(UI) 스레드에서만 호출 가능하므로 토스트 메시지 호출시에만 메인 스레드로 변경
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "신고 완료되었습니다", Toast.LENGTH_SHORT).show()
+                    _reportStatus.value = true
+                }
+                Log.d(TAG,"신고 완료")
             } catch (e: MessagingException) {
-                e.printStackTrace()
+                // 토스트 메시지는 메인(UI) 스레드에서만 호출 가능하므로 토스트 메시지 호출시에만 메인 스레드로 변경
+                withContext(Dispatchers.Main) {
+                    _reportStatus.value = false
+                }
+                Log.d(TAG,"신고 실패 : ${e.stackTrace}")
             }
         }
     }
