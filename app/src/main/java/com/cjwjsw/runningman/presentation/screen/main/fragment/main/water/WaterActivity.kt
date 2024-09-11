@@ -157,6 +157,10 @@ class WaterActivity : AppCompatActivity() {
             val intent = Intent(this@WaterActivity, WaterSettingActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_SETTING)
         }
+
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
