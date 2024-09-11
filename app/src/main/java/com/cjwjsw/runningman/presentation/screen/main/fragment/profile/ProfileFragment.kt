@@ -31,7 +31,7 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.feeddRecyclerView.layoutManager = GridLayoutManager(context, 3)
+        binding.feedRecyclerView.layoutManager = GridLayoutManager(context, 3)
         binding.addFeedBtn.setOnClickListener {
             val intent = Intent(super.getActivity(), AddFeedActivity::class.java)
             startActivity(intent)
@@ -44,7 +44,7 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         loadProfileImg() // 사용자 프로필 띄우기
 
         adapter = ProfileViewAdapter(mutableListOf(),this)
-        binding.feeddRecyclerView.adapter= adapter
+        binding.feedRecyclerView.adapter= adapter
 
         viewModel.feedArr.observe(viewLifecycleOwner) { feed ->
             feed.let {

@@ -9,128 +9,151 @@
     android:layout_marginEnd="10dp"
     app:layout_constraintHorizontal_chainStyle="packed">
 
-    <LinearLayout
-        android:id="@+id/topLayout"
-        android:layout_width="0dp"
+
+    <ImageButton
+        android:id="@+id/addFeedBtn"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:background="@color/black"
+        android:paddingTop="3dp"
+        android:src="@drawable/outline_add_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.04"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/awardLayer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/addFeedBtn">
 
         <TextView
-            android:id="@+id/toptext"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="프로필"
-            android:textColor="@color/white"
-            android:textSize="20dp" />
-
-        <View
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent"
+            android:layout_weight="2.805"
+            android:gravity="right"
+            android:paddingEnd="20dp"
+            android:text="기록"
+            android:textColor="@color/white"
+            android:textSize="24dp" />
 
         <ImageButton
-            android:id="@+id/addFeedBtn"
-            android:layout_width="wrap_content"
+            android:id="@+id/awardBtn"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="0.195"
             android:background="@color/black"
-            android:paddingTop="3dp"
-            android:src="@drawable/outline_add_24" />
+            android:src="@drawable/iconoir_trophy" />
+
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
-
         android:id="@+id/profileImg"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.3"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toTopOf="@id/feedText"
+        app:layout_constraintEnd_toStartOf="@id/avgWalkingLayer"
+        app:layout_constraintHeight_percent="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topLayout"
+        app:layout_constraintTop_toBottomOf="@id/awardLayer"
         tools:src="@drawable/sun" />
 
-    <TextView
-        android:id="@+id/nameText"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:text="정성욱"
-        android:textColor="@color/white"
-        android:textSize="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.05"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profileImg" />
-
     <LinearLayout
-        android:id="@+id/categoryText"
+        android:id="@+id/avgWalkingLayer"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.03"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameText">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/profileImg"
+        app:layout_constraintEnd_toStartOf="@id/maximumWalkingLayer"
+        app:layout_constraintStart_toEndOf="@id/profileImg"
+        app:layout_constraintTop_toBottomOf="@id/awardLayer">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="평균 걸음 수"
-            android:textColor="@color/white" />
+            android:text="평균 걸음 수 "
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold">
+
+
+        </TextView>
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="최대 걸음 수"
-            android:textColor="@color/white" />
+            android:text="hello"
+            android:textColor="#3C6AFF">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="총 걸음 수"
-            android:textColor="@color/white" />
+        </TextView>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/valueText"
+        android:id="@+id/maximumWalkingLayer"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/profileImg"
+        app:layout_constraintEnd_toStartOf="@id/totalWalkingLayer"
+        app:layout_constraintStart_toEndOf="@id/avgWalkingLayer"
+        app:layout_constraintTop_toBottomOf="@id/awardLayer">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="전체 걸음 수"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="hello"
+            android:textColor="#3C6AFF">
+
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/totalWalkingLayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/profileImg"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.03"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryText">
+        app:layout_constraintStart_toEndOf="@id/maximumWalkingLayer"
+        app:layout_constraintTop_toBottomOf="@id/awardLayer">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="1,000 보"
-            android:textColor="@color/blue" />
+            android:text="총 걸음 수"
+            android:textColor="@color/white"
+            android:textSize="14dp"
+            android:textStyle="bold">
+
+        </TextView>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="1,000 보"
-            android:textColor="@color/blue" />
+            android:text="hello"
+            android:textColor="#3C6AFF">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="1,000 보"
-            android:textColor="@color/blue" />
+        </TextView>
     </LinearLayout>
 
     <TextView
@@ -145,17 +168,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.03"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/valueText" />
+        app:layout_constraintTop_toBottomOf="@id/profileImg" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:scrollbarSize="5dp"
         android:id="@+id/feedRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
+        android:scrollbarSize="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintHeight_percent="0.55"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/feedText"
         app:layout_constraintVertical_bias="0.0" />
