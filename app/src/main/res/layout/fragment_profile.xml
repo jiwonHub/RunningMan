@@ -20,35 +20,57 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/awardLayer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:weightSum="3"
+        android:background="@drawable/gray15_background"
+        android:padding="12dp"
+        android:weightSum="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addFeedBtn">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2.805"
-            android:gravity="right"
-            android:paddingEnd="20dp"
-            android:text="기록"
-            android:textColor="@color/white"
-            android:textSize="24dp" />
 
         <ImageButton
             android:id="@+id/awardBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.195"
-            android:background="@color/black"
-            android:src="@drawable/iconoir_trophy" />
+            android:layout_weight="0.4"
+            android:background="@drawable/gray15_background"
+            android:src="@drawable/iconoir_trophy"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/awardText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/awardText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3.4"
+            android:layout_marginStart="10dp"
+            android:gravity="center|left"
+            android:text="업적"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/awardBtn"
+            app:layout_constraintStart_toEndOf="@id/awardBtn"
+            app:layout_constraintTop_toTopOf="@id/awardBtn" />
+
+
+        <ImageView
+            android:id="@+id/awardIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:src="@drawable/iconoir_trophy"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImg"
@@ -85,6 +107,7 @@
         </TextView>
 
         <TextView
+            android:id="@+id/avgWalk"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -100,7 +123,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@id/profileImg"
-        app:layout_constraintEnd_toStartOf="@id/totalWalkingLayer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/avgWalkingLayer"
         app:layout_constraintTop_toBottomOf="@id/awardLayer">
 
@@ -116,6 +139,7 @@
         </TextView>
 
         <TextView
+            android:id="@+id/totalWalkText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -125,36 +149,6 @@
         </TextView>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/totalWalkingLayer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/profileImg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/maximumWalkingLayer"
-        app:layout_constraintTop_toBottomOf="@id/awardLayer">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="총 걸음 수"
-            android:textColor="@color/white"
-            android:textSize="14dp"
-            android:textStyle="bold">
-
-        </TextView>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="hello"
-            android:textColor="#3C6AFF">
-
-        </TextView>
-    </LinearLayout>
 
     <TextView
         android:id="@+id/feedText"
@@ -165,6 +159,7 @@
         android:text="내 피드"
         android:textColor="@color/white"
         android:textSize="16dp"
+        app:layout_constraintBottom_toTopOf="@id/feedRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.03"
         app:layout_constraintStart_toStartOf="parent"
