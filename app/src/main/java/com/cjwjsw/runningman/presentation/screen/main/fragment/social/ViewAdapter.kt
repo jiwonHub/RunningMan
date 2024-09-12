@@ -36,13 +36,12 @@ class ViewAdapter (
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val imageUrl = imageList[position].imageUrls
+        val imageUrl = imageList[position].imageUrls[0]
         for(i : Int in 0..<imageList.size){
-            Log.d("ViewAdapter", "Loading image URL: ${imageList[i]}")
-
+            Log.d("ViewAdapter", "Loading image URL: ${imageList[i].imageUrls[0]}")
         }
         Glide.with(holder.feedImageView.context)
-            .load(imageUrl[0])
+            .load(imageUrl)
             .placeholder(R.drawable.sun)
             .error(R.drawable.calories)
             .centerCrop()

@@ -85,17 +85,18 @@ class ProfileViewModel @Inject constructor(
     }
     fun upLoadPost(title : String, content : String){
         Log.d("ProfileViewModel", userUid)
+
         val uploadedImageUrls = mutableListOf<String>()
         val imageUris = _photoArr.value ?: return
+        val feedUID = UUID.randomUUID().toString()
 
         imageUris.forEachIndexed { index, imguri ->
-            val imageRef = fbManager.reference.child("Post/$userUid-$index.jpg")
+            val imageRef = fbManager.reference.child("Post/$userUid-$feedUID-$index.jpg")
             imageRef.putFile(imguri)
                 .addOnSuccessListener {
                     imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                         uploadedImageUrls.add(downloadUrl.toString())
                         if (uploadedImageUrls.size == imageUris.size) {
-                            val feedUID = UUID.randomUUID().toString()
                             savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName,0,false,
                                 userData!!.idToken,userNumber)
                         }
