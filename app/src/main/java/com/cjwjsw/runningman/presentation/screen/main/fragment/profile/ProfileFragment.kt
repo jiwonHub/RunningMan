@@ -36,6 +36,11 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
             val intent = Intent(super.getActivity(), AddFeedActivity::class.java)
             startActivity(intent)
         }
+
+        //평균 걸음수, 총 걸음 수 데이터 초기화
+        viewModel.getAllWalkData()
+        viewModel.getAvgWalkData()
+
         return binding.root
     }
 
@@ -46,6 +51,7 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         adapter = ProfileViewAdapter(mutableListOf(),this)
         binding.feedRecyclerView.adapter= adapter
 
+        //피드 옵저빙
         viewModel.feedArr.observe(viewLifecycleOwner) { feed ->
             feed.let {
                 for(i in 0..<feed?.size!!){
@@ -56,6 +62,15 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
             adapter.updateImages(arr)
         }
         viewModel.getUserFeed()
+        //총 걸음수 옵저빙
+        viewModel.totalWalkArr.observe(viewLifecycleOwner){walk ->
+            binding.totalWalkText.text = walk.toString()
+        }
+
+        //평균 걸음 수 옵저빙
+        viewModel.avgWalkArr.observe(viewLifecycleOwner){avg ->
+            binding.avgWalk.text = avg.toString()
+        }
     }
 
     private fun loadProfileImg(){
