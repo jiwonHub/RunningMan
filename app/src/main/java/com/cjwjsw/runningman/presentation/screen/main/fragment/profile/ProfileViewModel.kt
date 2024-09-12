@@ -5,13 +5,16 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.FeedModel
+import com.cjwjsw.runningman.domain.repository.WalkRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.UUID
 import javax.inject.Inject
@@ -19,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val fbManager:FirebaseStorage,
-    private val fbsManager : FirebaseFirestore
+    private val fbsManager : FirebaseFirestore,
+    private val db : WalkRepository
 ): ViewModel() {
     private val _photoArr = MutableLiveData<MutableList<Uri>>().apply { value = mutableListOf() }
     val arr : MutableList<FeedModel> = mutableListOf()
@@ -28,6 +32,12 @@ class ProfileViewModel @Inject constructor(
     private val _feedArr = MutableLiveData<MutableList<FeedModel>?>()
     val feedArr: LiveData<MutableList<FeedModel>?> get() = _feedArr
 
+    private val _totalWalkArr = MutableLiveData<Int>()
+    val totalWalkArr : LiveData<Int> get() = _totalWalkArr
+
+    private val _avgWalkArr = MutableLiveData<Int>()
+    val avgWalkArr : LiveData<Int> get() = _avgWalkArr
+
     private val userUid : String = userData?.idToken.toString()
     private val profileImg : String = userData?.profileUrl.toString()
     private val userName : String = userData?.nickName.toString()
@@ -35,6 +45,37 @@ class ProfileViewModel @Inject constructor(
 
     private val _uploadStatus = MutableLiveData<Boolean>()
     val uploadStatus: LiveData<Boolean> get() = _uploadStatus
+
+     fun getAllWalkData(){ // 전체 걸음 수 가져오기
+         viewModelScope.launch {
+             val x = db.getAllWalks()
+             var sum = 0;
+
+             for (i : Int in 0..< x.size){
+                sum+= x[i].stepCount
+             }
+             _totalWalkArr.value = sum
+             Log.d(TAG,"전체 걸음 수 : $sum")
+         }
+     }
+
+    fun getAvgWalkData(){ // 평균 걸음 수 가져오기
+        viewModelScope.launch {
+            val x = db.getAllWalks()
+            var sum = 0;
+            for (i : Int in 0..< x.size){
+                sum+= x[i].stepCount
+            }
+            Log.d(TAG,"사이즈 : ${x.size}")
+
+            if(x.isEmpty()){
+                _avgWalkArr.value = 0
+            }else{
+                _avgWalkArr.value = (sum / x.size)
+            }
+        }
+
+    }
 
     fun setImageFile(uri : Uri){
         val currentList = _photoArr.value ?: mutableListOf()
@@ -147,6 +188,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     companion object{
+        const val TAG = "ProfileViewModel"
         val userData = UserManager.getInstance()
     }
 
