@@ -1,5 +1,6 @@
 package com.cjwjsw.runningman.presentation.screen.main.fragment.social
 
+import ViewAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cjwjsw.runningman.databinding.FragmentSocialBinding
-import com.cjwjsw.runningman.domain.model.FeedModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,7 +19,6 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
     private val viewModel : FeedViewModel by viewModels()
     private lateinit var adapter: ViewAdapter
     private val binding get() = _binding!!
-    private var feedArr = mutableListOf<FeedModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,20 +32,21 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = ViewAdapter(mutableListOf(),this)
+        adapter = ViewAdapter(this)
         binding.recyclerView.adapter = adapter
-        viewModel.feedArr.observe (viewLifecycleOwner) { urls ->
-            Log.d("SocialFragment",urls.toString())
-            if(urls == null){
-                Log.d("SocialFragment","피드 정보가 없습니다")
-            }else{
-                for(i in 0..<urls.size){
-                    feedArr.add(urls[i])
-                }
-            }
-            adapter.updateImages(feedArr)
-        }
+
         viewModel.fetchFeedData()
+
+        viewModel.feedArr.observe(viewLifecycleOwner) { feedList ->
+            Log.d("SocialFragment", feedList.toString())
+
+            if (feedList == null) {
+                Log.d("SocialFragment", "피드 정보가 없습니다")
+            } else {
+                // 어뎁터에 데이터 업데이트
+                adapter.submitList(feedList.toMutableList())
+            }
+        }
     }
 
 
@@ -82,5 +82,4 @@ class SocialFragment : Fragment(),ViewAdapter.OnItemClickListener {
         }
         startActivity(intent)
     }
-
 }
