@@ -39,12 +39,12 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
 
         uid = intent.getStringExtra("UID").toString()
         val image = intent.getStringArrayListExtra("URL")
-        profileImg = userData?.profileUrl!!
+        profileImg = intent.getStringExtra("profileUrl").toString()
         feedTitle = intent.getStringExtra("title").toString()
         IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
         Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
 
-        initAlert(alert,uid)
+        initAlert(alert,uid,image)
         adapter = FeedDetailViewAdapter(image)
         adapter = image?.let { FeedDetailViewAdapter(it) }!!
         viewPager = binding.feedImgViewPager
@@ -52,7 +52,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         binding.indicator.setViewPager(binding.feedImgViewPager)
         binding.title.text = feedTitle
         binding.likedCountText.text = "${Lc}명이 좋아합니다"
-        userNumber = userData.userNumber
+        userNumber = userData?.userNumber ?: "0"
 
         isLikedImg(IL)
         loadProfileImg()
@@ -124,10 +124,10 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         }
     }
 
-    private fun initAlert(alert: AlertDialog.Builder,uid: String){
+    private fun initAlert(alert: AlertDialog.Builder, uid: String, image: ArrayList<String>?){
         alert.setTitle("피드를 삭제하시겠습니까?")
         alert.setPositiveButton("네", DialogInterface.OnClickListener { dialog, which ->
-            viewModel.deleteFeed(uid)
+            viewModel.deleteFeed(uid,image)
             this.finish()
         })
         alert.setNegativeButton("아니오",DialogInterface.OnClickListener{ dialog, which ->
