@@ -199,37 +199,6 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
 
         })
     }
-
-    fun uploadComment(
-        comment: String,
-        feedUid: String,
-        userName: String,
-        profileImg: String,
-        userNumber: String
-    ) {
-        val ref = FeedViewModel.fbRef.getReference(feedUid).child("comments")
-        val newCommentKey = ref.push().key //고유 키 생성
-        val newComment = CommentModel( //데이터 만들기
-            comment = comment,
-            timestamp = System.currentTimeMillis() / 1000,
-            userName = userName,
-            profileUrl = profileImg,
-            userUid = userData?.idToken.toString(),
-            userNumber = userData?.userNumber.toString(),
-            newCommentKey = newCommentKey.toString()
-        )
-
-        if (newCommentKey != null) {
-            ref.child(newCommentKey).setValue(newComment).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("DetailFeedViewModel", "Comment added successfully")
-                } else {
-                    Log.d("DetailFeedViewModel", "Failed to add comment: ${task.exception}")
-                }
-            }
-        }
-    }
-
     fun getFeedUploadTime(uid: String) {
         val ref = firebaseFirestore.collection("posts").document(uid)
         ref.get().addOnSuccessListener { document ->
@@ -268,18 +237,6 @@ class DetailFeedViewModel @Inject constructor( private val firebaseFirestore: Fi
             }
         }
     }
-
-    fun deleteComment(feedUid : String){
-        Log.d("DetailFeedViewModel","댓글 삭제 버튼")
-        val ref = fbRef.getReference(feedUid).child("comment")
-
-        ref.child(userData?.idToken.toString()).removeValue().addOnSuccessListener {
-            Log.d("DetailFeedViewModel","댓글 삭제 완료")
-        }.addOnFailureListener { e ->
-            Log.d("DetailFeedViewModel","댓글 삭제 실패 :${e.message}")
-        }
-    }
-
 
     private inline fun <reified T> Map<String, Any>.toDataClass(): T? {
         val json = Gson().toJson(this)
