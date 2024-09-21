@@ -51,7 +51,7 @@ class AddFeedActivity: AppCompatActivity()  {
         binding.addImageBtn.setOnClickListener{
             val title = binding.titleEditText.text
             val contents = binding.contentsEditText.text
-            viewModel.upLoadPost(title.toString(),contents.toString())
+            viewModel.uploadPost(title.toString(),contents.toString())
             finish()
 
         }

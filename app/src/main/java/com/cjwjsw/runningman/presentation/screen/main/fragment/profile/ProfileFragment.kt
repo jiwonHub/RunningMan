@@ -37,10 +37,6 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
             startActivity(intent)
         }
 
-        //평균 걸음수, 총 걸음 수 데이터 초기화
-        viewModel.getAllWalkData()
-        viewModel.getAvgWalkData()
-
         return binding.root
     }
 
@@ -48,6 +44,11 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         super.onViewCreated(view, savedInstanceState)
         loadProfileImg() // 사용자 프로필 띄우기
 
+        //평균 걸음수, 총 걸음 수 데이터 초기화
+        viewModel.getAllWalkData()
+        viewModel.getAvgWalkData()
+
+        //어댑터 초기화
         adapter = ProfileViewAdapter(mutableListOf(),this)
         binding.feedRecyclerView.adapter= adapter
 
@@ -72,6 +73,7 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
             binding.avgWalk.text = avg.toString()
         }
     }
+
 
     private fun loadProfileImg(){
         val profileUrl = UserManager.getInstance()?.profileUrl

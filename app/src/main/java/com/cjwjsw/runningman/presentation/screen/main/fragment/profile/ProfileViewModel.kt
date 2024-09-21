@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.FeedModel
 import com.cjwjsw.runningman.domain.repository.WalkRepository
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -83,32 +84,33 @@ class ProfileViewModel @Inject constructor(
         _photoArr.value = currentList
         Log.d("ProfileViewModel", uri.toString())
     }
-    fun upLoadPost(title : String, content : String){
+
+    fun uploadPost(title: String, content: String) {
+        val currentTime = System.currentTimeMillis()
+        Log.d("ProfileViewModel", "시작 시간: $currentTime")
         Log.d("ProfileViewModel", userUid)
 
-        val uploadedImageUrls = mutableListOf<String>()
         val imageUris = _photoArr.value ?: return
         val feedUID = UUID.randomUUID().toString()
 
-        imageUris.forEachIndexed { index, imguri ->
+        // 1. 이미지 병렬 업로드 처리
+        val uploadTasks = imageUris.mapIndexed { index, imgUri ->
             val imageRef = fbManager.reference.child("Post/$userUid-$feedUID-$index.jpg")
-            imageRef.putFile(imguri)
-                .addOnSuccessListener {
-                    imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                        uploadedImageUrls.add(downloadUrl.toString())
-                        if (uploadedImageUrls.size == imageUris.size) {
-                            savePostMetadata(userUid, title, content, uploadedImageUrls, feedUID, profileImg,userName,0,false,
-                                userData!!.idToken,userNumber)
-                        }
-                    }.addOnFailureListener { e ->
-                        _uploadStatus.value = false
-                        Log.d("ProfileViewModel",e.toString())
-                    }
+            imageRef.putFile(imgUri).continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    throw task.exception ?: Exception("이미지 업로드 실패")
                 }
-                .addOnFailureListener { e ->
-                    _uploadStatus.value = false
-                    Log.d("ProfileViewModel",e.toString())
-                }
+                imageRef.downloadUrl
+            }
+        }
+
+        // 2. 이미지 업로드 완료 후 피드 메타데이터 저장
+        Tasks.whenAllSuccess<Uri>(uploadTasks).addOnSuccessListener { imageUrls ->
+            val imageUrlStrings = imageUrls.map { it.toString() }
+            savePostMetadata(userUid, title, content, imageUrlStrings, feedUID, profileImg, userName, 0, false, userData!!.idToken, userNumber)
+        }.addOnFailureListener { e ->
+            _uploadStatus.value = false
+            Log.d("ProfileViewModel", "이미지 업로드 실패: ${e.message}")
         }
     }
 
@@ -120,10 +122,10 @@ class ProfileViewModel @Inject constructor(
         feedUID: String,
         profileImg: String,
         userName: String,
-        likedCount : Int,
-        isLiked : Boolean,
-        userUID : String,
-        userNumber : String
+        likedCount: Int,
+        isLiked: Boolean,
+        userUID: String,
+        userNumber: String
     ) {
         val postMetadata = hashMapOf(
             "postId" to postId,
@@ -140,16 +142,29 @@ class ProfileViewModel @Inject constructor(
             "userNumber" to userNumber
         )
 
+        // 3. Firestore에 메타데이터 저장
         fbsManager.collection("posts").document(feedUID)
             .set(postMetadata)
             .addOnSuccessListener {
                 _uploadStatus.value = true
                 _photoArr.value = mutableListOf()
+                Log.d("ProfileViewModel", "피드 업로드 성공")
+                updateUIWithNewPost(postMetadata)  // Firestore 업데이트 전에 UI 반영
             }
             .addOnFailureListener { e ->
                 _uploadStatus.value = false
-                Log.d("ProfileViewModel",e.toString())
+                Log.d("ProfileViewModel", "피드 업로드 실패: ${e.message}")
             }
+    }
+
+    // UI를 즉시 업데이트하는 함수
+    private fun updateUIWithNewPost(postMetadata: HashMap<String, Any>) {
+        val newPost = postMetadata.toDataClass<FeedModel>()
+        if (newPost != null) {
+            val currentFeed = _feedArr.value?.toMutableList() ?: mutableListOf()
+            currentFeed.add(0, newPost)  // 피드를 맨 위에 추가
+            _feedArr.value = currentFeed
+        }
     }
     fun getUserFeed(){
         fbsManager.collection("posts").whereEqualTo("postId",userUid)
@@ -173,6 +188,7 @@ class ProfileViewModel @Inject constructor(
                 Log.d("ProfileViewModel","파이어베이스에서 유저 피드 정보 호출 실패 +${it.toString()}")
             }
     }
+
 
 
     fun charToString(uid: MutableList<Char>) : String{
