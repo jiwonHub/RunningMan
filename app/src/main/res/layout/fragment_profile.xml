@@ -27,7 +27,6 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/gray15_background"
         android:padding="12dp"
-        android:weightSum="4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addFeedBtn">
@@ -48,7 +47,6 @@
             android:id="@+id/awardText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3.4"
             android:layout_marginStart="10dp"
             android:gravity="center|left"
             android:text="업적"

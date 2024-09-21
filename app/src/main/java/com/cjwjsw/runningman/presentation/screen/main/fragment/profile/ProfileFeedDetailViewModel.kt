@@ -7,13 +7,20 @@ import androidx.lifecycle.ViewModel
 import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.domain.model.CommentModel
 import com.cjwjsw.runningman.domain.model.FeedModel
+import com.cjwjsw.runningman.presentation.screen.main.fragment.Comment.CommentViewModel
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileFeedDetailViewModel @Inject constructor( private val firebaseFirestore: FirebaseFirestore) :
+class ProfileFeedDetailViewModel @Inject constructor(
+    private val firebaseFirestore: FirebaseFirestore,
+    private val fbManager: FirebaseStorage,
+) :
     ViewModel(){
     private val _likeCount = MutableLiveData<Int>()
     val likeCount: LiveData<Int> get() = _likeCount
@@ -107,12 +114,35 @@ class ProfileFeedDetailViewModel @Inject constructor( private val firebaseFirest
         }
     }
 
-    fun deleteFeed(feedUid : String){
-        val ref = firebaseFirestore.collection("posts").document(feedUid)
-        ref.delete().addOnSuccessListener {task ->
+    fun deleteFeed(feedUid: String, image: ArrayList<String>?){
+
+        //피드 지우기
+        val feedRef = firebaseFirestore.collection("posts").document(feedUid)
+        feedRef.delete().addOnSuccessListener {task ->
             Log.d("ProfileFeedDetailViewModel","피드 삭제 성공")
         }.addOnFailureListener { e ->
             Log.d("ProfileFeedDetailViewModel","피드 삭제 성공")
+        }
+
+        // 댓글 지우기
+        val commnetRef = fbRef.getReference(feedUid)
+        commnetRef.removeValue().addOnSuccessListener {
+            Log.d(TAG,"댓글 삭제 성공")
+        }.addOnFailureListener { e ->
+            Log.d(CommentViewModel.TAG,"댓글 삭제 실패 :${e.message}")
+        }
+
+
+        // 스토리지 사진 삭제하기
+        var imageRef = fbManager.reference
+        image?.forEachIndexed { index, imguri ->
+            imageRef = fbManager.reference.child("Post/${user?.idToken}-$feedUid-$index.jpg")
+            imageRef.delete()
+                .addOnSuccessListener {
+                    Log.d(TAG,"이미지 삭제 성공")
+                }.addOnFailureListener {e ->
+                        Log.d(TAG,"이미지 삭제 실패 : ${e.message}")
+                }
         }
     }
 
@@ -126,7 +156,9 @@ class ProfileFeedDetailViewModel @Inject constructor( private val firebaseFirest
     }
 
     companion object{
-        val userData =  UserManager.getInstance()
+        val user = UserManager.getInstance()
+        val fbRef = Firebase.database
+        const val TAG = "ProfileFeedDetailViewModel"
     }
 
 }
