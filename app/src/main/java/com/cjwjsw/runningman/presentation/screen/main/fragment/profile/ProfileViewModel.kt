@@ -22,6 +22,9 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
@@ -38,6 +41,7 @@ class ProfileViewModel @Inject constructor(
     private val application : Application
 ): ViewModel() {
     private val _photoArr = MutableLiveData<MutableList<Uri>>().apply { value = mutableListOf() }
+
     val arr : MutableList<FeedModel> = mutableListOf()
     val photoArr: LiveData<MutableList<Uri>> get() = _photoArr
 
@@ -50,16 +54,15 @@ class ProfileViewModel @Inject constructor(
     private val _avgWalkArr = MutableLiveData<Int>()
     val avgWalkArr : LiveData<Int> get() = _avgWalkArr
 
-    private val _isPosted = MutableLiveData<Boolean>()
-    val isPosted : LiveData<Boolean> get() = _isPosted
+    private val _isPosted : MutableStateFlow<PostedState> = MutableStateFlow(PostedState.beforePosted)
+    val isPosted : StateFlow<PostedState> get() = _isPosted.asStateFlow()
 
     private val userUid : String = userData?.idToken.toString()
     private val profileImg : String = userData?.profileUrl.toString()
     private val userName : String = userData?.nickName.toString()
     private val userNumber : String = userData?.userNumber.toString()
 
-    private val _uploadStatus = MutableLiveData<Boolean>()
-    val uploadStatus: LiveData<Boolean> get() = _uploadStatus
+
 
      fun getAllWalkData(){ // 전체 걸음 수 가져오기
          viewModelScope.launch {
@@ -120,6 +123,9 @@ class ProfileViewModel @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.R)
     fun uploadPost(title: String, content: String) {
         val currentTime = System.currentTimeMillis()
+
+        _isPosted.value = PostedState.Loading // 업로드 로딩 시작
+
         Log.d("ProfileViewModel", "시작 시간: $currentTime")
         Log.d("ProfileViewModel", userUid)
 
@@ -158,11 +164,8 @@ class ProfileViewModel @Inject constructor(
                 "userUID" to userData!!.idToken,
                 "userNumber" to userNumber
             )
-
-            updateUIWithNewPost(postMetadata) // 파베에 피드 업로드 전 UI에 먼저 업로드
             savePostMetadata(userUid, title, content, imageUrlStrings, feedUID, profileImg, userName, 0, false, userData!!.idToken, userNumber)
         }.addOnFailureListener { e ->
-            _uploadStatus.value = false
             Log.d("ProfileViewModel", "이미지 업로드 실패: ${e.message}")
         }
     }
@@ -199,13 +202,14 @@ class ProfileViewModel @Inject constructor(
         fbsManager.collection("posts").document(feedUID)
             .set(postMetadata)
             .addOnSuccessListener {
-                _uploadStatus.value = true
                 _photoArr.value = mutableListOf()
+                _isPosted.value = PostedState.Success // 업로드 상태 성공으로 변경
+                updateUIWithNewPost(postMetadata) // 파베에 피드 업로드 후 네트워크 요청 없이 바로 UI에 업데이트 내용 반영
                 Log.d("ProfileViewModel", "피드 업로드 성공")
             }
             .addOnFailureListener { e ->
-                _uploadStatus.value = false
                 Log.d("ProfileViewModel", "피드 업로드 실패: ${e.message}")
+                _isPosted.value = PostedState.Failure
             }
     }
 
@@ -214,7 +218,6 @@ class ProfileViewModel @Inject constructor(
         val newPost = postMetadata.toDataClass<FeedModel>()
         if (newPost != null) {
             val currentFeed = _feedArr.value?.toMutableList() ?: mutableListOf()
-            Log.d(TAG,"!newPost")
             currentFeed.add(0, newPost)  // 피드를 맨 위에 추가
             _feedArr.value = currentFeed
         }

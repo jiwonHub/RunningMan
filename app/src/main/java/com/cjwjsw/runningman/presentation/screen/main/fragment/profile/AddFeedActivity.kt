@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -17,9 +19,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.cjwjsw.runningman.databinding.ActivityAddFeedBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -52,18 +56,34 @@ class AddFeedActivity: AppCompatActivity()  {
         })
 
 
-        binding.addImageBtn.setOnClickListener{
-
+        binding.addImageBtn.setOnClickListener{ // 피드 등록 요청 버튼
             val title = binding.titleEditText.text
             val contents = binding.contentsEditText.text
             viewModel.uploadPost(title.toString(),contents.toString())
-            if(viewModel.isPosted.value == true){
-                finish()
-            }else{
-                binding.loadingBar.show()
-            }
-
         }
+
+        lifecycleScope.launch {
+            viewModel.isPosted.collect{
+                when(it){
+                    PostedState.Failure -> {
+                        binding.loadingBar.visibility = View.GONE
+                        Toast.makeText(applicationContext,"피드 업데이트에 실패했습니다", Toast.LENGTH_SHORT).show();
+                    }
+                    PostedState.Loading -> {
+                        binding.loadingBar.show()
+                        Toast.makeText(applicationContext,"피드 업데이트 중입니다", Toast.LENGTH_SHORT).show();
+                    }
+                    PostedState.Success -> {
+                        binding.loadingBar.visibility = View.GONE
+                        Toast.makeText(applicationContext,"피드 업데이트에 성공했습니다", Toast.LENGTH_SHORT).show();
+                        finish()
+                    }
+                    PostedState.beforePosted -> return@collect
+                }
+            }
+        }
+
+
         binding.addPictureBtn.setOnClickListener {
             when {
                 ContextCompat.checkSelfPermission(
