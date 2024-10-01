@@ -44,9 +44,13 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         super.onViewCreated(view, savedInstanceState)
         loadProfileImg() // 사용자 프로필 띄우기
 
+        //유저 피드 가져오기
+        viewModel.getUserFeed()
+
         //평균 걸음수, 총 걸음 수 데이터 초기화
         viewModel.getAllWalkData()
         viewModel.getAvgWalkData()
+
 
         //어댑터 초기화
         adapter = ProfileViewAdapter(mutableListOf(),this)
@@ -54,15 +58,10 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
 
         //피드 옵저빙
         viewModel.feedArr.observe(viewLifecycleOwner) { feed ->
-            feed.let {
-                for(i in 0..<feed?.size!!){
-                    arr.add(feed[i])
-                }
-                Log.d("profilefragment",feed.toString())
+            if (feed != null) {
+                adapter.updateImages(feed)
             }
-            adapter.updateImages(arr)
         }
-        viewModel.getUserFeed()
         //총 걸음수 옵저빙
         viewModel.totalWalkArr.observe(viewLifecycleOwner){walk ->
             binding.totalWalkText.text = walk.toString()
@@ -72,6 +71,21 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         viewModel.avgWalkArr.observe(viewLifecycleOwner){avg ->
             binding.avgWalk.text = avg.toString()
         }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+
+
+
+    }
+
+    override fun onResume() { // 프레그먼트 재개 시
+        super.onResume()
+
+
+
     }
 
 

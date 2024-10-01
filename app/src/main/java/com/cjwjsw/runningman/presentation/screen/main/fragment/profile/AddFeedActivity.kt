@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -34,6 +35,8 @@ class AddFeedActivity: AppCompatActivity()  {
     lateinit var binding: ActivityAddFeedBinding
     private lateinit var viewPager: ViewPager2
     lateinit var adapter : ViewpageAdapter
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddFeedBinding.inflate(layoutInflater)
@@ -48,11 +51,17 @@ class AddFeedActivity: AppCompatActivity()  {
             binding.indicator.setViewPager(binding.previewImage)
         })
 
+
         binding.addImageBtn.setOnClickListener{
+
             val title = binding.titleEditText.text
             val contents = binding.contentsEditText.text
             viewModel.uploadPost(title.toString(),contents.toString())
-            finish()
+            if(viewModel.isPosted.value == true){
+                finish()
+            }else{
+                binding.loadingBar.show()
+            }
 
         }
         binding.addPictureBtn.setOnClickListener {
