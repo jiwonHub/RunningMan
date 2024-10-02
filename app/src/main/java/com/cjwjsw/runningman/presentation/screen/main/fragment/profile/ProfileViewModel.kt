@@ -204,8 +204,8 @@ class ProfileViewModel @Inject constructor(
             .addOnSuccessListener {
                 _photoArr.value = mutableListOf()
                 _isPosted.value = PostedState.Success // 업로드 상태 성공으로 변경
-                updateUIWithNewPost(postMetadata) // 파베에 피드 업로드 후 네트워크 요청 없이 바로 UI에 업데이트 내용 반영
                 Log.d("ProfileViewModel", "피드 업로드 성공")
+                updateUIWithNewPost(postMetadata) // 파베 업로드 후 재호출 없이 UI 바로 반영
             }
             .addOnFailureListener { e ->
                 Log.d("ProfileViewModel", "피드 업로드 실패: ${e.message}")
@@ -231,6 +231,23 @@ class ProfileViewModel @Inject constructor(
 
         fbsManager.firestoreSettings = settings
 
+        // 캐시에서 정보 가져오기
+        fbsManager.collection("posts")
+            .whereEqualTo("postId",userUid)
+            .get(Source.CACHE)  // 로컬 캐시에서 먼저 데이터 가져오기
+            .addOnSuccessListener { documents ->
+                if (documents.isEmpty) {
+                    Log.d("FeedViewModel", "캐시에 피드 정보가 없습니다")
+                    _feedArr.value = null
+                } else {
+                    Log.d("FeedViewModel", "캐시에서 데이터 가져오기 성공")
+                    _feedArr.value = documents.documents.mapNotNull { it.data?.toDataClass<FeedModel>() }.toMutableList()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.d("FeedViewModel", "캐시에서 데이터 불러오기 실패: ${e.message}")
+            }
+
         // 리얼 타임 리스너
         fbsManager.collection("posts")
             .whereEqualTo("postId",userUid)
@@ -245,40 +262,26 @@ class ProfileViewModel @Inject constructor(
                     _feedArr.value = snapshots.documents.mapNotNull { it.data?.toDataClass<FeedModel>() }.toMutableList()
                 } else {
                     Log.d("FeedViewModel", "리얼타임 데이터가 없습니다")
+                    _feedArr.value = null
                 }
             }
 
-        // 캐시에서 정보 가져오기
-        fbsManager.collection("posts")
-            .whereEqualTo("postId",userUid)
-            .get(Source.CACHE)  // 로컬 캐시에서 먼저 데이터 가져오기
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    Log.d("FeedViewModel", "캐시에 피드 정보가 없습니다")
-                } else {
-                    Log.d("FeedViewModel", "캐시에서 데이터 가져오기 성공")
-                    _feedArr.value = documents.documents.mapNotNull { it.data?.toDataClass<FeedModel>() }.toMutableList()
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.d("FeedViewModel", "캐시에서 데이터 불러오기 실패: ${e.message}")
-            }
 
-        // Firebase 서버에서 최신 데이터 가져오기
-        fbsManager.collection("posts")
-            .whereEqualTo("postId",userUid)
-            .get(Source.SERVER)  // 서버에서 최신 데이터 가져오기
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    Log.d("FeedViewModel", "서버에 피드 정보가 없습니다")
-                } else {
-                    Log.d("FeedViewModel", "서버에서 데이터 가져오기 성공")
-                    _feedArr.value = documents.documents.mapNotNull { it.data?.toDataClass<FeedModel>() }.toMutableList()
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.d("FeedViewModel", "서버에서 데이터 불러오기 실패: ${e.message}")
-            }
+//        // Firebase 서버에서 최신 데이터 가져오기
+//        fbsManager.collection("posts")
+//            .whereEqualTo("postId",userUid)
+//            .get(Source.SERVER)  // 서버에서 최신 데이터 가져오기
+//            .addOnSuccessListener { documents ->
+//                if (documents.isEmpty) {
+//                    Log.d("FeedViewModel", "서버에 피드 정보가 없습니다")
+//                } else {
+//                    Log.d("FeedViewModel", "서버에서 데이터 가져오기 성공")
+//                    _feedArr.value = documents.documents.mapNotNull { it.data?.toDataClass<FeedModel>() }.toMutableList()
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Log.d("FeedViewModel", "서버에서 데이터 불러오기 실패: ${e.message}")
+//            }
     }
 
     fun charToString(uid: MutableList<Char>) : String{

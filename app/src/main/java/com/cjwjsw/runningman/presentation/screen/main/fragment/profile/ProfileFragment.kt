@@ -47,6 +47,18 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         //유저 피드 가져오기
         viewModel.getUserFeed()
 
+        //피드 옵저빙
+        viewModel.feedArr.observe(viewLifecycleOwner) { feed ->
+            if (feed != null) {
+                adapter.updateImages(feed) // 피드가 있다면 어댑터에 바로 데이터 집어넣기
+            }
+
+            if (feed.isNullOrEmpty()) {
+                adapter.clearFeed()  // 피드 비어있으면 피드 바로 비움
+            }
+        }
+
+
         //평균 걸음수, 총 걸음 수 데이터 초기화
         viewModel.getAllWalkData()
         viewModel.getAvgWalkData()
@@ -56,12 +68,6 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
         adapter = ProfileViewAdapter(mutableListOf(),this)
         binding.feedRecyclerView.adapter= adapter
 
-        //피드 옵저빙
-        viewModel.feedArr.observe(viewLifecycleOwner) { feed ->
-            if (feed != null) {
-                adapter.updateImages(feed)
-            }
-        }
         //총 걸음수 옵저빙
         viewModel.totalWalkArr.observe(viewLifecycleOwner){walk ->
             binding.totalWalkText.text = walk.toString()
@@ -76,16 +82,6 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
 
     override fun onStart() {
         super.onStart()
-
-
-
-    }
-
-    override fun onResume() { // 프레그먼트 재개 시
-        super.onResume()
-
-
-
     }
 
 
@@ -130,5 +126,9 @@ class ProfileFragment @Inject constructor() : Fragment(),ProfileViewAdapter.OnIt
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object{
+        const val TAG = "ProfileFragment"
     }
 }
