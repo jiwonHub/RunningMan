@@ -90,6 +90,8 @@ dependencies {
     //카카오 로그인 API
     implementation ("com.kakao.sdk:v2-user:2.20.1")
 
+    implementation ("com.google.android.material:material:1.9.0")
+
     implementation ("com.google.dagger:hilt-android:2.51.1")
     implementation ("androidx.work:work-runtime-ktx:2.7.1")
     implementation ("androidx.hilt:hilt-work:1.0.0")

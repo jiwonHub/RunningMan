@@ -63,6 +63,12 @@ class ProfileViewAdapter(
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearFeed(){
+        feed.clear()
+        notifyDataSetChanged()
+    }
+
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: AppCompatImageView = itemView.findViewById(R.id.feedimg)

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="item"
             type="com.cjwjsw.runningman.presentation.screen.main.fragment.profile.AddFeedActivity" />
@@ -14,6 +15,21 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp">
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/loadingBar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:indeterminate="true"
+            android:theme="@style/Widget.MaterialComponents.LinearProgressIndicator"
+            app:indicatorColor="#3C6AFF"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:trackColor="@android:color/darker_gray"
+            app:trackCornerRadius="100dp" />
+
+
         <LinearLayout
             android:id="@+id/topLayout"
             android:layout_width="match_parent"
@@ -22,7 +38,7 @@
             app:layout_constraintBottom_toTopOf="@id/previewImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/loadingBar"
             app:layout_constraintVertical_weight="0.2">
 
             <View
@@ -63,13 +79,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/topLayout"
             app:layout_constraintVertical_weight="2" />
+
         <me.relex.circleindicator.CircleIndicator3
             android:id="@+id/indicator"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/titleEditText"
-            app:layout_constraintTop_toBottomOf="@id/previewImage"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/previewImage" />
+
         <ImageButton
             android:id="@+id/addPictureBtn"
             android:layout_width="wrap_content"
