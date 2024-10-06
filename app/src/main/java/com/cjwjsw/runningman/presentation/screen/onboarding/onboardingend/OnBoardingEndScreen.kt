@@ -22,6 +22,7 @@ class OnBoardingEndScreen : AppCompatActivity() {
         setContentView(binding.root)
 
         val userId = UserManager.getInstance()?.idToken
+        val userImage = UserManager.getInstance()?.profileUrl!! // null 허용, null일리가 없기 때문
 
         Log.d("userdata", userId.toString())
         val gender = intent.getStringExtra("gender")
@@ -32,7 +33,7 @@ class OnBoardingEndScreen : AppCompatActivity() {
 
         binding.nextButton.setOnClickListener {
             userId?.let {
-                viewModel.saveUserData(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age, this)
+                viewModel.saveUserData(userId = userId, userImage = userImage, gender = gender ?: "", weight = weight, height = height, age = age, this)
                 viewModel.saveUserInfo(userId = userId, gender = gender ?: "", weight = weight, height = height, age = age)
             }
 
