@@ -28,6 +28,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
     private var userNumber = ""
     private var IL = false
     private var Lc = 0
+    private var Image = ArrayList<String>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,33 +38,23 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         setContentView(binding.root)
         val alert = AlertDialog.Builder(this)
 
-        uid = intent.getStringExtra("UID").toString()
-        val image = intent.getStringArrayListExtra("URL")
-        feedTitle = intent.getStringExtra("title").toString()
-        IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
-        Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
+        initFeed() // 피드 초기화
+        initAlert(alert,uid,Image) // 알람 초기화
+        initAdapter(Image!!) // 어댑터 초기화
+        initViewPager() // 뷰페이저 초기화
 
-        initAlert(alert,uid,image)
-        adapter = FeedDetailViewAdapter(image)
-        adapter = image?.let { FeedDetailViewAdapter(it) }!!
-        viewPager = binding.feedImgViewPager
-        viewPager.adapter = adapter
-        binding.indicator.setViewPager(binding.feedImgViewPager)
+
+
         binding.title.text = feedTitle
         binding.likedCountText.text = "${Lc}명이 좋아합니다"
         userNumber = userData?.userNumber ?: "0"
 
         isLikedImg(IL)
-
         viewModel.getProfileImage(userData!!.idToken)
-
-
         viewModel.userImage.observe(this, Observer {
             profileImg = it.toString()
             loadProfileImg()
         })
-
-
         binding.backBtn.setOnClickListener {
             finish()
         }
@@ -138,6 +129,26 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
             dialog.cancel()
         })
     }
+
+    private fun initAdapter(image: ArrayList<String>){
+        adapter = FeedDetailViewAdapter(image)
+        adapter = image?.let { FeedDetailViewAdapter(it) }!!
+    }
+
+    private fun initFeed() {
+        uid = intent.getStringExtra("UID").toString()
+        Image = intent.getStringArrayListExtra("URL")!!
+        feedTitle = intent.getStringExtra("title").toString()
+        IL = intent.getBooleanExtra("isLiked", false) // 좋아요 여부
+        Lc = intent.getIntExtra("likedCount", 0) // 좋아요 개수
+    }
+
+    private fun initViewPager(){
+        viewPager = binding.feedImgViewPager
+        viewPager.adapter = adapter
+        binding.indicator.setViewPager(binding.feedImgViewPager)
+    }
+
 
 
     companion object{
