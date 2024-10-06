@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.cjwjsw.runningman.R
@@ -12,7 +13,6 @@ import com.cjwjsw.runningman.core.UserManager
 import com.cjwjsw.runningman.databinding.ActivitiyFeedDetailBinding
 import com.cjwjsw.runningman.presentation.screen.main.fragment.Comment.CommentModalBottomSheet
 import com.cjwjsw.runningman.presentation.screen.main.fragment.social.FeedDetailViewAdapter
-import com.cjwjsw.runningman.presentation.screen.main.fragment.social.ProfileFeedDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,18 +28,17 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
     private var userNumber = ""
     private var IL = false
     private var Lc = 0
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivitiyFeedDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         val alert = AlertDialog.Builder(this)
-
 
         uid = intent.getStringExtra("UID").toString()
         val image = intent.getStringArrayListExtra("URL")
-        profileImg = intent.getStringExtra("profileUrl").toString()
         feedTitle = intent.getStringExtra("title").toString()
         IL = intent.getBooleanExtra("isLiked",false) // 좋아요 눌렀는지 아닌지
         Lc = intent.getIntExtra("likedCount",0) // 좋아요 개수
@@ -55,9 +54,14 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
         userNumber = userData?.userNumber ?: "0"
 
         isLikedImg(IL)
-        loadProfileImg()
-        viewModel.getFeedUploadTime(uid)
 
+        viewModel.getProfileImage(userData!!.idToken)
+
+
+        viewModel.userImage.observe(this, Observer {
+            profileImg = it.toString()
+            loadProfileImg()
+        })
 
 
         binding.backBtn.setOnClickListener {
@@ -134,6 +138,7 @@ class ProfileFeedDetailScreen : AppCompatActivity() {
             dialog.cancel()
         })
     }
+
 
     companion object{
         val userData = UserManager.getInstance()
