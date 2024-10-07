@@ -73,8 +73,9 @@ class CommentAdapter(
         fun bind(item: String) {
             Glide.with(view)
                 .load(item)
-                .centerCrop()
+                .fitCenter()
                 .into(view)
+
             val modal = Comment2thBottomSheet(
                 feedUid = feedUid,
                 commentKey = (getCommentKey()),
