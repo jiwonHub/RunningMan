@@ -19,11 +19,13 @@ class OnBoardingEndViewModel @Inject constructor(
 
     private val db = FirebaseFirestore.getInstance()
 
-    fun saveUserData(userId: String?, gender: String, weight: Int, height: Int, age: Int,context : Context) {
+    fun saveUserData(userId: String?, userImage: String, gender: String, weight: Int, height: Int, age: Int,context : Context) {
         userId?.let {
             Log.d("OnBoardingEndViewModel",userId + gender + weight + height + age)
             val userRef = db.collection("user_info").document(userId)
             val userData = hashMapOf(
+                "userId" to userId,
+                "userImage" to userImage,
                 "gender" to gender,
                 "weight" to weight,
                 "height" to height,

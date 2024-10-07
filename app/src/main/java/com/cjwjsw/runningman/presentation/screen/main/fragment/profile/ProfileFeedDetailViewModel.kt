@@ -1,4 +1,4 @@
-package com.cjwjsw.runningman.presentation.screen.main.fragment.social
+package com.cjwjsw.runningman.presentation.screen.main.fragment.profile
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -35,10 +35,12 @@ class ProfileFeedDetailViewModel @Inject constructor(
     private val _feed_time = MutableLiveData<String>()
     val feed_time : LiveData<String> get() = _feed_time
 
+    private val _userImage = MutableLiveData<String>()
+    val userImage : LiveData<String> get() = _userImage
+
 
     fun getLikedCount(uid : String){
         val ref = firebaseFirestore.collection("posts").document(uid)
-
         //데이터 받아오기
         ref.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
@@ -114,6 +116,8 @@ class ProfileFeedDetailViewModel @Inject constructor(
         }
     }
 
+
+
     fun deleteFeed(feedUid: String, image: ArrayList<String>?){
 
         //피드 지우기
@@ -144,6 +148,21 @@ class ProfileFeedDetailViewModel @Inject constructor(
                         Log.d(TAG,"이미지 삭제 실패 : ${e.message}")
                 }
         }
+    }
+
+    fun getProfileImage(uid : String){
+        Log.d(TAG,"UID : ${uid.toString()}")
+
+        firebaseFirestore.collection("user_info")
+            .document(uid)
+            .get()
+            .addOnSuccessListener {
+                Log.d(TAG,"프로필사진 : ${it.getString("userImage").toString()}") // 프로필 사진 가져오기
+                _userImage.value =  it.getString("userImage").toString()
+            }
+            .addOnFailureListener {
+                Log.d(ProfileFeedDetailViewModel.TAG, it.cause.toString())
+            }
     }
 
 
