@@ -101,6 +101,7 @@ class SettingsActivity : AppCompatActivity() {
                 currentSetting = userAge.text.toString().toInt(),
                 onValueSet = { newAge ->
                     viewModel.updateAge(userId, newAge) // ViewModel 메서드 호출
+                    viewModel.updateAgeInFB(userId,newAge) // ViewModel 메서드 호출
                 }
             )
         }
@@ -112,6 +113,7 @@ class SettingsActivity : AppCompatActivity() {
                 currentSetting = userHeight.text.toString().toInt(),
                 onValueSet = { newHeight ->
                     viewModel.updateHeight(userId, newHeight) // ViewModel 메서드 호출
+                    viewModel.updateHeightInFB(userId, newHeight) // ViewModel 메서드 호출
                 }
             )
         }
@@ -123,6 +125,7 @@ class SettingsActivity : AppCompatActivity() {
                 currentSetting = userWeight.text.toString().toInt(),
                 onValueSet = { newWeight ->
                     viewModel.updateWeight(userId, newWeight) // ViewModel 메서드 호출
+                    viewModel.updateWeightInFB(userId, newWeight) // ViewModel 메서드 호출
                 }
             )
         }
@@ -132,6 +135,7 @@ class SettingsActivity : AppCompatActivity() {
                 currentGender = userGender.text.toString(),
                 onGenderSet = { newGender ->
                     viewModel.updateGender(userId, newGender) // ViewModel 메서드 호출
+                    viewModel.updateGenderInFB(userId,newGender) // ViewModel 메서드 호출
                 }
             )
         }
